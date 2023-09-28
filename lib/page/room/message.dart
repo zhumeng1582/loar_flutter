@@ -26,6 +26,7 @@ class AudioFile {
   int audioTimeLength = 0;
   int position = 0;
   bool isPlaying = false;
+  bool isLoading = false;
   String fileName = "";
 
   AudioFile(this.fileName, this.audioTimeLength);

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:chat_bubbles/bubbles/bubble_normal_audio.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal_image.dart';
 import 'package:chat_bubbles/bubbles/bubble_special_one.dart';
@@ -19,6 +17,7 @@ final roomProvider =
 
 class RoomNotifier extends ChangeNotifier {
   List<MessageItem> data = [];
+  MessageItem? playMessage;
 
   loadData() {
     var message1 = MessageItem.forText("1", "你好呀");
@@ -47,13 +46,38 @@ class RoomNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  setPlayPosition(MessageItem message, int value) {
-    if (value == message.audioFile?.audioTimeLength) {
-      message.audioFile?.isPlaying = false;
-    } else {
-      message.audioFile?.isPlaying = true;
+  setPlayMessage(MessageItem message) {
+    playMessage = message;
+  }
+
+  setPlayPosition(int value) {
+    if (playMessage?.audioFile == null) {
+      return;
     }
-    message.audioFile?.position = value;
+    if (value == playMessage!.audioFile!.audioTimeLength) {
+      playMessage!.audioFile!.isPlaying = false;
+    } else {
+      playMessage!.audioFile!.isPlaying = true;
+    }
+    if (value <= playMessage!.audioFile!.audioTimeLength) {
+      playMessage!.audioFile!.position = value;
+    }
+    notifyListeners();
+  }
+
+  setPlayState(ProcessingState state) {
+    if (playMessage?.audioFile == null) {
+      return;
+    }
+    if (state == ProcessingState.completed) {
+      playMessage!.audioFile?.isPlaying = false;
+      playMessage!.audioFile?.position =
+          playMessage!.audioFile!.audioTimeLength;
+    } else if (state == ProcessingState.loading) {
+      playMessage!.audioFile?.isLoading = true;
+      playMessage!.audioFile?.position = 0;
+    }
+
     notifyListeners();
   }
 }
@@ -101,7 +125,14 @@ class _RoomPageState extends ConsumerState<RoomPage> {
 }
 
 extension _Action on _RoomPageState {
-  void init() async {}
+  void init() async {
+    player.positionStream.listen((position) {
+      ref.read(roomProvider).setPlayPosition(position.inSeconds);
+    });
+    player.processingStateStream.listen((state) {
+      ref.read(roomProvider).setPlayState(state);
+    });
+  }
 
   sendMessage(String message) {
     ref.read(roomProvider).addData(message);
@@ -109,22 +140,19 @@ extension _Action on _RoomPageState {
 
   void _changeSeek(MessageItem message, double value) async {
     if (message.audioFile != null) {
+      ref.read(roomProvider).setPlayMessage(message);
       await player.setFilePath(message.audioFile!.fileName);
       player.seek(Duration(seconds: value.toInt()));
-      player.positionStream.listen((position) {
-        ref.read(roomProvider).setPlayPosition(message, position.inSeconds);
-      });
+
       player.play();
     }
   }
 
   _playAudio(MessageItem message) async {
     if (message.audioFile != null) {
+      ref.read(roomProvider).setPlayMessage(message);
       await player.setFilePath(message.audioFile!.fileName);
       player.play();
-      player.positionStream.listen((position) {
-        ref.read(roomProvider).setPlayPosition(message, position.inSeconds);
-      });
     }
   }
 
@@ -201,8 +229,9 @@ extension _UI on _RoomPageState {
     } else if (data.messageType == MessageType.audio) {
       return Expanded(
         child: BubbleNormalAudio(
-          color: Color(0xFFE8E8EE),
+          color: const Color(0xFFE8E8EE),
           isPlaying: data.audioFile!.isPlaying,
+          isLoading: data.audioFile!.isLoading,
           duration: data.audioFile?.audioTimeLength.toDouble(),
           position: data.audioFile?.position.toDouble(),
           onSeekChanged: (value) => {_changeSeek(data, value)},
