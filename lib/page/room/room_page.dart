@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chat_bubbles/bubbles/bubble_normal_audio.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal_image.dart';
 import 'package:chat_bubbles/bubbles/bubble_special_one.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
+import 'package:loar_flutter/common/util/storage.dart';
 import '../../common/image.dart';
 import '../../widget/voice_widget.dart';
 import '../home/room_list.dart';
@@ -18,20 +21,39 @@ final roomProvider =
 class RoomNotifier extends ChangeNotifier {
   List<MessageItem> data = [];
   MessageItem? playMessage;
+  String roomId = "";
 
-  loadData() {
-    var message1 = MessageItem.forText("1", "你好呀");
-    var message2 = MessageItem.forText("2", "你也好呀");
-    var message3 = MessageItem.forText("2", "嗯，挺好的");
-    var message4 = MessageItem.forText("1", "ok");
-    var message5 = MessageItem.forText("1", "ok");
-    var message6 = MessageItem.forText("2", "ok");
-    data.add(message1);
-    data.add(message2);
-    data.add(message5);
-    data.add(message3);
-    data.add(message6);
-    data.add(message4);
+  get key => "Room$roomId";
+
+  loadData(String roomId) async {
+    this.roomId = roomId;
+    data.clear();
+    print("text=clear");
+    var text = await Storage.getString(key);
+    print("text=开始");
+    if (text != null) {
+      print("text="+text);
+      List<dynamic> dynamicList = jsonDecode(text);
+      data = dynamicList
+          .map((item) => MessageItem.fromJson(item))
+          .toList();
+
+    } else {
+      var message1 = MessageItem.forText("1", "你好呀");
+      var message2 = MessageItem.forText("2", "你也好呀");
+      var message3 = MessageItem.forText("2", "嗯，挺好的");
+      var message4 = MessageItem.forText("1", "ok");
+      var message5 = MessageItem.forText("1", "ok");
+      var message6 = MessageItem.forText("2", "ok");
+      data.add(message1);
+      data.add(message2);
+      data.add(message5);
+      data.add(message3);
+      data.add(message6);
+      data.add(message4);
+
+    }
+    notifyListeners();
   }
 
   addData(String text) {
@@ -54,13 +76,13 @@ class RoomNotifier extends ChangeNotifier {
     if (playMessage?.audioFile == null) {
       return;
     }
-    if (value == playMessage!.audioFile!.audioTimeLength) {
-      playMessage!.audioFile!.isPlaying = false;
+    if (value == playMessage!.audioFile.audioTimeLength) {
+      playMessage!.audioFile.isPlaying = false;
     } else {
-      playMessage!.audioFile!.isPlaying = true;
+      playMessage!.audioFile.isPlaying = true;
     }
-    if (value <= playMessage!.audioFile!.audioTimeLength) {
-      playMessage!.audioFile!.position = value;
+    if (value <= playMessage!.audioFile.audioTimeLength) {
+      playMessage!.audioFile.position = value;
     }
     notifyListeners();
   }
@@ -70,15 +92,21 @@ class RoomNotifier extends ChangeNotifier {
       return;
     }
     if (state == ProcessingState.completed) {
-      playMessage!.audioFile?.isPlaying = false;
-      playMessage!.audioFile?.position =
-          playMessage!.audioFile!.audioTimeLength;
+      playMessage!.audioFile.isPlaying = false;
+      playMessage!.audioFile.position =
+          playMessage!.audioFile.audioTimeLength;
     } else if (state == ProcessingState.loading) {
-      playMessage!.audioFile?.isLoading = true;
-      playMessage!.audioFile?.position = 0;
+      playMessage!.audioFile.isLoading = true;
+      playMessage!.audioFile.position = 0;
     }
 
     notifyListeners();
+  }
+
+  saveData() async {
+    String chatList = jsonEncode(data);
+    Storage.save(key, chatList);
+
   }
 }
 
@@ -98,8 +126,8 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   @override
   void initState() {
     super.initState();
+    print("text=initState");
     init();
-    ref.read(roomProvider).loadData();
   }
 
   @override
@@ -121,11 +149,14 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   void dispose() {
     super.dispose();
     _controller.dispose();
+    ref.watch(roomProvider).saveData();
   }
 }
 
 extension _Action on _RoomPageState {
   void init() async {
+    ref.read(roomProvider).loadData(widget.roomItem.id);
+
     player.positionStream.listen((position) {
       ref.read(roomProvider).setPlayPosition(position.inSeconds);
     });
@@ -139,22 +170,18 @@ extension _Action on _RoomPageState {
   }
 
   void _changeSeek(MessageItem message, double value) async {
-    if (message.audioFile != null) {
-      ref.read(roomProvider).setPlayMessage(message);
-      await player.setFilePath(message.audioFile!.fileName);
-      player.seek(Duration(seconds: value.toInt()));
+    ref.read(roomProvider).setPlayMessage(message);
+    await player.setFilePath(message.audioFile.fileName);
+    player.seek(Duration(seconds: value.toInt()));
 
-      player.play();
+    player.play();
     }
-  }
 
   _playAudio(MessageItem message) async {
-    if (message.audioFile != null) {
-      ref.read(roomProvider).setPlayMessage(message);
-      await player.setFilePath(message.audioFile!.fileName);
-      player.play();
+    ref.read(roomProvider).setPlayMessage(message);
+    await player.setFilePath(message.audioFile.fileName);
+    player.play();
     }
-  }
 
   startRecord() {
     print("开始录制");
@@ -229,11 +256,14 @@ extension _UI on _RoomPageState {
     } else if (data.messageType == MessageType.audio) {
       return Expanded(
         child: BubbleNormalAudio(
+          isSender: isSender,
+          constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width - 140.w, maxHeight: 70),
           color: const Color(0xFFE8E8EE),
-          isPlaying: data.audioFile!.isPlaying,
-          isLoading: data.audioFile!.isLoading,
-          duration: data.audioFile?.audioTimeLength.toDouble(),
-          position: data.audioFile?.position.toDouble(),
+          isPlaying: data.audioFile.isPlaying,
+          isLoading: data.audioFile.isLoading,
+          duration: data.audioFile.audioTimeLength.toDouble(),
+          position: data.audioFile.position.toDouble(),
           onSeekChanged: (value) => {_changeSeek(data, value)},
           onPlayPauseButtonClick: () => {_playAudio(data)},
         ),
@@ -243,8 +273,8 @@ extension _UI on _RoomPageState {
         text: data.text,
         isSender: isSender,
         color: !isSender ? Colors.grey : Color(0xFF1B97F3),
-        textStyle: const TextStyle(
-          fontSize: 20,
+        textStyle: TextStyle(
+          fontSize: 24.sp,
         ),
       );
     }
@@ -253,12 +283,7 @@ extension _UI on _RoomPageState {
   _buildChatLeftItem(MessageItem data, Widget child) {
     return Row(
       children: [
-        ImageWidget(
-          url: data.userInfo.icon,
-          width: 50,
-          height: 50,
-          type: ImageWidgetType.network,
-        ),
+        userAvatar(data),
         child,
       ],
     );
@@ -269,13 +294,17 @@ extension _UI on _RoomPageState {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         child,
-        ImageWidget(
-          url: data.userInfo.icon,
-          width: 50,
-          height: 50,
-          type: ImageWidgetType.network,
-        ),
+        userAvatar(data),
       ],
     );
   }
+}
+
+ImageWidget userAvatar(MessageItem data) {
+  return ImageWidget(
+    url: data.userInfo.icon,
+    width: 80.w,
+    height: 80.w,
+    type: ImageWidgetType.network,
+  );
 }

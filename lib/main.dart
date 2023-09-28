@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive/hive.dart';
+import 'package:loar_flutter/page/login/login_page.dart';
 import 'package:loar_flutter/page/main_page.dart';
 
 import 'common/routers/RouteObservers.dart';
 
-void main() {
+void main() async{
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -31,8 +33,8 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          title: 'wallet',
-          home: const MainPage(),
+          title: 'loar',
+          home: const LoginPage(),
         );
       },
     );

@@ -14,9 +14,9 @@ class HomeNotifier extends ChangeNotifier {
   List<RoomItem> data = [];
 
   loadData() {
-    data.add(RoomItem());
-    data.add(RoomItem());
-    data.add(RoomItem());
+    data.add(RoomItem("1","聊天室1","快下班了","晚上8:49"));
+    data.add(RoomItem("2","聊天室2","国庆去哪里玩","晚上7:43"));
+    data.add(RoomItem("3","聊天室3","晚上开一把","晚上4:9"));
   }
 }
 
