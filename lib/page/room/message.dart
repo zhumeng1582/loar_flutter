@@ -10,12 +10,12 @@ class MessageItem {
   String fileName = "";
   String time = "";
 
-  MessageItem.forText(String userId,this.text) {
+  MessageItem.forText(String userId, this.text) {
     userInfo.id = userId;
     messageType = MessageType.text;
   }
 
-  MessageItem.forAudio(String userId, this.fileName,double audioTimeLength) {
+  MessageItem.forAudio(String userId, this.fileName, int audioTimeLength) {
     userInfo.id = userId;
     messageType = MessageType.audio;
     audioFile = AudioFile(fileName, audioTimeLength);
@@ -23,7 +23,9 @@ class MessageItem {
 }
 
 class AudioFile {
-  double audioTimeLength = 0;
+  int audioTimeLength = 0;
+  int position = 0;
+  bool isPlaying = false;
   String fileName = "";
 
   AudioFile(this.fileName, this.audioTimeLength);

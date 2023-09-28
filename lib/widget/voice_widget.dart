@@ -9,9 +9,6 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../common/util/images.dart';
 
-typedef startRecord = Future Function();
-typedef stopRecord = Future Function();
-
 class VoiceWidget extends StatefulWidget {
   final Function? startRecord;
   final Function? stopRecord;
@@ -35,7 +32,7 @@ class VoiceWidget extends StatefulWidget {
 
 class _VoiceWidgetState extends State<VoiceWidget> {
   // 倒计时总时长
-  int _countTotal = 10;
+  int _countTotal = 20;
   double starty = 0.0;
   double offset = 0.0;
   bool isUp = false;
@@ -71,8 +68,9 @@ class _VoiceWidgetState extends State<VoiceWidget> {
       if (data.msg == "onStop") {
         ///结束录制时会返回录制文件的地址方便上传服务器
         print("onStop  " + data.path!);
-        if (widget.stopRecord != null)
+        if (widget.stopRecord != null) {
           widget.stopRecord!(data.path, data.audioTimeLength);
+        }
       } else if (data.msg == "onStart") {
         print("onStart --");
         if (widget.startRecord != null) widget.startRecord!();
@@ -105,7 +103,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
         }
       });
 
-      // print("振幅大小   " + voiceData.toString() + "  " + voiceIco);
+      print("振幅大小   " + voiceData.toString() + "  " + voiceIco);
     });
   }
 
@@ -200,7 +198,8 @@ class _VoiceWidgetState extends State<VoiceWidget> {
   }
 
   moveVoiceView() {
-    print("offset = $offset,starty =$starty,offset - starty=${offset - starty}");
+    print(
+        "offset = $offset,starty =$starty,offset - starty=${offset - starty}");
     setState(() {
       isUp = starty - offset > 100 ? true : false;
       if (isUp) {

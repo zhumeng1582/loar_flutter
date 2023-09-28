@@ -45,10 +45,13 @@ dependencies:
   flutter_easyloading: ^3.0.5
   # 模仿微信录音
   flutter_plugin_record_plus: ^0.0.16
+  flutter_sound_record: ^3.3.2
+  just_audio: 0.9.35
   # 图片缓存
   extended_image: ^8.1.0
   # 聊天气泡
   chat_bubbles: ^1.5.0
+
 
 dev_dependencies:
   flutter_test:

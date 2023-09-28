@@ -1,13 +1,14 @@
+import 'dart:async';
+
 import 'package:chat_bubbles/bubbles/bubble_normal_audio.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal_image.dart';
 import 'package:chat_bubbles/bubbles/bubble_special_one.dart';
 import 'package:chat_bubbles/message_bars/message_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_plugin_record_plus/flutter_plugin_record.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-
 import '../../common/image.dart';
 import '../../widget/voice_widget.dart';
 import '../home/room_list.dart';
@@ -40,12 +41,21 @@ class RoomNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  addAudioData(String audioFileName, double audioTimeLength) {
+  addAudioData(String audioFileName, int audioTimeLength) {
     var message = MessageItem.forAudio("1", audioFileName, audioTimeLength);
     data.add(message);
     notifyListeners();
   }
 
+  setPlayPosition(MessageItem message, int value) {
+    if (value == message.audioFile?.audioTimeLength) {
+      message.audioFile?.isPlaying = false;
+    } else {
+      message.audioFile?.isPlaying = true;
+    }
+    message.audioFile?.position = value;
+    notifyListeners();
+  }
 }
 
 class RoomPage extends ConsumerStatefulWidget {
@@ -58,14 +68,13 @@ class RoomPage extends ConsumerStatefulWidget {
 }
 
 class _RoomPageState extends ConsumerState<RoomPage> {
-  FlutterPluginRecord recordPlugin = FlutterPluginRecord();
-
-
+  final player = AudioPlayer();
   final _controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    init();
     ref.read(roomProvider).loadData();
   }
 
@@ -88,27 +97,37 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   void dispose() {
     super.dispose();
     _controller.dispose();
-    recordPlugin.dispose();
-
   }
-
 }
 
 extension _Action on _RoomPageState {
+  void init() async {}
+
   sendMessage(String message) {
     ref.read(roomProvider).addData(message);
   }
 
-  void _changeSeek(MessageItem data, double value) {}
-
-  _playAudio(MessageItem message) async{
+  void _changeSeek(MessageItem message, double value) async {
     if (message.audioFile != null) {
-      recordPlugin.playByPath(message.audioFile!.fileName, "file");
+      await player.setFilePath(message.audioFile!.fileName);
+      player.seek(Duration(seconds: value.toInt()));
+      player.positionStream.listen((position) {
+        ref.read(roomProvider).setPlayPosition(message, position.inSeconds);
+      });
+      player.play();
     }
   }
-}
 
-extension _UI on _RoomPageState {
+  _playAudio(MessageItem message) async {
+    if (message.audioFile != null) {
+      await player.setFilePath(message.audioFile!.fileName);
+      player.play();
+      player.positionStream.listen((position) {
+        ref.read(roomProvider).setPlayPosition(message, position.inSeconds);
+      });
+    }
+  }
+
   startRecord() {
     print("开始录制");
   }
@@ -117,9 +136,11 @@ extension _UI on _RoomPageState {
     print("结束束录制");
     print("音频文件位置" + path);
     print("音频录制时长" + audioTimeLength.toString());
-    ref.read(roomProvider).addAudioData(path, audioTimeLength);
+    ref.read(roomProvider).addAudioData(path, audioTimeLength.toInt());
   }
+}
 
+extension _UI on _RoomPageState {
   _buildBottomItem() {
     return MessageBar(
       onSend: (message) => sendMessage(message),
@@ -181,8 +202,9 @@ extension _UI on _RoomPageState {
       return Expanded(
         child: BubbleNormalAudio(
           color: Color(0xFFE8E8EE),
-          duration: data.audioFile?.audioTimeLength,
-          position: 0,
+          isPlaying: data.audioFile!.isPlaying,
+          duration: data.audioFile?.audioTimeLength.toDouble(),
+          position: data.audioFile?.position.toDouble(),
           onSeekChanged: (value) => {_changeSeek(data, value)},
           onPlayPauseButtonClick: () => {_playAudio(data)},
         ),
