@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-import 'package:loar_flutter/page/contacts/contacts_list.dart';
 
 import '../../common/image.dart';
 import '../../common/local_info_cache.dart';
-import '../../common/util/images.dart';
 
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
 

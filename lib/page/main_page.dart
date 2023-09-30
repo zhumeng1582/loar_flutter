@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loar_flutter/page/record_page.dart';
+import 'package:loar_flutter/page/sos/sos_page.dart';
 import 'package:loar_flutter/page/statellite_map.dart';
 
 import 'contacts/contacts_page.dart';
@@ -15,6 +16,7 @@ class MainNotifier extends ChangeNotifier {
     const HomePage(),
     const ContactsPage(),
     WeChatRecordScreen(),
+    const SosPage(),
     const MePage(),
   ]; // 列举所有 Tab 控制切换将用到的页面
   int selectedIndex = 0;
@@ -71,6 +73,11 @@ class _MainPageState extends ConsumerState<MainPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.map, size: 24.0),
             label: '地图',
+            backgroundColor: Colors.white,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.sos, size: 24.0),
+            label: 'SOS',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
