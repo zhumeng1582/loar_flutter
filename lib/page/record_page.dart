@@ -77,6 +77,7 @@ class _WeChatRecordScreenState extends State<WeChatRecordScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("仿微信发送语音"),
+        centerTitle: true,
       ),
       body: Column(
         children: <Widget>[

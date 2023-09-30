@@ -35,6 +35,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("联系人"),
+        centerTitle: true,
       ),
       body: ListView.builder(
         itemCount: data.length,

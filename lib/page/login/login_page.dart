@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/contacts/contacts_list.dart';
 
-import '../../common/LoginInfo.dart';
+import '../../common/local_info_cache.dart';
 import '../../common/colors.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
@@ -35,33 +35,20 @@ class LoginNotifier extends ChangeNotifier {
     buttonState = ButtonState.loading;
     notifyListeners();
     var text = await Storage.getString(key);
+
     if (text != null && text.isNotEmpty) {
-      LoginUserInfo userInfo = LoginUserInfo.fromJson(jsonDecode(text));
+      MyUserInfo userInfo = MyUserInfo.fromJson(jsonDecode(text));
       if (userInfo.password == password &&
           userInfo.userInfo.account == account) {
-        LoginInfo.instance.userInfo = userInfo;
+        LocalInfoCache.instance.userInfo = userInfo;
         buttonState = ButtonState.normal;
         notifyListeners();
         return true;
-      } else {
-        buttonState = ButtonState.normal;
-        notifyListeners();
-        return false;
       }
-    } else {
-      var userInfo = await saveUser(account, password);
-      LoginInfo.instance.userInfo = userInfo;
     }
     buttonState = ButtonState.normal;
     notifyListeners();
-    return true;
-  }
-
-  Future<LoginUserInfo> saveUser(String account, String password) async {
-    LoginUserInfo userInfo = LoginUserInfo(account, password);
-    String useInfoStr = jsonEncode(userInfo);
-    await Storage.save(key, useInfoStr);
-    return userInfo;
+    return false;
   }
 }
 
@@ -118,6 +105,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       login(_userAccountController.text,
                           _userPasswordController.text)
                     }).paddingTop(70.h),
+            Row(
+              children: [
+                Text("忘记密码",
+                    style: TextStyle(
+                      color: AppColors.disabledTextColor,
+                    )).onTap(() => forgetPassword()),
+                Expanded(child: Container()),
+                Text("注册账户",
+                    style: TextStyle(
+                      color: AppColors.commonPrimary,
+                    )).onTap(() => signUp())
+              ],
+            ).paddingTop(20.h),
             Expanded(flex: 2, child: Container()),
           ],
         ).paddingHorizontal(30.w),
@@ -134,10 +134,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 }
 
 extension _Action on _LoginPageState {
+  forgetPassword() {
+    Navigator.popAndPushNamed(
+      context,
+      RouteNames.signUp,
+    );
+  }
+
+  signUp() {
+    Navigator.popAndPushNamed(
+      context,
+      RouteNames.signUp,
+    );
+  }
+
   login(String account, String password) async {
     bool isSuccess = await ref.read(loginProvider).login(account, password);
     if (isSuccess) {
-      if (LoginInfo.instance.userInfo != null) {
+      if (LocalInfoCache.instance.userInfo != null) {
         Navigator.popAndPushNamed(
           context,
           RouteNames.main,

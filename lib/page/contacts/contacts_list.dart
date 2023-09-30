@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:uuid/uuid.dart';
+
+
 class UserInfo {
   UserInfo();
   String id = "";
@@ -21,15 +26,17 @@ class UserInfo {
   }
 }
 
-class LoginUserInfo {
-  LoginUserInfo(String account,this.password){
+class MyUserInfo {
+
+  MyUserInfo.createUser(String account,this.password){
     userInfo = UserInfo();
+    userInfo.id = const Uuid().v4();
     userInfo.account = account;
   }
   late UserInfo userInfo;
   String password = "";
 
-  LoginUserInfo.fromJson(Map<String, dynamic> json) {
+  MyUserInfo.fromJson(Map<String, dynamic> json) {
     userInfo = UserInfo.fromJson(json["userInfo"]);
     password = json["password"];
   }

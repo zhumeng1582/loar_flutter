@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loar_flutter/page/login/sign_up_page.dart';
 import 'package:loar_flutter/page/main_page.dart';
 
 import '../../page/home/room_list.dart';
@@ -14,9 +15,12 @@ class RouteObservers {
       var roomItem = settings.arguments as RoomItem;
       return MaterialPageRoute(
           settings: settings, builder: (_) => RoomPage(roomItem: roomItem));
-    }else if (settings.name == RouteNames.main) {
+    } else if (settings.name == RouteNames.main) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const MainPage());
+    } else if (settings.name == RouteNames.signUp) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const SignUpPage());
     }
   }
 }

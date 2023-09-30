@@ -40,6 +40,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("聊天"),
+        centerTitle: true,
       ),
       body: ListView.builder(
         itemCount: data.length,
