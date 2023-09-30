@@ -28,11 +28,8 @@ class RoomNotifier extends ChangeNotifier {
   loadData(String roomId) async {
     this.roomId = roomId;
     data.clear();
-    print("text=clear");
     var text = await Storage.getString(key);
-    print("text=开始");
     if (text != null) {
-      print("text="+text);
       List<dynamic> dynamicList = jsonDecode(text);
       data = dynamicList
           .map((item) => MessageItem.fromJson(item))

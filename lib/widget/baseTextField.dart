@@ -172,7 +172,7 @@ extension _UI on _BaseTextFieldState {
             });
           },
           icon: Icon(
-            _isShowPwd ? Icons.clear : Icons.clear,
+            _isShowPwd ? Icons.visibility : Icons.visibility_off,
             size: 30.w,
           ),
           alignment: IconTextAlignment.iconOnly,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           title: 'loar',
-          home: const LoginPage(),
+          home: EasyLoading.init()(context, const LoginPage()),
         );
       },
     );

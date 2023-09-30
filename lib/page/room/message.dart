@@ -26,7 +26,7 @@ class MessageItem {
         'fileName': fileName,
         'time': time,
         'userInfo': userInfo.toJson(),
-        'audioFile': audioFile?.toJson(),
+        'audioFile': audioFile.toJson(),
         'messageType': messageType.name,
       };
 
