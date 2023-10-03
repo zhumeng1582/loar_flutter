@@ -1,4 +1,10 @@
 PODS:
+  - AMap3DMap (9.7.0):
+    - AMapFoundation (>= 1.8.0)
+  - amap_flutter_map (0.0.1):
+    - AMap3DMap
+    - Flutter
+  - AMapFoundation (1.8.2)
   - audio_session (0.0.1):
     - Flutter
   - barcode_scan2 (0.0.1):
@@ -24,6 +30,7 @@ PODS:
   - SwiftProtobuf (1.24.0)
 
 DEPENDENCIES:
+  - amap_flutter_map (from `.symlinks/plugins/amap_flutter_map/ios`)
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - barcode_scan2 (from `.symlinks/plugins/barcode_scan2/ios`)
   - Flutter (from `Flutter`)
@@ -36,10 +43,14 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - AMap3DMap
+    - AMapFoundation
     - MTBBarcodeScanner
     - SwiftProtobuf
 
 EXTERNAL SOURCES:
+  amap_flutter_map:
+    :path: ".symlinks/plugins/amap_flutter_map/ios"
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
   barcode_scan2:
@@ -60,6 +71,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
+  AMap3DMap: dce25dd3e51e6b92109caa7d0c97fc6055830fb3
+  amap_flutter_map: 979e54d227cedac6c7504a2151bfbf3bcf96760a
+  AMapFoundation: 9885c48fc3a78fdfb84a0299a2293e56ea3c9fec
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   barcode_scan2: 0af2bb63c81b4565aab6cd78278e4c0fa136dbb0
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854

@@ -16,7 +16,7 @@ class MainNotifier extends ChangeNotifier {
   final List tabPages = [
     const HomePage(),
     const ContactsPage(),
-     ShowMapPageBody(),
+    MarkerAddAfterMapPage(),
     const SosPage(),
     const MePage(),
   ]; // 列举所有 Tab 控制切换将用到的页面
