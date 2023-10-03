@@ -6,6 +6,7 @@ import 'package:loar_flutter/page/statellite_map.dart';
 
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
+import 'map/map_page.dart';
 import 'me/me_page.dart';
 
 final mainProvider =
@@ -15,7 +16,7 @@ class MainNotifier extends ChangeNotifier {
   final List tabPages = [
     const HomePage(),
     const ContactsPage(),
-    WeChatRecordScreen(),
+     ShowMapPageBody(),
     const SosPage(),
     const MePage(),
   ]; // 列举所有 Tab 控制切换将用到的页面

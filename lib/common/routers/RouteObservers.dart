@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loar_flutter/page/login/sign_up_page.dart';
 import 'package:loar_flutter/page/main_page.dart';
+import 'package:loar_flutter/page/me/QR_generate_page.dart';
+import 'package:loar_flutter/page/me/scan_qr_page.dart';
 
 import '../../page/home/room_list.dart';
 import '../../page/room/room_page.dart';
@@ -21,6 +23,13 @@ class RouteObservers {
     } else if (settings.name == RouteNames.signUp) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const SignUpPage());
+    } else if (settings.name == RouteNames.qrGenerate) {
+      var qrCode=settings.arguments as String;
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => QRGeneratePage(qrCode:qrCode));
+    } else if (settings.name == RouteNames.qrScan) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => ScanQRPage());
     }
   }
 }

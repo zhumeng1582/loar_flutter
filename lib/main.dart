@@ -5,11 +5,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/page/login/login_page.dart';
 
 import 'common/routers/RouteObservers.dart';
+import 'dart:io' show Platform;
 
-void main() async{
+void main() async {
+  initMap();
   runApp(const ProviderScope(child: MyApp()));
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -38,4 +39,8 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+
+void initMap() async {
+
 }

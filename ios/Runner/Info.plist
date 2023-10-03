@@ -4,6 +4,20 @@
 <dict>
     <key>NSMicrophoneUsageDescription</key>
     <string>我们需要您的同意才能使用您的麦克风进行录音</string>
+    <key>NSCameraUsageDescription</key>
+    <string>我们需要您的同意才能使用您的摄像头进行扫码</string>
+
+    <key>io.flutter.embedded_views_preview</key>
+    <string>YES</string>
+
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>需要定位权限</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+    	<string>iosamap</string>
+    	<string>amapuri</string>
+    </array>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

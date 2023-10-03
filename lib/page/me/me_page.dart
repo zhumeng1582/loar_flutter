@@ -7,6 +7,7 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/image.dart';
 import '../../common/local_info_cache.dart';
+import '../../common/routers/RouteNames.dart';
 
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
 
@@ -38,7 +39,19 @@ class _MePageState extends ConsumerState<MePage> {
             _topItem(),
             _getMeItem("账号", LocalInfoCache.instance.userInfo?.userInfo.account,
                 false),
-            _getMeItem("个人信息", "", true),
+            _getMeItem("二维码名片", "", true).onTap(() {
+              Navigator.pushNamed(
+                context,
+                RouteNames.qrGenerate,
+                arguments: LocalInfoCache.instance.userInfo?.userInfo.account
+              );
+            }),
+            _getMeItem("添加好友", "", true).onTap(() {
+              Navigator.pushNamed(
+                  context,
+                  RouteNames.qrScan
+              );
+            }),
           ],
         ).paddingHorizontal(30.w),
       ),
