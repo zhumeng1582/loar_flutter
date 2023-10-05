@@ -5,6 +5,7 @@ import 'package:loar_flutter/page/main_page.dart';
 import 'package:loar_flutter/page/me/QR_generate_page.dart';
 import 'package:loar_flutter/page/me/scan_qr_page.dart';
 
+import '../../page/blue/blue_page.dart';
 import '../../page/home/room_list.dart';
 import '../../page/room/room_page.dart';
 import 'RouteNames.dart';
@@ -30,6 +31,9 @@ class RouteObservers {
     } else if (settings.name == RouteNames.qrScan) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => ScanQRPage());
+    } else if (settings.name == RouteNames.bluePlus) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const FlutterBlueApp());
     }
   }
 }

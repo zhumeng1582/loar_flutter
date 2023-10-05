@@ -3,13 +3,29 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/page/login/login_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'common/routers/RouteObservers.dart';
 import 'dart:io' show Platform;
 
 void main() async {
   initMap();
-  runApp(const ProviderScope(child: MyApp()));
+  if (Platform.isAndroid) {
+    WidgetsFlutterBinding.ensureInitialized();
+    [
+      Permission.location,
+      Permission.storage,
+      Permission.bluetooth,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan
+    ].request().then((status) {
+      runApp(const ProviderScope(child: MyApp()));
+    });
+  } else {
+    runApp(const ProviderScope(child: MyApp()));
+  }
+
+
 }
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

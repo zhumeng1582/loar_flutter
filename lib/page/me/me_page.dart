@@ -52,6 +52,12 @@ class _MePageState extends ConsumerState<MePage> {
                   RouteNames.qrScan
               );
             }),
+            _getMeItem("蓝牙", "", true).onTap(() {
+              Navigator.pushNamed(
+                  context,
+                  RouteNames.bluePlus
+              );
+            }),
           ],
         ).paddingHorizontal(30.w),
       ),

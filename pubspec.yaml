@@ -60,6 +60,7 @@ dependencies:
   barcode_scan2: ^4.2.4
   flutter_blue_plus: ^1.16.2
   amap_flutter_map: ^3.0.0
+  permission_handler: ^10.2.0
 
 
 dev_dependencies:
