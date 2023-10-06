@@ -52,6 +52,24 @@ class BlueToothConnect {
       }
     });
   }
+   void setLedOnOff(bool on) {
+    List<int> data = [0xF2,on?1:0];
+    _write(setChar!, data);
+  }
+
+  void setLoraMode(int mode) {
+    List<int> data = [0xF3,mode];
+    _write(setChar!, data);
+  }
+  writeSetString(String value) async {
+    if (setChar != null) {
+      setLoraMode(2);
+      await Future.delayed(const Duration(milliseconds: 150));
+      _write(setChar!, string2Int(value));
+      await Future.delayed(const Duration(milliseconds: 150));
+      setLoraMode(1);
+    }
+  }
 
   writeLoraString(String value) {
     if (loarChar != null) {
