@@ -5,6 +5,7 @@ class RouteNames{
   static const signUp = 'signUp';
   static const qrGenerate = 'qr_generate';
   static const qrScan = 'qr_scan';
-  static const bluePlus = 'blue_plus';
+  static const blueSearchList = 'blueSearchList';
+  static const deviceScreen = 'device_Screen';
 
 }

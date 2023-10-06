@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loar_flutter/page/record_page.dart';
 import 'package:loar_flutter/page/sos/sos_page.dart';
-import 'package:loar_flutter/page/statellite_map.dart';
 
+import '../common/blue_tooth.dart';
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
 import 'map/map_page.dart';
 import 'me/me_page.dart';
 
 final mainProvider =
-    ChangeNotifierProvider<MainNotifier>((ref) => MainNotifier());
+ChangeNotifierProvider<MainNotifier>((ref) => MainNotifier());
 
 class MainNotifier extends ChangeNotifier {
   final List tabPages = [
@@ -30,6 +29,23 @@ class MainNotifier extends ChangeNotifier {
   Widget getCurrentWidget() {
     return tabPages[selectedIndex];
   }
+
+  getLocation() {
+    BlueToothConnect.instance
+        .listenGps((message) =>gpsParser(message));
+  }
+
+  String text = "";
+
+  gpsParser(String value) {
+    if (value.startsWith("\$")) {
+      text = "";
+    }
+    text += value;
+    if(value.contains("*") && text.contains("GNRMC")){
+      debugPrint("定位数据------->" + text);
+    }
+  }
 }
 
 class MainPage extends ConsumerStatefulWidget {
@@ -40,6 +56,12 @@ class MainPage extends ConsumerStatefulWidget {
 }
 
 class _MainPageState extends ConsumerState<MainPage> {
+  @override
+  void initState() {
+    ref.read(mainProvider).getLocation();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +111,9 @@ class _MainPageState extends ConsumerState<MainPage> {
         ],
 
         // 设置当前（即被选中时）页面
-        currentIndex: ref.watch(mainProvider).selectedIndex,
+        currentIndex: ref
+            .watch(mainProvider)
+            .selectedIndex,
 
         // 当点击其中一个[items]被触发
         onTap: (int index) {

@@ -55,7 +55,7 @@ class _MePageState extends ConsumerState<MePage> {
             _getMeItem("蓝牙", "", true).onTap(() {
               Navigator.pushNamed(
                   context,
-                  RouteNames.bluePlus
+                  RouteNames.blueSearchList
               );
             }),
           ],

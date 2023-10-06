@@ -18,6 +18,8 @@ final loginProvider =
     ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
 
 class LoginNotifier extends ChangeNotifier {
+  MyUserInfo? userInfo;
+
   get key => "LoginUserInfo";
 
   var buttonState = ButtonState.disabled;
@@ -29,6 +31,17 @@ class LoginNotifier extends ChangeNotifier {
       buttonState = ButtonState.normal;
     }
     notifyListeners();
+  }
+
+  getAccount(TextEditingController userAccountController,
+      TextEditingController userPasswordController) async {
+    var text = await Storage.getString(key);
+
+    if (text != null && text.isNotEmpty) {
+      userInfo = MyUserInfo.fromJson(jsonDecode(text));
+      userAccountController.text = userInfo?.userInfo.account ?? "";
+      userPasswordController.text = userInfo?.password ?? "";
+    }
   }
 
   Future<bool> login(String account, String password) async {
@@ -66,6 +79,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   void initState() {
     super.initState();
+    ref
+        .read(loginProvider)
+        .getAccount(_userAccountController, _userPasswordController);
     _userAccountController.addListener(() {
       ref.read(loginProvider).setButtonState(
           _userAccountController.text, _userPasswordController.text);
@@ -154,7 +170,7 @@ extension _Action on _LoginPageState {
       if (LocalInfoCache.instance.userInfo != null) {
         Navigator.popAndPushNamed(
           context,
-          RouteNames.main,
+          RouteNames.blueSearchList,
         );
       }
     } else {
