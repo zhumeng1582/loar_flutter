@@ -37,13 +37,13 @@ class _MePageState extends ConsumerState<MePage> {
         child: Column(
           children: [
             _topItem(),
-            _getMeItem("账号", LocalInfoCache.instance.userInfo?.userInfo.account,
+            _getMeItem("账号", LocalInfoCache.instance.userInfo?.user.account,
                 false),
             _getMeItem("二维码名片", "", true).onTap(() {
               Navigator.pushNamed(
                 context,
                 RouteNames.qrGenerate,
-                arguments: LocalInfoCache.instance.userInfo?.userInfo.account
+                arguments: LocalInfoCache.instance.userInfo?.user.account
               );
             }),
             _getMeItem("添加好友", "", true).onTap(() {
@@ -78,15 +78,15 @@ extension _UI on _MePageState {
       children: [
         ClipOval(
           child: ImageWidget(
-            url: LocalInfoCache.instance.userInfo?.userInfo.icon ?? "",
+            url: LocalInfoCache.instance.userInfo?.user.icon ?? "",
             width: 50,
             height: 50,
             type: ImageWidgetType.network,
           ),
         ),
-        Text(LocalInfoCache.instance.userInfo?.userInfo.name ?? ""),
+        Text(LocalInfoCache.instance.userInfo?.user.name ?? ""),
         Text(
-          LocalInfoCache.instance.userInfo?.userInfo.id ?? "",
+          LocalInfoCache.instance.userInfo?.user.id ?? "",
           textAlign: TextAlign.right,
           overflow: TextOverflow.ellipsis,
         )

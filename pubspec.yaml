@@ -61,7 +61,7 @@ dependencies:
   flutter_blue_plus: ^1.16.2
   amap_flutter_map: ^3.0.0
   permission_handler: ^10.2.0
-
+  protobuf: ^3.1.0
 
 dev_dependencies:
   flutter_test:

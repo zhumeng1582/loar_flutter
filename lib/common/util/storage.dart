@@ -4,6 +4,7 @@
 // @Description:
 
 import 'dart:async';
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Storage {
@@ -22,6 +23,19 @@ class Storage {
     if (value is double) return prefs!.setDouble(key, value);
     if (value is List<String>) return prefs!.setStringList(key, value);
     throw UnimplementedError('Type ${value.runtimeType} not implemented');
+  }
+
+  static Future<dynamic> saveIntList(String key, List<int> value) async {
+    save(key, base64Encode(value));
+  }
+
+  static Future<List<int>> getIntList(String key) async {
+    var value = await getString(key);
+    if (value != null) {
+      return base64Decode(value);
+    } else {
+      return [];
+    }
   }
 
   static Future<String?> getString(String key) async {

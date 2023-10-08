@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loar_flutter/common/proto/index.dart';
 import 'package:loar_flutter/page/login/sign_up_page.dart';
 import 'package:loar_flutter/page/main_page.dart';
 import 'package:loar_flutter/page/me/QR_generate_page.dart';
 import 'package:loar_flutter/page/me/scan_qr_page.dart';
 
 import '../../page/blue/find_device_page.dart';
-import '../../page/home/room_list.dart';
 import '../../page/room/room_page.dart';
 import 'RouteNames.dart';
 
@@ -15,9 +15,9 @@ class RouteObservers {
 
   static PageRoute? didPush(RouteSettings settings) {
     if (settings.name == RouteNames.roomPage) {
-      var roomItem = settings.arguments as RoomItem;
+      var roomId = settings.arguments as String;
       return MaterialPageRoute(
-          settings: settings, builder: (_) => RoomPage(roomItem: roomItem));
+          settings: settings, builder: (_) => RoomPage(roomId: roomId));
     } else if (settings.name == RouteNames.main) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const MainPage());

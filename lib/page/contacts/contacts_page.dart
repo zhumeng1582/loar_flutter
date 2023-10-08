@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../common/image.dart';
-import 'contacts_list.dart';
+import '../../common/proto/index.dart';
 
 final contactsProvider =
     ChangeNotifierProvider<ContactsNotifier>((ref) => ContactsNotifier());

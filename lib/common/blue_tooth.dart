@@ -27,8 +27,11 @@ class BlueToothConnect {
   connect(ScanResult value, Function success, Function fail) async {
     await value.device
         .connect(timeout: const Duration(seconds: 35))
-        .catchError((e) {fail(e);})
-        .then((v) {device = value.device;});
+        .catchError((e) {
+      fail(e);
+    }).then((v) {
+      device = value.device;
+    });
 
     var servicesList = await device?.discoverServices();
     var service = servicesList?.firstWhere((element) =>
@@ -48,32 +51,36 @@ class BlueToothConnect {
 
     value.device.connectionState.listen((BluetoothConnectionState state) {
       if (state == BluetoothConnectionState.connected) {
+        enableCommunication();
         success();
       }
     });
   }
-   void setLedOnOff(bool on) {
-    List<int> data = [0xF2,on?1:0];
+
+  void setLedOnOff(bool on) {
+    List<int> data = [0xF2, on ? 1 : 0];
     _write(setChar!, data);
   }
 
   void setLoraMode(int mode) {
-    List<int> data = [0xF3,mode];
+    List<int> data = [0xF3, mode];
     _write(setChar!, data);
   }
-  writeSetString(String value) async {
+
+  enableCommunication() async {
     if (setChar != null) {
+      List<int>  value= [0xC2,0x00,0x06,0x12,0x34,0x01,0x62,0x00,0x18];
       setLoraMode(2);
       await Future.delayed(const Duration(milliseconds: 150));
-      _write(setChar!, string2Int(value));
+      _write(loarChar!, value);
       await Future.delayed(const Duration(milliseconds: 150));
       setLoraMode(1);
     }
   }
 
-  writeLoraString(String value) {
+  writeLoraString(List<int> value) {
     if (loarChar != null) {
-      _write(loarChar!, string2Int(value));
+      _write(loarChar!, value);
     }
   }
 
@@ -95,9 +102,15 @@ class BlueToothConnect {
     }
   }
 
+  listenSet(Function message) {
+    if (setChar != null) {
+      _setNotifyValue(setChar!, message);
+    }
+  }
+
   _setNotifyValue(BluetoothCharacteristic c, Function message) async {
     c.onValueReceived.listen((event) {
-      message(String.fromCharCodes(event));
+      message(event);
     });
     await c.setNotifyValue(true);
     if (c.properties.read) {

@@ -5,7 +5,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-import 'package:loar_flutter/page/contacts/contacts_list.dart';
 
 import '../../common/local_info_cache.dart';
 import '../../common/colors.dart';
@@ -13,12 +12,12 @@ import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
 import 'package:loar_flutter/common/util/storage.dart';
-
+import '../../common/proto/index.dart';
 final loginProvider =
     ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
 
 class LoginNotifier extends ChangeNotifier {
-  MyUserInfo? userInfo;
+
 
   get key => "LoginUserInfo";
 
@@ -35,24 +34,23 @@ class LoginNotifier extends ChangeNotifier {
 
   getAccount(TextEditingController userAccountController,
       TextEditingController userPasswordController) async {
-    var text = await Storage.getString(key);
-
-    if (text != null && text.isNotEmpty) {
-      userInfo = MyUserInfo.fromJson(jsonDecode(text));
-      userAccountController.text = userInfo?.userInfo.account ?? "";
-      userPasswordController.text = userInfo?.password ?? "";
+    var text = await Storage.getIntList(key);
+    if (text.isNotEmpty) {
+      LoginUserInfo userInfo = LoginUserInfo.fromBuffer(text);
+      userAccountController.text = userInfo.user.account;
+      userPasswordController.text = userInfo.password;
     }
   }
 
   Future<bool> login(String account, String password) async {
     buttonState = ButtonState.loading;
     notifyListeners();
-    var text = await Storage.getString(key);
+    var text = await Storage.getIntList(key);
 
-    if (text != null && text.isNotEmpty) {
-      MyUserInfo userInfo = MyUserInfo.fromJson(jsonDecode(text));
+    if (text.isNotEmpty) {
+      LoginUserInfo userInfo = LoginUserInfo.fromBuffer(text);
       if (userInfo.password == password &&
-          userInfo.userInfo.account == account) {
+          userInfo.user.account == account) {
         LocalInfoCache.instance.userInfo = userInfo;
         buttonState = ButtonState.normal;
         notifyListeners();

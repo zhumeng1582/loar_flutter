@@ -1,18 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-import 'package:loar_flutter/page/contacts/contacts_list.dart';
 
-import '../../common/local_info_cache.dart';
-import '../../common/colors.dart';
-import '../../common/routers/RouteNames.dart';
-import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
-import 'package:loar_flutter/common/util/storage.dart';
 
 final sosProvider =
     ChangeNotifierProvider<SosNotifier>((ref) => SosNotifier());

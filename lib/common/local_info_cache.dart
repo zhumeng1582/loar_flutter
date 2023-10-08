@@ -1,6 +1,5 @@
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:loar_flutter/common/proto/UserInfo.pb.dart';
 
-import '../page/contacts/contacts_list.dart';
 
 class LocalInfoCache{
   LocalInfoCache._();
@@ -13,6 +12,6 @@ class LocalInfoCache{
     return _instance!;
   }
 
-  late MyUserInfo userInfo;
+  late LoginUserInfo? userInfo;
 
 }

@@ -32,7 +32,7 @@ class MainNotifier extends ChangeNotifier {
 
   getLocation() {
     BlueToothConnect.instance
-        .listenGps((message) =>gpsParser(message));
+        .listenGps((message) =>gpsParser(String.fromCharCodes(message)));
   }
 
   String text = "";

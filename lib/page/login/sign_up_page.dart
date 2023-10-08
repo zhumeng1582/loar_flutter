@@ -8,12 +8,12 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/local_info_cache.dart';
 import '../../common/colors.dart';
+import '../../common/proto/UserInfo.pb.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
 import 'package:loar_flutter/common/util/storage.dart';
 
-import '../contacts/contacts_list.dart';
 
 final signUpProvider =
     ChangeNotifierProvider<SignUpNotifier>((ref) => SignUpNotifier());
@@ -23,7 +23,7 @@ class SignUpNotifier extends ChangeNotifier {
 
   var buttonState = ButtonState.disabled;
 
-  setButtonState(String account, String password,String password2) {
+  setButtonState(String account, String password, String password2) {
     if (account.isEmpty || password.isEmpty || password2.isEmpty) {
       buttonState = ButtonState.disabled;
     } else {
@@ -32,12 +32,15 @@ class SignUpNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-
   Future<bool> saveUser(String account, String password) async {
-    MyUserInfo userInfo = MyUserInfo.createUser(account, password);
-    String useInfoStr = jsonEncode(userInfo);
-
-    bool isSuccess = await Storage.save(key, useInfoStr);
+    LoginUserInfo userInfo = LoginUserInfo();
+    userInfo.user = UserInfo();
+    userInfo.user.account = account;
+    userInfo.user.name = account;
+    userInfo.user.id = "user_${DateTime.now().millisecondsSinceEpoch}";
+    userInfo.user.icon = "https://img0.baidu.com/it/u=1691000662,1326044609&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1695834000&t=804a82ed014a5bcbe6c69e1a74228a29";
+    userInfo.password = password;
+    bool isSuccess = await Storage.saveIntList(key, userInfo.writeToBuffer());
     LocalInfoCache.instance.userInfo = userInfo;
 
     return isSuccess;
@@ -54,22 +57,23 @@ class SignUpPage extends ConsumerStatefulWidget {
 class _SignUpPageState extends ConsumerState<SignUpPage> {
   final TextEditingController _userAccountController = TextEditingController();
   final TextEditingController _userPasswordController = TextEditingController();
-  final TextEditingController _userPassword2Controller = TextEditingController();
+  final TextEditingController _userPassword2Controller =
+      TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _userAccountController.addListener(() {
-      ref.read(signUpProvider).setButtonState(
-          _userAccountController.text, _userPasswordController.text,_userPassword2Controller.text);
+      ref.read(signUpProvider).setButtonState(_userAccountController.text,
+          _userPasswordController.text, _userPassword2Controller.text);
     });
     _userPasswordController.addListener(() {
-      ref.read(signUpProvider).setButtonState(
-          _userAccountController.text, _userPasswordController.text,_userPassword2Controller.text);
+      ref.read(signUpProvider).setButtonState(_userAccountController.text,
+          _userPasswordController.text, _userPassword2Controller.text);
     });
     _userPassword2Controller.addListener(() {
-      ref.read(signUpProvider).setButtonState(
-          _userAccountController.text, _userPasswordController.text,_userPassword2Controller.text);
+      ref.read(signUpProvider).setButtonState(_userAccountController.text,
+          _userPasswordController.text, _userPassword2Controller.text);
     });
   }
 
@@ -105,8 +109,10 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 margin: EdgeInsets.zero,
                 text: "注册",
                 tapAction: () => {
-                      signUp(_userAccountController.text,
-                          _userPasswordController.text,_userPassword2Controller.text)
+                      signUp(
+                          _userAccountController.text,
+                          _userPasswordController.text,
+                          _userPassword2Controller.text)
                     }).paddingTop(70.h),
             Expanded(flex: 2, child: Container()),
           ],
@@ -125,14 +131,14 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 }
 
 extension _Action on _SignUpPageState {
-  signUp(String account, String password,String password2) async {
+  signUp(String account, String password, String password2) async {
     if (password != password2) {
       EasyLoading.showToast("两次密码不一致，请重新输入");
       return;
     }
 
     bool isSuccess = await ref.read(signUpProvider).saveUser(account, password);
-    if(isSuccess){
+    if (isSuccess) {
       Navigator.popAndPushNamed(
         context,
         RouteNames.main,

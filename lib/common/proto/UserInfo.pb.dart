@@ -1,0 +1,555 @@
+//
+//  Generated code. Do not modify.
+//  source: UserInfo.proto
+//
+// @dart = 2.12
+
+// ignore_for_file: annotate_overrides, camel_case_types, comment_references
+// ignore_for_file: constant_identifier_names, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+
+import 'dart:core' as $core;
+
+import 'package:protobuf/protobuf.dart' as $pb;
+
+import 'UserInfo.pbenum.dart';
+
+export 'UserInfo.pbenum.dart';
+
+class UserInfo extends $pb.GeneratedMessage {
+  factory UserInfo({
+    $core.String? id,
+    $core.String? icon,
+    $core.String? name,
+    $core.String? account,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (icon != null) {
+      $result.icon = icon;
+    }
+    if (name != null) {
+      $result.name = name;
+    }
+    if (account != null) {
+      $result.account = account;
+    }
+    return $result;
+  }
+  UserInfo._() : super();
+  factory UserInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserInfo', createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'icon')
+    ..aOS(3, _omitFieldNames ? '' : 'name')
+    ..aOS(4, _omitFieldNames ? '' : 'account')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UserInfo clone() => UserInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UserInfo copyWith(void Function(UserInfo) updates) => super.copyWith((message) => updates(message as UserInfo)) as UserInfo;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UserInfo create() => UserInfo._();
+  UserInfo createEmptyInstance() => create();
+  static $pb.PbList<UserInfo> createRepeated() => $pb.PbList<UserInfo>();
+  @$core.pragma('dart2js:noInline')
+  static UserInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UserInfo>(create);
+  static UserInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get icon => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set icon($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasIcon() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearIcon() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get name => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set name($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasName() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearName() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get account => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set account($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasAccount() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearAccount() => clearField(4);
+}
+
+class RoomInfo extends $pb.GeneratedMessage {
+  factory RoomInfo({
+    $core.String? id,
+    $core.String? icon,
+    $core.String? name,
+    $core.String? tag,
+    UserInfo? creator,
+    $core.Iterable<UserInfo>? userList,
+    $core.Iterable<MessageItem>? messagelist,
+    $core.int? createtime,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (icon != null) {
+      $result.icon = icon;
+    }
+    if (name != null) {
+      $result.name = name;
+    }
+    if (tag != null) {
+      $result.tag = tag;
+    }
+    if (creator != null) {
+      $result.creator = creator;
+    }
+    if (userList != null) {
+      $result.userList.addAll(userList);
+    }
+    if (messagelist != null) {
+      $result.messagelist.addAll(messagelist);
+    }
+    if (createtime != null) {
+      $result.createtime = createtime;
+    }
+    return $result;
+  }
+  RoomInfo._() : super();
+  factory RoomInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RoomInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'RoomInfo', createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'icon')
+    ..aOS(3, _omitFieldNames ? '' : 'name')
+    ..aOS(4, _omitFieldNames ? '' : 'tag')
+    ..aOM<UserInfo>(5, _omitFieldNames ? '' : 'creator', subBuilder: UserInfo.create)
+    ..pc<UserInfo>(6, _omitFieldNames ? '' : 'userList', $pb.PbFieldType.PM, protoName: 'userList', subBuilder: UserInfo.create)
+    ..pc<MessageItem>(7, _omitFieldNames ? '' : 'messagelist', $pb.PbFieldType.PM, subBuilder: MessageItem.create)
+    ..a<$core.int>(9, _omitFieldNames ? '' : 'createtime', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  RoomInfo clone() => RoomInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  RoomInfo copyWith(void Function(RoomInfo) updates) => super.copyWith((message) => updates(message as RoomInfo)) as RoomInfo;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static RoomInfo create() => RoomInfo._();
+  RoomInfo createEmptyInstance() => create();
+  static $pb.PbList<RoomInfo> createRepeated() => $pb.PbList<RoomInfo>();
+  @$core.pragma('dart2js:noInline')
+  static RoomInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RoomInfo>(create);
+  static RoomInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get icon => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set icon($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasIcon() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearIcon() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get name => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set name($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasName() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearName() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get tag => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set tag($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasTag() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearTag() => clearField(4);
+
+  @$pb.TagNumber(5)
+  UserInfo get creator => $_getN(4);
+  @$pb.TagNumber(5)
+  set creator(UserInfo v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasCreator() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearCreator() => clearField(5);
+  @$pb.TagNumber(5)
+  UserInfo ensureCreator() => $_ensure(4);
+
+  @$pb.TagNumber(6)
+  $core.List<UserInfo> get userList => $_getList(5);
+
+  @$pb.TagNumber(7)
+  $core.List<MessageItem> get messagelist => $_getList(6);
+
+  @$pb.TagNumber(9)
+  $core.int get createtime => $_getIZ(7);
+  @$pb.TagNumber(9)
+  set createtime($core.int v) { $_setSignedInt32(7, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasCreatetime() => $_has(7);
+  @$pb.TagNumber(9)
+  void clearCreatetime() => clearField(9);
+}
+
+class RoomList extends $pb.GeneratedMessage {
+  factory RoomList({
+    $core.String? userId,
+    $core.Iterable<RoomInfo>? roomList,
+  }) {
+    final $result = create();
+    if (userId != null) {
+      $result.userId = userId;
+    }
+    if (roomList != null) {
+      $result.roomList.addAll(roomList);
+    }
+    return $result;
+  }
+  RoomList._() : super();
+  factory RoomList.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RoomList.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'RoomList', createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'userId', protoName: 'userId')
+    ..pc<RoomInfo>(2, _omitFieldNames ? '' : 'roomList', $pb.PbFieldType.PM, protoName: 'roomList', subBuilder: RoomInfo.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  RoomList clone() => RoomList()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  RoomList copyWith(void Function(RoomList) updates) => super.copyWith((message) => updates(message as RoomList)) as RoomList;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static RoomList create() => RoomList._();
+  RoomList createEmptyInstance() => create();
+  static $pb.PbList<RoomList> createRepeated() => $pb.PbList<RoomList>();
+  @$core.pragma('dart2js:noInline')
+  static RoomList getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RoomList>(create);
+  static RoomList? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get userId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set userId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUserId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUserId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<RoomInfo> get roomList => $_getList(1);
+}
+
+class LoginUserInfo extends $pb.GeneratedMessage {
+  factory LoginUserInfo({
+    UserInfo? user,
+    $core.String? password,
+  }) {
+    final $result = create();
+    if (user != null) {
+      $result.user = user;
+    }
+    if (password != null) {
+      $result.password = password;
+    }
+    return $result;
+  }
+  LoginUserInfo._() : super();
+  factory LoginUserInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory LoginUserInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'LoginUserInfo', createEmptyInstance: create)
+    ..aOM<UserInfo>(1, _omitFieldNames ? '' : 'user', subBuilder: UserInfo.create)
+    ..aOS(2, _omitFieldNames ? '' : 'password')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  LoginUserInfo clone() => LoginUserInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  LoginUserInfo copyWith(void Function(LoginUserInfo) updates) => super.copyWith((message) => updates(message as LoginUserInfo)) as LoginUserInfo;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static LoginUserInfo create() => LoginUserInfo._();
+  LoginUserInfo createEmptyInstance() => create();
+  static $pb.PbList<LoginUserInfo> createRepeated() => $pb.PbList<LoginUserInfo>();
+  @$core.pragma('dart2js:noInline')
+  static LoginUserInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LoginUserInfo>(create);
+  static LoginUserInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  UserInfo get user => $_getN(0);
+  @$pb.TagNumber(1)
+  set user(UserInfo v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUser() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUser() => clearField(1);
+  @$pb.TagNumber(1)
+  UserInfo ensureUser() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.String get password => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set password($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasPassword() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPassword() => clearField(2);
+}
+
+class MessageItem extends $pb.GeneratedMessage {
+  factory MessageItem({
+    UserInfo? user,
+    MessageType? messageType,
+    $core.int? playTimeLength,
+    $core.int? playPosition,
+    $core.bool? isPlaying,
+    $core.bool? isLoading,
+    $core.String? content,
+    $core.String? fileName,
+    $core.int? sendtime,
+    $core.String? targetId,
+  }) {
+    final $result = create();
+    if (user != null) {
+      $result.user = user;
+    }
+    if (messageType != null) {
+      $result.messageType = messageType;
+    }
+    if (playTimeLength != null) {
+      $result.playTimeLength = playTimeLength;
+    }
+    if (playPosition != null) {
+      $result.playPosition = playPosition;
+    }
+    if (isPlaying != null) {
+      $result.isPlaying = isPlaying;
+    }
+    if (isLoading != null) {
+      $result.isLoading = isLoading;
+    }
+    if (content != null) {
+      $result.content = content;
+    }
+    if (fileName != null) {
+      $result.fileName = fileName;
+    }
+    if (sendtime != null) {
+      $result.sendtime = sendtime;
+    }
+    if (targetId != null) {
+      $result.targetId = targetId;
+    }
+    return $result;
+  }
+  MessageItem._() : super();
+  factory MessageItem.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MessageItem.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MessageItem', createEmptyInstance: create)
+    ..aOM<UserInfo>(1, _omitFieldNames ? '' : 'user', subBuilder: UserInfo.create)
+    ..e<MessageType>(2, _omitFieldNames ? '' : 'messageType', $pb.PbFieldType.OE, protoName: 'messageType', defaultOrMaker: MessageType.TEXT, valueOf: MessageType.valueOf, enumValues: MessageType.values)
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'playTimeLength', $pb.PbFieldType.O3, protoName: 'playTimeLength')
+    ..a<$core.int>(4, _omitFieldNames ? '' : 'playPosition', $pb.PbFieldType.O3, protoName: 'playPosition')
+    ..aOB(5, _omitFieldNames ? '' : 'isPlaying', protoName: 'isPlaying')
+    ..aOB(6, _omitFieldNames ? '' : 'isLoading', protoName: 'isLoading')
+    ..aOS(7, _omitFieldNames ? '' : 'content')
+    ..aOS(8, _omitFieldNames ? '' : 'fileName', protoName: 'fileName')
+    ..a<$core.int>(9, _omitFieldNames ? '' : 'sendtime', $pb.PbFieldType.O3)
+    ..aOS(10, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  MessageItem clone() => MessageItem()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  MessageItem copyWith(void Function(MessageItem) updates) => super.copyWith((message) => updates(message as MessageItem)) as MessageItem;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MessageItem create() => MessageItem._();
+  MessageItem createEmptyInstance() => create();
+  static $pb.PbList<MessageItem> createRepeated() => $pb.PbList<MessageItem>();
+  @$core.pragma('dart2js:noInline')
+  static MessageItem getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MessageItem>(create);
+  static MessageItem? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  UserInfo get user => $_getN(0);
+  @$pb.TagNumber(1)
+  set user(UserInfo v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUser() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUser() => clearField(1);
+  @$pb.TagNumber(1)
+  UserInfo ensureUser() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  MessageType get messageType => $_getN(1);
+  @$pb.TagNumber(2)
+  set messageType(MessageType v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasMessageType() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearMessageType() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get playTimeLength => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set playTimeLength($core.int v) { $_setSignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPlayTimeLength() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPlayTimeLength() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.int get playPosition => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set playPosition($core.int v) { $_setSignedInt32(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasPlayPosition() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearPlayPosition() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.bool get isPlaying => $_getBF(4);
+  @$pb.TagNumber(5)
+  set isPlaying($core.bool v) { $_setBool(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasIsPlaying() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearIsPlaying() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.bool get isLoading => $_getBF(5);
+  @$pb.TagNumber(6)
+  set isLoading($core.bool v) { $_setBool(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasIsLoading() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearIsLoading() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.String get content => $_getSZ(6);
+  @$pb.TagNumber(7)
+  set content($core.String v) { $_setString(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasContent() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearContent() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.String get fileName => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set fileName($core.String v) { $_setString(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasFileName() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearFileName() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.int get sendtime => $_getIZ(8);
+  @$pb.TagNumber(9)
+  set sendtime($core.int v) { $_setSignedInt32(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasSendtime() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearSendtime() => clearField(9);
+
+  /// 目标ID,单聊是为用户id,群聊时为群id
+  @$pb.TagNumber(10)
+  $core.String get targetId => $_getSZ(9);
+  @$pb.TagNumber(10)
+  set targetId($core.String v) { $_setString(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasTargetId() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearTargetId() => clearField(10);
+}
+
+
+const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
+const _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');
