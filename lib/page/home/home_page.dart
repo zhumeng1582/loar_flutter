@@ -26,6 +26,7 @@ class HomeNotifier extends ChangeNotifier {
   setMessage(MessageItem messageItem) async {
     var room = getRoomInfo(messageItem.targetId);
     room?.messagelist.add(messageItem);
+    notifyListeners();
     await Storage.saveIntList(chatMessageKey, roomList.writeToBuffer());
   }
   RoomInfo? getRoomInfo(String id){
