@@ -170,26 +170,25 @@ class UserInfoList extends $pb.GeneratedMessage {
 class RoomInfo extends $pb.GeneratedMessage {
   factory RoomInfo({
     $core.String? id,
-    $core.String? icon,
     $core.String? name,
     $core.String? tag,
+    $core.String? createtime,
     UserInfo? creator,
     $core.Iterable<UserInfo>? userList,
-    $core.Iterable<MessageItem>? messagelist,
-    $core.String? createtime,
+    $core.Iterable<ChatMessage>? messagelist,
   }) {
     final $result = create();
     if (id != null) {
       $result.id = id;
-    }
-    if (icon != null) {
-      $result.icon = icon;
     }
     if (name != null) {
       $result.name = name;
     }
     if (tag != null) {
       $result.tag = tag;
+    }
+    if (createtime != null) {
+      $result.createtime = createtime;
     }
     if (creator != null) {
       $result.creator = creator;
@@ -200,9 +199,6 @@ class RoomInfo extends $pb.GeneratedMessage {
     if (messagelist != null) {
       $result.messagelist.addAll(messagelist);
     }
-    if (createtime != null) {
-      $result.createtime = createtime;
-    }
     return $result;
   }
   RoomInfo._() : super();
@@ -211,13 +207,12 @@ class RoomInfo extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'RoomInfo', createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'id')
-    ..aOS(2, _omitFieldNames ? '' : 'icon')
-    ..aOS(3, _omitFieldNames ? '' : 'name')
-    ..aOS(4, _omitFieldNames ? '' : 'tag')
+    ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..aOS(3, _omitFieldNames ? '' : 'tag')
+    ..aOS(4, _omitFieldNames ? '' : 'createtime')
     ..aOM<UserInfo>(5, _omitFieldNames ? '' : 'creator', subBuilder: UserInfo.create)
     ..pc<UserInfo>(6, _omitFieldNames ? '' : 'userList', $pb.PbFieldType.PM, protoName: 'userList', subBuilder: UserInfo.create)
-    ..pc<MessageItem>(7, _omitFieldNames ? '' : 'messagelist', $pb.PbFieldType.PM, subBuilder: MessageItem.create)
-    ..aOS(9, _omitFieldNames ? '' : 'createtime')
+    ..pc<ChatMessage>(7, _omitFieldNames ? '' : 'messagelist', $pb.PbFieldType.PM, subBuilder: ChatMessage.create)
     ..hasRequiredFields = false
   ;
 
@@ -252,31 +247,31 @@ class RoomInfo extends $pb.GeneratedMessage {
   void clearId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get icon => $_getSZ(1);
+  $core.String get name => $_getSZ(1);
   @$pb.TagNumber(2)
-  set icon($core.String v) { $_setString(1, v); }
+  set name($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasIcon() => $_has(1);
+  $core.bool hasName() => $_has(1);
   @$pb.TagNumber(2)
-  void clearIcon() => clearField(2);
+  void clearName() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get name => $_getSZ(2);
+  $core.String get tag => $_getSZ(2);
   @$pb.TagNumber(3)
-  set name($core.String v) { $_setString(2, v); }
+  set tag($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasName() => $_has(2);
+  $core.bool hasTag() => $_has(2);
   @$pb.TagNumber(3)
-  void clearName() => clearField(3);
+  void clearTag() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.String get tag => $_getSZ(3);
+  $core.String get createtime => $_getSZ(3);
   @$pb.TagNumber(4)
-  set tag($core.String v) { $_setString(3, v); }
+  set createtime($core.String v) { $_setString(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasTag() => $_has(3);
+  $core.bool hasCreatetime() => $_has(3);
   @$pb.TagNumber(4)
-  void clearTag() => clearField(4);
+  void clearCreatetime() => clearField(4);
 
   @$pb.TagNumber(5)
   UserInfo get creator => $_getN(4);
@@ -293,16 +288,7 @@ class RoomInfo extends $pb.GeneratedMessage {
   $core.List<UserInfo> get userList => $_getList(5);
 
   @$pb.TagNumber(7)
-  $core.List<MessageItem> get messagelist => $_getList(6);
-
-  @$pb.TagNumber(9)
-  $core.String get createtime => $_getSZ(7);
-  @$pb.TagNumber(9)
-  set createtime($core.String v) { $_setString(7, v); }
-  @$pb.TagNumber(9)
-  $core.bool hasCreatetime() => $_has(7);
-  @$pb.TagNumber(9)
-  void clearCreatetime() => clearField(9);
+  $core.List<ChatMessage> get messagelist => $_getList(6);
 }
 
 class RoomList extends $pb.GeneratedMessage {
@@ -429,8 +415,8 @@ class LoginUserInfo extends $pb.GeneratedMessage {
   void clearPassword() => clearField(2);
 }
 
-class MessageItem extends $pb.GeneratedMessage {
-  factory MessageItem({
+class ChatMessage extends $pb.GeneratedMessage {
+  factory ChatMessage({
     UserInfo? user,
     MessageType? messageType,
     $core.int? playTimeLength,
@@ -441,6 +427,7 @@ class MessageItem extends $pb.GeneratedMessage {
     $core.String? fileName,
     $core.String? sendtime,
     $core.String? targetId,
+    ConversationType? conversationType,
   }) {
     final $result = create();
     if (user != null) {
@@ -473,13 +460,16 @@ class MessageItem extends $pb.GeneratedMessage {
     if (targetId != null) {
       $result.targetId = targetId;
     }
+    if (conversationType != null) {
+      $result.conversationType = conversationType;
+    }
     return $result;
   }
-  MessageItem._() : super();
-  factory MessageItem.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory MessageItem.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  ChatMessage._() : super();
+  factory ChatMessage.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ChatMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MessageItem', createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatMessage', createEmptyInstance: create)
     ..aOM<UserInfo>(1, _omitFieldNames ? '' : 'user', subBuilder: UserInfo.create)
     ..e<MessageType>(2, _omitFieldNames ? '' : 'messageType', $pb.PbFieldType.OE, protoName: 'messageType', defaultOrMaker: MessageType.TEXT, valueOf: MessageType.valueOf, enumValues: MessageType.values)
     ..a<$core.int>(3, _omitFieldNames ? '' : 'playTimeLength', $pb.PbFieldType.O3, protoName: 'playTimeLength')
@@ -490,6 +480,7 @@ class MessageItem extends $pb.GeneratedMessage {
     ..aOS(8, _omitFieldNames ? '' : 'fileName', protoName: 'fileName')
     ..aOS(9, _omitFieldNames ? '' : 'sendtime')
     ..aOS(10, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
+    ..e<ConversationType>(11, _omitFieldNames ? '' : 'conversationType', $pb.PbFieldType.OE, protoName: 'conversationType', defaultOrMaker: ConversationType.PRIVATE, valueOf: ConversationType.valueOf, enumValues: ConversationType.values)
     ..hasRequiredFields = false
   ;
 
@@ -497,22 +488,22 @@ class MessageItem extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  MessageItem clone() => MessageItem()..mergeFromMessage(this);
+  ChatMessage clone() => ChatMessage()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  MessageItem copyWith(void Function(MessageItem) updates) => super.copyWith((message) => updates(message as MessageItem)) as MessageItem;
+  ChatMessage copyWith(void Function(ChatMessage) updates) => super.copyWith((message) => updates(message as ChatMessage)) as ChatMessage;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static MessageItem create() => MessageItem._();
-  MessageItem createEmptyInstance() => create();
-  static $pb.PbList<MessageItem> createRepeated() => $pb.PbList<MessageItem>();
+  static ChatMessage create() => ChatMessage._();
+  ChatMessage createEmptyInstance() => create();
+  static $pb.PbList<ChatMessage> createRepeated() => $pb.PbList<ChatMessage>();
   @$core.pragma('dart2js:noInline')
-  static MessageItem getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MessageItem>(create);
-  static MessageItem? _defaultInstance;
+  static ChatMessage getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChatMessage>(create);
+  static ChatMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
   UserInfo get user => $_getN(0);
@@ -606,6 +597,217 @@ class MessageItem extends $pb.GeneratedMessage {
   $core.bool hasTargetId() => $_has(9);
   @$pb.TagNumber(10)
   void clearTargetId() => clearField(10);
+
+  @$pb.TagNumber(11)
+  ConversationType get conversationType => $_getN(10);
+  @$pb.TagNumber(11)
+  set conversationType(ConversationType v) { setField(11, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasConversationType() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearConversationType() => clearField(11);
+}
+
+class AddFriendMessage extends $pb.GeneratedMessage {
+  factory AddFriendMessage({
+    UserInfo? user,
+  }) {
+    final $result = create();
+    if (user != null) {
+      $result.user = user;
+    }
+    return $result;
+  }
+  AddFriendMessage._() : super();
+  factory AddFriendMessage.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AddFriendMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AddFriendMessage', createEmptyInstance: create)
+    ..aOM<UserInfo>(1, _omitFieldNames ? '' : 'user', subBuilder: UserInfo.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  AddFriendMessage clone() => AddFriendMessage()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  AddFriendMessage copyWith(void Function(AddFriendMessage) updates) => super.copyWith((message) => updates(message as AddFriendMessage)) as AddFriendMessage;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static AddFriendMessage create() => AddFriendMessage._();
+  AddFriendMessage createEmptyInstance() => create();
+  static $pb.PbList<AddFriendMessage> createRepeated() => $pb.PbList<AddFriendMessage>();
+  @$core.pragma('dart2js:noInline')
+  static AddFriendMessage getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AddFriendMessage>(create);
+  static AddFriendMessage? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  UserInfo get user => $_getN(0);
+  @$pb.TagNumber(1)
+  set user(UserInfo v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUser() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUser() => clearField(1);
+  @$pb.TagNumber(1)
+  UserInfo ensureUser() => $_ensure(0);
+}
+
+class AddGroupMessage extends $pb.GeneratedMessage {
+  factory AddGroupMessage({
+    RoomInfo? roomList,
+  }) {
+    final $result = create();
+    if (roomList != null) {
+      $result.roomList = roomList;
+    }
+    return $result;
+  }
+  AddGroupMessage._() : super();
+  factory AddGroupMessage.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AddGroupMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AddGroupMessage', createEmptyInstance: create)
+    ..aOM<RoomInfo>(1, _omitFieldNames ? '' : 'roomList', protoName: 'roomList', subBuilder: RoomInfo.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  AddGroupMessage clone() => AddGroupMessage()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  AddGroupMessage copyWith(void Function(AddGroupMessage) updates) => super.copyWith((message) => updates(message as AddGroupMessage)) as AddGroupMessage;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static AddGroupMessage create() => AddGroupMessage._();
+  AddGroupMessage createEmptyInstance() => create();
+  static $pb.PbList<AddGroupMessage> createRepeated() => $pb.PbList<AddGroupMessage>();
+  @$core.pragma('dart2js:noInline')
+  static AddGroupMessage getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AddGroupMessage>(create);
+  static AddGroupMessage? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  RoomInfo get roomList => $_getN(0);
+  @$pb.TagNumber(1)
+  set roomList(RoomInfo v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasRoomList() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRoomList() => clearField(1);
+  @$pb.TagNumber(1)
+  RoomInfo ensureRoomList() => $_ensure(0);
+}
+
+class LoarMessage extends $pb.GeneratedMessage {
+  factory LoarMessage({
+    LoarMessageType? loarMessageType,
+    ChatMessage? message,
+    AddFriendMessage? addFriendMessage,
+    AddGroupMessage? addGroupMessage,
+  }) {
+    final $result = create();
+    if (loarMessageType != null) {
+      $result.loarMessageType = loarMessageType;
+    }
+    if (message != null) {
+      $result.message = message;
+    }
+    if (addFriendMessage != null) {
+      $result.addFriendMessage = addFriendMessage;
+    }
+    if (addGroupMessage != null) {
+      $result.addGroupMessage = addGroupMessage;
+    }
+    return $result;
+  }
+  LoarMessage._() : super();
+  factory LoarMessage.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory LoarMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'LoarMessage', createEmptyInstance: create)
+    ..e<LoarMessageType>(1, _omitFieldNames ? '' : 'loarMessageType', $pb.PbFieldType.OE, protoName: 'loarMessageType', defaultOrMaker: LoarMessageType.ADD_FRIEND, valueOf: LoarMessageType.valueOf, enumValues: LoarMessageType.values)
+    ..aOM<ChatMessage>(2, _omitFieldNames ? '' : 'message', subBuilder: ChatMessage.create)
+    ..aOM<AddFriendMessage>(3, _omitFieldNames ? '' : 'addFriendMessage', protoName: 'addFriendMessage', subBuilder: AddFriendMessage.create)
+    ..aOM<AddGroupMessage>(4, _omitFieldNames ? '' : 'addGroupMessage', protoName: 'addGroupMessage', subBuilder: AddGroupMessage.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  LoarMessage clone() => LoarMessage()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  LoarMessage copyWith(void Function(LoarMessage) updates) => super.copyWith((message) => updates(message as LoarMessage)) as LoarMessage;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static LoarMessage create() => LoarMessage._();
+  LoarMessage createEmptyInstance() => create();
+  static $pb.PbList<LoarMessage> createRepeated() => $pb.PbList<LoarMessage>();
+  @$core.pragma('dart2js:noInline')
+  static LoarMessage getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LoarMessage>(create);
+  static LoarMessage? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  LoarMessageType get loarMessageType => $_getN(0);
+  @$pb.TagNumber(1)
+  set loarMessageType(LoarMessageType v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLoarMessageType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLoarMessageType() => clearField(1);
+
+  @$pb.TagNumber(2)
+  ChatMessage get message => $_getN(1);
+  @$pb.TagNumber(2)
+  set message(ChatMessage v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasMessage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearMessage() => clearField(2);
+  @$pb.TagNumber(2)
+  ChatMessage ensureMessage() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  AddFriendMessage get addFriendMessage => $_getN(2);
+  @$pb.TagNumber(3)
+  set addFriendMessage(AddFriendMessage v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasAddFriendMessage() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearAddFriendMessage() => clearField(3);
+  @$pb.TagNumber(3)
+  AddFriendMessage ensureAddFriendMessage() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  AddGroupMessage get addGroupMessage => $_getN(3);
+  @$pb.TagNumber(4)
+  set addGroupMessage(AddGroupMessage v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasAddGroupMessage() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearAddGroupMessage() => clearField(4);
+  @$pb.TagNumber(4)
+  AddGroupMessage ensureAddGroupMessage() => $_ensure(3);
 }
 
 

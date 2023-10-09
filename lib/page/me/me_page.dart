@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/image.dart';
-import '../../common/local_info_cache.dart';
+import '../../common/global_data.dart';
 import '../../common/routers/RouteNames.dart';
 
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
@@ -37,10 +37,12 @@ class _MePageState extends ConsumerState<MePage> {
         child: Column(
           children: [
             _topItem(),
-            _getMeItem("账号", LocalInfoCache.instance.userInfo?.user.account,
+            _getMeItem("账号", GlobalData.instance.me.account,
                 false),
             _getMeItem("二维码名片", "", true).onTap(() {
-              var newUser = LocalInfoCache.instance.userInfo!.user;
+              var newUser = GlobalData.instance.me;
+              newUser.id = "user#000000";
+              newUser.name ="张三";
               Navigator.pushNamed(
                 context,
                 RouteNames.qrGenerate,
@@ -73,15 +75,15 @@ extension _UI on _MePageState {
       children: [
         ClipOval(
           child: ImageWidget(
-            url: LocalInfoCache.instance.userInfo?.user.icon ?? "",
+            url: GlobalData.instance.me.icon,
             width: 50,
             height: 50,
             type: ImageWidgetType.network,
           ),
         ),
-        Text(LocalInfoCache.instance.userInfo?.user.name ?? ""),
+        Text(GlobalData.instance.me.name),
         Text(
-          LocalInfoCache.instance.userInfo?.user.id ?? "",
+          GlobalData.instance.me.id,
           textAlign: TextAlign.right,
           overflow: TextOverflow.ellipsis,
         )

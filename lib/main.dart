@@ -43,6 +43,13 @@ class MyApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       builder: (context, child) {
         return MaterialApp(
+          // localizationsDelegates: [
+          //   GlobalMaterialLocalizations.delegate,
+          //   GlobalWidgetsLocalizations.delegate,
+          // ],
+          // supportedLocales: [
+          //   const Locale('zh', 'CH'),
+          // ],
           onGenerateRoute: (RouteSettings settings) =>
               RouteObservers.didPush(settings),
           theme: ThemeData(

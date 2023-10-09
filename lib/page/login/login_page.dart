@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
-import '../../common/local_info_cache.dart';
+import '../../common/global_data.dart';
 import '../../common/colors.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
@@ -47,7 +47,7 @@ class LoginNotifier extends ChangeNotifier {
       LoginUserInfo userInfo = LoginUserInfo.fromBuffer(text);
       if (userInfo.password == password &&
           userInfo.user.account == account) {
-        LocalInfoCache.instance.userInfo = userInfo;
+        GlobalData.instance.userInfo = userInfo;
         buttonState = ButtonState.normal;
         notifyListeners();
         return true;
@@ -161,14 +161,12 @@ extension _Action on _LoginPageState {
   login(String account, String password) async {
     bool isSuccess = await ref.read(loginProvider).login(account, password);
     if (isSuccess) {
-      if (LocalInfoCache.instance.userInfo != null) {
-        Navigator.popAndPushNamed(
-          context,
-          // RouteNames.blueSearchList,
-          RouteNames.main,
-        );
-      }
-    } else {
+      Navigator.popAndPushNamed(
+        context,
+        // RouteNames.blueSearchList,
+        RouteNames.main,
+      );
+        } else {
       EasyLoading.showToast("账号或密码不正确，请重新登陆");
     }
   }

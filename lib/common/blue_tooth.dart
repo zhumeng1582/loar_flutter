@@ -1,4 +1,5 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:loar_flutter/common/proto/UserInfo.pb.dart';
 
 class BlueToothConnect {
   BlueToothConnect._();
@@ -78,7 +79,13 @@ class BlueToothConnect {
     }
   }
 
-  writeLoraString(List<int> value) {
+  writeLoraMessage(LoarMessage value) {
+    if (loarChar != null) {
+      _write(loarChar!, value.writeToBuffer());
+    }
+  }
+
+  _writeLoraString(List<int> value) {
     if (loarChar != null) {
       _write(loarChar!, value);
     }

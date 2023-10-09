@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loar_flutter/common/local_info_cache.dart';
+import 'package:loar_flutter/common/global_data.dart';
 
 import '../../common/blue_tooth.dart';
 import '../../common/routers/RouteNames.dart';

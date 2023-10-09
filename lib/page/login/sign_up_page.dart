@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
-import '../../common/local_info_cache.dart';
+import '../../common/global_data.dart';
 import '../../common/colors.dart';
 import '../../common/proto/UserInfo.pb.dart';
 import '../../common/routers/RouteNames.dart';
@@ -37,11 +37,11 @@ class SignUpNotifier extends ChangeNotifier {
     userInfo.user = UserInfo();
     userInfo.user.account = account;
     userInfo.user.name = account;
-    userInfo.user.id = "user_${DateTime.now().millisecondsSinceEpoch}";
+    userInfo.user.id = "user#${DateTime.now().millisecond}";
     userInfo.user.icon = "https://img0.baidu.com/it/u=1691000662,1326044609&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1695834000&t=804a82ed014a5bcbe6c69e1a74228a29";
     userInfo.password = password;
     bool isSuccess = await Storage.saveIntList(key, userInfo.writeToBuffer());
-    LocalInfoCache.instance.userInfo = userInfo;
+    GlobalData.instance.userInfo = userInfo;
 
     return isSuccess;
   }

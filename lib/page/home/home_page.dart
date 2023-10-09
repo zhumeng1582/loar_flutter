@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:barcode_scan2/model/android_options.dart';
@@ -5,25 +6,33 @@ import 'package:barcode_scan2/model/scan_options.dart';
 import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/ex/ex_string.dart';
-import 'package:loar_flutter/common/local_info_cache.dart';
+import 'package:loar_flutter/common/global_data.dart';
 import 'package:loar_flutter/common/proto/index.dart';
+import 'package:loar_flutter/common/util/ex_widget.dart';
+import 'package:nine_grid_view/nine_grid_view.dart';
 
 import '../../common/blue_tooth.dart';
+import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/gaps.dart';
 import '../../common/util/storage.dart';
 
 final homeProvider =
     ChangeNotifierProvider<HomeNotifier>((ref) => HomeNotifier());
 
 class HomeNotifier extends ChangeNotifier {
-  String get chatMessageKey =>
-      "chatMessageKey_${LocalInfoCache.instance.userInfo?.user.id}";
+  String get chatMessageKey => "chatMessageKey_${GlobalData.instance.me.id}";
 
-  String get userInfoListKey =>
-      "userInfoList_${LocalInfoCache.instance.userInfo?.user.id}";
+  String get userInfoListKey => "userInfoList_${GlobalData.instance.me.id}";
+
   RoomList roomList = RoomList();
+
+  List<RoomInfo> get messageRoomList => roomList.roomList
+      .where((element) => element.messagelist.isNotEmpty)
+      .toList();
   UserInfoList userInfoList = UserInfoList();
 
   init() async {
@@ -32,77 +41,160 @@ class HomeNotifier extends ChangeNotifier {
 
     var userInfoIntList = await Storage.getIntList(userInfoListKey);
     userInfoList = UserInfoList.fromBuffer(userInfoIntList);
+    notifyListeners();
+
+    const period = Duration(seconds: 3);
+    Timer.periodic(period, (timer) {
+      var loarMessage = LoarMessage();
+      loarMessage.loarMessageType = LoarMessageType.MESSAGE;
+      var chatMessage = ChatMessage();
+      chatMessage.messageType = MessageType.TEXT;
+      var newUser = GlobalData.instance.me.clone();
+      newUser.id = "user#000000";
+      newUser.name ="张三";
+      chatMessage.user = newUser;
+      chatMessage.content = "当前时间:"+DateTime.now().millisecondsSinceEpoch.toString().formatChatTime;
+      chatMessage.targetId = _getRoomId(newUser);
+      chatMessage.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
+      loarMessage.message = chatMessage;
+
+      getRemoteMessage(loarMessage);
+      notifyListeners();
+    });
 
     BlueToothConnect.instance
-        .listenLoar((text) => {setMessage(MessageItem.fromBuffer(text))});
+        .listenLoar((text) => {getRemoteMessage(LoarMessage.fromBuffer(text))});
   }
 
-  setMessage(MessageItem messageItem) async {
-    var room = getRoomInfo(messageItem.targetId);
-    if (room ==null) {
-      room = getUserInfoRoom(messageItem.targetId);
-      roomList.roomList.add(room);
-    }
-    room.messagelist.add(messageItem);
-
+  _addFriend(AddFriendMessage addFriendMessage) {
+    userInfoList.userList.add(addFriendMessage.user);
     notifyListeners();
+  }
+
+  _addGroup(AddGroupMessage addGroupMessage) {
+    roomList.roomList.add(addGroupMessage.roomList);
+    notifyListeners();
+  }
+
+  _addChatMessage(ChatMessage chatMessage) async {
+    var room = getRoomInfo(chatMessage);
+    //房间不存在，先创建一个房间
+    room.messagelist.add(chatMessage);
+
+    //判断用户是否在房间里，不在就添加进去
+    if (!isInRoom(room, chatMessage.user)) {
+      room.userList.add(chatMessage.user);
+    }
+    //判断自己是否在房间里，不在就添加进去
+    if (!isInRoom(room, GlobalData.instance.me)) {
+      room.userList.add(GlobalData.instance.me);
+    }
     await Storage.saveIntList(chatMessageKey, roomList.writeToBuffer());
   }
-
-  RoomInfo? getRoomInfo(String id) {
-    for (var element in roomList.roomList) {
-      if(element.id == id){
-        return element;
-      }
+//生成两个用户的房间号
+  String _getRoomId(UserInfo data) {
+    var id1 = GlobalData.instance.me.id;
+    var id2 = data.id;
+    if (id1.compareTo(id2) < 0) {
+      return '$id1-$id2';
+    } else {
+      return '$id2-$id1';
     }
-    return null;
-  }
-  RoomInfo getRoomInfoFoRoom(String id) {
-    for (var element in roomList.roomList) {
-      if(element.id == id){
-        return element;
-      }
-    }
-    return getUserInfoRoom(id);
   }
 
-  //单聊用户
-  RoomInfo getUserInfoRoom(String id) {
-    var user = userInfoList.userList.firstWhere((element) => id == element.id);
-    RoomInfo roomInfo = RoomInfo();
+
+  //loar消息分发处理
+  getRemoteMessage(LoarMessage loarMessage) {
+    switch (loarMessage.loarMessageType) {
+      case LoarMessageType.ADD_FRIEND:
+        _addFriend(loarMessage.addFriendMessage);
+        break;
+      case LoarMessageType.ADD_GROUP:
+        _addGroup(loarMessage.addGroupMessage);
+        break;
+      case LoarMessageType.MESSAGE:
+        _addChatMessage(loarMessage.message);
+        break;
+    }
+  }
+
+  RoomInfo getRoomInfo(ChatMessage chatMessage) {
+    return roomList.roomList.firstWhere(
+        (element) => element.id == chatMessage.targetId,
+        orElse: () => _createRoomById(chatMessage.targetId));
+  }
+
+  bool isInRoom(RoomInfo room, UserInfo userInfo) {
+    return room.userList.any((element) => element.id == userInfo.id);
+  }
+
+  RoomInfo getRoomInfoById(String id) {
+    return roomList.roomList.firstWhere((element) => element.id == id,
+        orElse: () => _createRoomById(id));
+  }
+
+  String getRoomTitle(String id) {
+    RoomInfo roomInfo = getRoomInfoById(id);
+    if (roomInfo.userList.length < 3) {
+      return getRoomInfoById(id).name;
+    } else {
+      return "${getRoomInfoById(id).name}(${roomInfo.userList.length})";
+    }
+  }
+
+  List<ChatMessage> getMessageList(String id) {
+    RoomInfo roomInfo = roomList.roomList.firstWhere(
+        (element) => element.id == id,
+        orElse: () => _createRoomById(id));
+    return roomInfo.messagelist;
+  }
+
+  //创建房间
+  RoomInfo _createRoomById(String id) {
+    var roomInfo = RoomInfo();
     roomInfo.id = id;
-    roomInfo.name = user.name;
+    if (id.contains("user")) {
+      String userId = id.replaceAll(GlobalData.instance.me.id, "");
+      userId = userId.replaceAll("-", "");
+      var user =
+          userInfoList.userList.firstWhere((element) => element.id == userId);
+      roomInfo.name = user.name;
+    } else {
+      roomInfo.name = "群聊";
+    }
 
-    // roomInfo.userList.add(LocalInfoCache.instance.userInfo!.user);
-    // roomInfo.userList.add(user);
-    // roomList.roomList.add(roomInfo);
-    // Storage.saveIntList(chatMessageKey, roomList.writeToBuffer());
-
+    roomList.roomList.add(roomInfo);
     return roomInfo;
   }
 
-  sendMessage(MessageItem message) {
-    BlueToothConnect.instance.writeLoraString(message.writeToBuffer());
+  //通过loar发送消息
+  _sendMessage(ChatMessage message) {
+    LoarMessage loarMessage = LoarMessage();
+    loarMessage.loarMessageType = LoarMessageType.MESSAGE;
+    loarMessage.message = message;
+    BlueToothConnect.instance.writeLoraMessage(loarMessage);
   }
 
   addData(String roomId, String text) {
-    var message = MessageItem();
-    message.user = LocalInfoCache.instance.userInfo!.user;
+    var message = ChatMessage();
+    message.user = GlobalData.instance.me;
     message.content = text;
     message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
     message.targetId = roomId;
-    setMessage(message);
+    _addChatMessage(message);
+    _sendMessage(message);
     notifyListeners();
   }
 
   addAudioData(String roomId, String audioFileName, int audioTimeLength) {
-    var message = MessageItem();
-    message.user = LocalInfoCache.instance.userInfo!.user;
+    var message = ChatMessage();
+    message.user = GlobalData.instance.me;
     message.fileName = audioFileName;
     message.playTimeLength = audioTimeLength;
     message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
     message.targetId = roomId;
-    setMessage(message);
+    _addChatMessage(message);
+    _sendMessage(message);
     notifyListeners();
   }
 
@@ -145,7 +237,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<RoomInfo> data = ref.watch(homeProvider).roomList.roomList;
+    List<RoomInfo> data = ref.watch(homeProvider).messageRoomList;
     return Scaffold(
       appBar: AppBar(
         title: Text("聊天"),
@@ -161,7 +253,9 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildRoomItem(data[index]);
+          return _buildRoomItem(data[index]).onTap(() {
+            _room(data[index]);
+          });
         },
       ),
     );
@@ -181,44 +275,79 @@ extension _Action on _HomePageState {
       arguments: data.id,
     );
   }
-  _getLastText(List<MessageItem> list){
-    return list.isNotEmpty?list.last.content:"";
+
+  _getLastText(List<ChatMessage> list) {
+    return list.isNotEmpty ? list.last.content : "";
   }
-  _getLastTime(List<MessageItem> list){
-    return list.isNotEmpty?list.last.sendtime.toYearMonthDayTimeDate:"";
+
+  _getLastTime(List<ChatMessage> list) {
+    return list.isNotEmpty ? list.last.sendtime.formatChatTime : "";
   }
 }
 
 extension _UI on _HomePageState {
-  _buildRoomItem(RoomInfo data) {
-    return InkWell(
-      onTap: () => _room(data),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              ImageWidget(
-                url: data.icon,
-                width: 50,
-                height: 50,
-                type: ImageWidgetType.network,
+  Widget _buildRoomItem(RoomInfo data) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            _getIcon(data).paddingHorizontal(30.w),
+            Expanded(
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data.name,
+                              style: TextStyle(
+                                fontSize: 24.sp,
+                                color: AppColors.title,
+                              ),
+                            ),
+                            Text(
+                              _getLastText(data.messagelist),
+                              style: TextStyle(
+                                fontSize: 22.sp,
+                                color: AppColors.title.withOpacity(0.6),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Text(_getLastTime(data.messagelist),
+                          style: TextStyle(
+                            fontSize: 22.sp,
+                            color: AppColors.title.withOpacity(0.6),
+                          )).paddingHorizontal(30.h),
+                    ],
+                  ),
+                ],
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(data.name),
-                    Text(_getLastText(data.messagelist))
-                  ],
-                ),
-              ),
-              Text(_getLastTime(data.messagelist)),
-            ],
-          ),
-          const Divider(height: 10),
-        ],
-      ),
+            ),
+          ],
+        ),
+        Gaps.line.paddingLeft(140.w).paddingVertical(15.h)
+      ],
     );
   }
 
+  Widget _getIcon(RoomInfo data) {
+    return NineGridView(
+      width: 80.w,
+      height: 80.h,
+      type: NineGridType.weChatGp,
+      itemCount: data.userList.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ImageWidget(
+          url: data.userList[index].icon,
+          type: ImageWidgetType.network,
+        );
+      },
+    );
+  }
 }
