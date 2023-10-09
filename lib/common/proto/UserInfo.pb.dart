@@ -109,6 +109,64 @@ class UserInfo extends $pb.GeneratedMessage {
   void clearAccount() => clearField(4);
 }
 
+class UserInfoList extends $pb.GeneratedMessage {
+  factory UserInfoList({
+    $core.String? userId,
+    $core.Iterable<UserInfo>? userList,
+  }) {
+    final $result = create();
+    if (userId != null) {
+      $result.userId = userId;
+    }
+    if (userList != null) {
+      $result.userList.addAll(userList);
+    }
+    return $result;
+  }
+  UserInfoList._() : super();
+  factory UserInfoList.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserInfoList.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserInfoList', createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'userId', protoName: 'userId')
+    ..pc<UserInfo>(2, _omitFieldNames ? '' : 'userList', $pb.PbFieldType.PM, protoName: 'userList', subBuilder: UserInfo.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UserInfoList clone() => UserInfoList()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UserInfoList copyWith(void Function(UserInfoList) updates) => super.copyWith((message) => updates(message as UserInfoList)) as UserInfoList;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UserInfoList create() => UserInfoList._();
+  UserInfoList createEmptyInstance() => create();
+  static $pb.PbList<UserInfoList> createRepeated() => $pb.PbList<UserInfoList>();
+  @$core.pragma('dart2js:noInline')
+  static UserInfoList getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UserInfoList>(create);
+  static UserInfoList? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get userId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set userId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUserId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUserId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<UserInfo> get userList => $_getList(1);
+}
+
 class RoomInfo extends $pb.GeneratedMessage {
   factory RoomInfo({
     $core.String? id,
@@ -118,7 +176,7 @@ class RoomInfo extends $pb.GeneratedMessage {
     UserInfo? creator,
     $core.Iterable<UserInfo>? userList,
     $core.Iterable<MessageItem>? messagelist,
-    $core.int? createtime,
+    $core.String? createtime,
   }) {
     final $result = create();
     if (id != null) {
@@ -159,7 +217,7 @@ class RoomInfo extends $pb.GeneratedMessage {
     ..aOM<UserInfo>(5, _omitFieldNames ? '' : 'creator', subBuilder: UserInfo.create)
     ..pc<UserInfo>(6, _omitFieldNames ? '' : 'userList', $pb.PbFieldType.PM, protoName: 'userList', subBuilder: UserInfo.create)
     ..pc<MessageItem>(7, _omitFieldNames ? '' : 'messagelist', $pb.PbFieldType.PM, subBuilder: MessageItem.create)
-    ..a<$core.int>(9, _omitFieldNames ? '' : 'createtime', $pb.PbFieldType.O3)
+    ..aOS(9, _omitFieldNames ? '' : 'createtime')
     ..hasRequiredFields = false
   ;
 
@@ -238,9 +296,9 @@ class RoomInfo extends $pb.GeneratedMessage {
   $core.List<MessageItem> get messagelist => $_getList(6);
 
   @$pb.TagNumber(9)
-  $core.int get createtime => $_getIZ(7);
+  $core.String get createtime => $_getSZ(7);
   @$pb.TagNumber(9)
-  set createtime($core.int v) { $_setSignedInt32(7, v); }
+  set createtime($core.String v) { $_setString(7, v); }
   @$pb.TagNumber(9)
   $core.bool hasCreatetime() => $_has(7);
   @$pb.TagNumber(9)
@@ -381,7 +439,7 @@ class MessageItem extends $pb.GeneratedMessage {
     $core.bool? isLoading,
     $core.String? content,
     $core.String? fileName,
-    $core.int? sendtime,
+    $core.String? sendtime,
     $core.String? targetId,
   }) {
     final $result = create();
@@ -430,7 +488,7 @@ class MessageItem extends $pb.GeneratedMessage {
     ..aOB(6, _omitFieldNames ? '' : 'isLoading', protoName: 'isLoading')
     ..aOS(7, _omitFieldNames ? '' : 'content')
     ..aOS(8, _omitFieldNames ? '' : 'fileName', protoName: 'fileName')
-    ..a<$core.int>(9, _omitFieldNames ? '' : 'sendtime', $pb.PbFieldType.O3)
+    ..aOS(9, _omitFieldNames ? '' : 'sendtime')
     ..aOS(10, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
     ..hasRequiredFields = false
   ;
@@ -531,9 +589,9 @@ class MessageItem extends $pb.GeneratedMessage {
   void clearFileName() => clearField(8);
 
   @$pb.TagNumber(9)
-  $core.int get sendtime => $_getIZ(8);
+  $core.String get sendtime => $_getSZ(8);
   @$pb.TagNumber(9)
-  set sendtime($core.int v) { $_setSignedInt32(8, v); }
+  set sendtime($core.String v) { $_setString(8, v); }
   @$pb.TagNumber(9)
   $core.bool hasSendtime() => $_has(8);
   @$pb.TagNumber(9)

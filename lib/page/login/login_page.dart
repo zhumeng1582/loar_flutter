@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,8 +15,6 @@ final loginProvider =
     ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
 
 class LoginNotifier extends ChangeNotifier {
-
-
   get key => "LoginUserInfo";
 
   var buttonState = ButtonState.disabled;
@@ -168,7 +164,8 @@ extension _Action on _LoginPageState {
       if (LocalInfoCache.instance.userInfo != null) {
         Navigator.popAndPushNamed(
           context,
-          RouteNames.blueSearchList,
+          // RouteNames.blueSearchList,
+          RouteNames.main,
         );
       }
     } else {

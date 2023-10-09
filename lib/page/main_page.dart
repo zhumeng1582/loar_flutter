@@ -59,6 +59,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   @override
   void initState() {
     ref.read(mainProvider).getLocation();
+    ref.read(homeProvider).init();
     super.initState();
   }
 

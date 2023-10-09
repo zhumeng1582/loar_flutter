@@ -40,16 +40,11 @@ class _MePageState extends ConsumerState<MePage> {
             _getMeItem("账号", LocalInfoCache.instance.userInfo?.user.account,
                 false),
             _getMeItem("二维码名片", "", true).onTap(() {
+              var newUser = LocalInfoCache.instance.userInfo!.user;
               Navigator.pushNamed(
                 context,
                 RouteNames.qrGenerate,
-                arguments: LocalInfoCache.instance.userInfo?.user.account
-              );
-            }),
-            _getMeItem("添加好友", "", true).onTap(() {
-              Navigator.pushNamed(
-                  context,
-                  RouteNames.qrScan
+                arguments: base64Encode(newUser.writeToBuffer())
               );
             }),
             _getMeItem("蓝牙", "", true).onTap(() {

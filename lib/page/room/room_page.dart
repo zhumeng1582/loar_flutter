@@ -75,10 +75,10 @@ class _RoomPageState extends ConsumerState<RoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<MessageItem> data = ref.watch(homeProvider).getRoomInfo(widget.roomId)?.messagelist??[];
+    List<MessageItem> data = ref.watch(homeProvider).getRoomInfoFoRoom(widget.roomId).messagelist??[];
     return Scaffold(
       appBar: AppBar(
-        title: Text(ref.watch(homeProvider).getRoomInfo(widget.roomId)?.name??""),
+        title: Text(ref.watch(homeProvider).getRoomInfoFoRoom(widget.roomId).name??""),
       ),
       body: SafeArea(
         child: Column(

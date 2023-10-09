@@ -26,7 +26,7 @@ class Storage {
   }
 
   static Future<dynamic> saveIntList(String key, List<int> value) async {
-    save(key, base64Encode(value));
+    return save(key, base64Encode(value));
   }
 
   static Future<List<int>> getIntList(String key) async {
