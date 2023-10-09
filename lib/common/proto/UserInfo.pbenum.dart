@@ -34,6 +34,7 @@ class MessageType extends $pb.ProtobufEnum {
   static const MessageType IMAGE = MessageType._(2, _omitEnumNames ? '' : 'IMAGE');
   static const MessageType MAP = MessageType._(3, _omitEnumNames ? '' : 'MAP');
   static const MessageType FILE = MessageType._(4, _omitEnumNames ? '' : 'FILE');
+  static const MessageType ADD_MEMBER = MessageType._(5, _omitEnumNames ? '' : 'ADD_MEMBER');
 
   static const $core.List<MessageType> values = <MessageType> [
     TEXT,
@@ -41,6 +42,7 @@ class MessageType extends $pb.ProtobufEnum {
     IMAGE,
     MAP,
     FILE,
+    ADD_MEMBER,
   ];
 
   static final $core.Map<$core.int, MessageType> _byValue = $pb.ProtobufEnum.initByValue(values);

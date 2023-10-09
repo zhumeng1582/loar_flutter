@@ -72,7 +72,7 @@ class HomeNotifier extends ChangeNotifier {
   }
 
   _addGroup(AddGroupMessage addGroupMessage) {
-    roomList.roomList.add(addGroupMessage.roomList);
+    roomList.roomList.add(addGroupMessage.room);
     notifyListeners();
   }
 
@@ -153,7 +153,7 @@ class HomeNotifier extends ChangeNotifier {
   RoomInfo _createRoomById(String id) {
     var roomInfo = RoomInfo();
     roomInfo.id = id;
-    if (id.contains("user")) {
+    if (!id.isGroup) {
       String userId = id.replaceAll(GlobalData.instance.me.id, "");
       userId = userId.replaceAll("-", "");
       var user =
@@ -175,24 +175,55 @@ class HomeNotifier extends ChangeNotifier {
     BlueToothConnect.instance.writeLoraMessage(loarMessage);
   }
 
-  addData(String roomId, String text) {
+  addTextMessage(String roomId, String text) {
     var message = ChatMessage();
     message.user = GlobalData.instance.me;
     message.content = text;
     message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
     message.targetId = roomId;
+    message.messageType = MessageType.TEXT;
     _addChatMessage(message);
     _sendMessage(message);
     notifyListeners();
   }
+  String createGroup(List<UserInfo> userInfoList){
+    var time = DateTime.now().millisecond;
+    var room = RoomInfo();
+    room.userList.addAll(userInfoList);
+    room.name = "群聊";
+    room.id  = "room#$time";
+    room.creator = GlobalData.instance.me;
+    room.createtime = "$time";
+    AddGroupMessage addGroupMessage = AddGroupMessage();
+    addGroupMessage.room = room;
+    LoarMessage loarMessage = LoarMessage();
+    loarMessage.loarMessageType = LoarMessageType.ADD_GROUP;
+    loarMessage.addGroupMessage = addGroupMessage;
+    BlueToothConnect.instance.writeLoraMessage(loarMessage);
+    return room.id;
+  }
+  inviteFriend(String roomId, List<UserInfo> userInfo) {
+    var message = ChatMessage();
+    message.user = GlobalData.instance.me;
+    message.addUser.addAll(userInfo);
+    message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
+    message.targetId = roomId;
+    message.messageType = MessageType.ADD_MEMBER;
+    _addChatMessage(message);
+    _sendMessage(message);
+    notifyListeners();
 
-  addAudioData(String roomId, String audioFileName, int audioTimeLength) {
+    notifyListeners();
+  }
+
+  addAudioMessage(String roomId, String audioFileName, int audioTimeLength) {
     var message = ChatMessage();
     message.user = GlobalData.instance.me;
     message.fileName = audioFileName;
     message.playTimeLength = audioTimeLength;
     message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
     message.targetId = roomId;
+    message.messageType = MessageType.AUDIO;
     _addChatMessage(message);
     _sendMessage(message);
     notifyListeners();

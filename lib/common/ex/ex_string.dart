@@ -44,6 +44,8 @@ extension ExString on String {
     }catch(e){
       return "未知时间:$this";
     }
-
+  }
+  bool get isGroup{
+    return !contains("user");
   }
 }

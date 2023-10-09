@@ -428,6 +428,7 @@ class ChatMessage extends $pb.GeneratedMessage {
     $core.String? sendtime,
     $core.String? targetId,
     ConversationType? conversationType,
+    $core.Iterable<UserInfo>? addUser,
   }) {
     final $result = create();
     if (user != null) {
@@ -463,6 +464,9 @@ class ChatMessage extends $pb.GeneratedMessage {
     if (conversationType != null) {
       $result.conversationType = conversationType;
     }
+    if (addUser != null) {
+      $result.addUser.addAll(addUser);
+    }
     return $result;
   }
   ChatMessage._() : super();
@@ -481,6 +485,7 @@ class ChatMessage extends $pb.GeneratedMessage {
     ..aOS(9, _omitFieldNames ? '' : 'sendtime')
     ..aOS(10, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
     ..e<ConversationType>(11, _omitFieldNames ? '' : 'conversationType', $pb.PbFieldType.OE, protoName: 'conversationType', defaultOrMaker: ConversationType.PRIVATE, valueOf: ConversationType.valueOf, enumValues: ConversationType.values)
+    ..pc<UserInfo>(12, _omitFieldNames ? '' : 'addUser', $pb.PbFieldType.PM, protoName: 'addUser', subBuilder: UserInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -606,6 +611,9 @@ class ChatMessage extends $pb.GeneratedMessage {
   $core.bool hasConversationType() => $_has(10);
   @$pb.TagNumber(11)
   void clearConversationType() => clearField(11);
+
+  @$pb.TagNumber(12)
+  $core.List<UserInfo> get addUser => $_getList(11);
 }
 
 class AddFriendMessage extends $pb.GeneratedMessage {
@@ -662,11 +670,11 @@ class AddFriendMessage extends $pb.GeneratedMessage {
 
 class AddGroupMessage extends $pb.GeneratedMessage {
   factory AddGroupMessage({
-    RoomInfo? roomList,
+    RoomInfo? room,
   }) {
     final $result = create();
-    if (roomList != null) {
-      $result.roomList = roomList;
+    if (room != null) {
+      $result.room = room;
     }
     return $result;
   }
@@ -675,7 +683,7 @@ class AddGroupMessage extends $pb.GeneratedMessage {
   factory AddGroupMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AddGroupMessage', createEmptyInstance: create)
-    ..aOM<RoomInfo>(1, _omitFieldNames ? '' : 'roomList', protoName: 'roomList', subBuilder: RoomInfo.create)
+    ..aOM<RoomInfo>(1, _omitFieldNames ? '' : 'room', subBuilder: RoomInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -701,15 +709,15 @@ class AddGroupMessage extends $pb.GeneratedMessage {
   static AddGroupMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
-  RoomInfo get roomList => $_getN(0);
+  RoomInfo get room => $_getN(0);
   @$pb.TagNumber(1)
-  set roomList(RoomInfo v) { setField(1, v); }
+  set room(RoomInfo v) { setField(1, v); }
   @$pb.TagNumber(1)
-  $core.bool hasRoomList() => $_has(0);
+  $core.bool hasRoom() => $_has(0);
   @$pb.TagNumber(1)
-  void clearRoomList() => clearField(1);
+  void clearRoom() => clearField(1);
   @$pb.TagNumber(1)
-  RoomInfo ensureRoomList() => $_ensure(0);
+  RoomInfo ensureRoom() => $_ensure(0);
 }
 
 class LoarMessage extends $pb.GeneratedMessage {

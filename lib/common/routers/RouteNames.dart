@@ -7,5 +7,7 @@ class RouteNames{
   static const qrScan = 'qr_scan';
   static const blueSearchList = 'blueSearchList';
   static const deviceScreen = 'device_Screen';
+  static const roomDetail = 'roomDetail';
+  static const selectContact = 'selectContact';
 
 }
