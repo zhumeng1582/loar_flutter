@@ -76,6 +76,8 @@ extension _UI on _ContactsSelectPageState {
 
 extension _Action on _ContactsSelectPageState {
   _selectUser(UserInfo data) {
-    Navigator.pop(context,data);
+    List<UserInfo> userInfoList = [];
+    userInfoList.add(data);
+    Navigator.pop(context, userInfoList);
   }
 }

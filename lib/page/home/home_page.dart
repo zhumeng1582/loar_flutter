@@ -12,6 +12,7 @@ import 'package:loar_flutter/common/global_data.dart';
 import 'package:loar_flutter/common/proto/index.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
+import 'package:protobuf/protobuf.dart';
 
 import '../../common/blue_tooth.dart';
 import '../../common/colors.dart';
@@ -43,25 +44,6 @@ class HomeNotifier extends ChangeNotifier {
     userInfoList = UserInfoList.fromBuffer(userInfoIntList);
     notifyListeners();
 
-    const period = Duration(seconds: 3);
-    Timer.periodic(period, (timer) {
-      var loarMessage = LoarMessage();
-      loarMessage.loarMessageType = LoarMessageType.MESSAGE;
-      var chatMessage = ChatMessage();
-      chatMessage.messageType = MessageType.TEXT;
-      var newUser = GlobalData.instance.me.clone();
-      newUser.id = "user#000000";
-      newUser.name ="张三";
-      chatMessage.user = newUser;
-      chatMessage.content = "当前时间:"+DateTime.now().millisecondsSinceEpoch.toString().formatChatTime;
-      chatMessage.targetId = _getRoomId(newUser);
-      chatMessage.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
-      loarMessage.message = chatMessage;
-
-      getRemoteMessage(loarMessage);
-      notifyListeners();
-    });
-
     BlueToothConnect.instance
         .listenLoar((text) => {getRemoteMessage(LoarMessage.fromBuffer(text))});
   }
@@ -91,17 +73,6 @@ class HomeNotifier extends ChangeNotifier {
     }
     await Storage.saveIntList(chatMessageKey, roomList.writeToBuffer());
   }
-//生成两个用户的房间号
-  String _getRoomId(UserInfo data) {
-    var id1 = GlobalData.instance.me.id;
-    var id2 = data.id;
-    if (id1.compareTo(id2) < 0) {
-      return '$id1-$id2';
-    } else {
-      return '$id2-$id1';
-    }
-  }
-
 
   //loar消息分发处理
   getRemoteMessage(LoarMessage loarMessage) {
@@ -186,12 +157,13 @@ class HomeNotifier extends ChangeNotifier {
     _sendMessage(message);
     notifyListeners();
   }
-  String createGroup(List<UserInfo> userInfoList){
+
+  String createGroup(List<UserInfo> userInfoList) {
     var time = DateTime.now().millisecond;
     var room = RoomInfo();
     room.userList.addAll(userInfoList);
     room.name = "群聊";
-    room.id  = "room#$time";
+    room.id = "room#$time";
     room.creator = GlobalData.instance.me;
     room.createtime = "$time";
     AddGroupMessage addGroupMessage = AddGroupMessage();
@@ -200,8 +172,10 @@ class HomeNotifier extends ChangeNotifier {
     loarMessage.loarMessageType = LoarMessageType.ADD_GROUP;
     loarMessage.addGroupMessage = addGroupMessage;
     BlueToothConnect.instance.writeLoraMessage(loarMessage);
+    roomList.roomList.add(room);
     return room.id;
   }
+
   inviteFriend(String roomId, List<UserInfo> userInfo) {
     var message = ChatMessage();
     message.user = GlobalData.instance.me;
@@ -308,7 +282,16 @@ extension _Action on _HomePageState {
   }
 
   _getLastText(List<ChatMessage> list) {
-    return list.isNotEmpty ? list.last.content : "";
+    if (list.isEmpty) {
+      return "";
+    }
+    var last = list.last;
+    if (list.last.messageType == MessageType.TEXT) {
+      return last.content;
+    } else if (last.messageType == MessageType.ADD_MEMBER) {
+      return "${last.addUser.last.name}加入群聊";
+    }
+    return "收到语音消息";
   }
 
   _getLastTime(List<ChatMessage> list) {

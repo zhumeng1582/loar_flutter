@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loar_flutter/page/sos/sos_page.dart';
 
 import '../common/blue_tooth.dart';
+import '../common/colors.dart';
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
 import 'map/map_page.dart';
@@ -75,7 +76,7 @@ class _MainPageState extends ConsumerState<MainPage> {
         showUnselectedLabels: true,
         enableFeedback: true,
         //点击会产生咔嗒声，长按会产生短暂的振动
-        selectedItemColor: Colors.orange,
+        selectedItemColor: AppColors.commonPrimary,
         // 设置被选中时的图标颜色
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,

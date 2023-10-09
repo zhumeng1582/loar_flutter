@@ -5,9 +5,10 @@ import 'package:loar_flutter/page/login/sign_up_page.dart';
 import 'package:loar_flutter/page/main_page.dart';
 import 'package:loar_flutter/page/me/QR_generate_page.dart';
 import 'package:loar_flutter/page/me/scan_qr_page.dart';
-import 'package:loar_flutter/page/room/room_detai_page.dart';
+import 'package:loar_flutter/page/room/room_detail_page.dart';
 
 import '../../page/blue/find_device_page.dart';
+import '../../page/contacts/contacts_select_page.dart';
 import '../../page/room/room_page.dart';
 import 'RouteNames.dart';
 
@@ -31,15 +32,18 @@ class RouteObservers {
     } else if (settings.name == RouteNames.blueSearchList) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const FindDevicesScreen());
-    }else if (settings.name == RouteNames.roomPage) {
+    } else if (settings.name == RouteNames.roomPage) {
       var roomId = settings.arguments as String;
       return MaterialPageRoute(
           settings: settings, builder: (_) => RoomPage(roomId: roomId));
-    }  else if (settings.name == RouteNames.roomDetail) {
+    } else if (settings.name == RouteNames.roomDetail) {
       var roomId = settings.arguments as String;
       return MaterialPageRoute(
           settings: settings, builder: (_) => RoomDetailPage(roomId: roomId));
-    }  else if (settings.name == RouteNames.deviceScreen) {
+    } else if (settings.name == RouteNames.selectContact) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const ContactsSelectPage());
+    } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(
       //     settings: settings,

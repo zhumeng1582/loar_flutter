@@ -7,6 +7,7 @@ import 'package:loar_flutter/common/ex/ex_string.dart';
 import 'package:loar_flutter/common/ex/ex_widget.dart';
 import 'package:loar_flutter/common/proto/index.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
+import 'package:protobuf/protobuf.dart';
 import '../../common/routers/RouteNames.dart';
 
 final roomProvider =
@@ -41,7 +42,9 @@ class _RoomDetailPageState extends ConsumerState<RoomDetailPage> {
             _getMeItem("拉好友入群", "", true).onTap(selectUser),
             _getMeItem("群二维码名片", "", true).onTap(() {
               var roomInfo =
-                  ref.watch(homeProvider).getRoomInfoById(widget.roomId);
+                  ref.watch(homeProvider).getRoomInfoById(widget.roomId).deepCopy();
+              roomInfo.messagelist.clear();
+
               Navigator.pushNamed(context, RouteNames.qrGenerate,
                   arguments: base64Encode(roomInfo.writeToBuffer()));
             }),
@@ -65,7 +68,7 @@ extension _Action on _RoomDetailPageState {
   }
 
   invite(List<UserInfo> userInfoList) {
-    if (!widget.roomId.isGroup) {
+    if (widget.roomId.isGroup) {
       ref.read(homeProvider).inviteFriend(widget.roomId, userInfoList);
       Navigator.pop(context);
     } else {

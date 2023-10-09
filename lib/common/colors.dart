@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:loar_flutter/common/ex/ex_string.dart';
 
 class AppColors {
-  static Color commonPrimary = "#00BA3D".toColor;
+  static Color commonPrimary = "#FF2196F3".toColor;
   static Color inputBgColor = "#F8F8F8".toColor;
   static Color title = "#000000".toColor;
   static Color get background => "#FFFFFF".toColor;

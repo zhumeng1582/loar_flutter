@@ -46,6 +46,6 @@ extension ExString on String {
     }
   }
   bool get isGroup{
-    return !contains("user");
+    return !startsWith("user");
   }
 }

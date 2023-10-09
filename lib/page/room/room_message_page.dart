@@ -10,6 +10,7 @@ import 'package:loar_flutter/common/global_data.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
+import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/proto/index.dart';
 import '../../widget/voice_widget.dart';
@@ -154,7 +155,9 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildRoomMessageItem(ChatMessage data) {
-    if (data.user.id == GlobalData.instance.me.id) {
+    if (data.messageType == MessageType.ADD_MEMBER) {
+      return _buildNotifyItem(data);
+    }else if (data.user.id == GlobalData.instance.me.id) {
       return _buildChatRightItem(data, _buildChatContent(data));
     } else {
       return _buildChatLeftItem(data, _buildChatContent(data));
@@ -220,6 +223,15 @@ extension _UI on _RoomMessagePageState {
         child,
         userAvatar(data),
       ],
+    );
+  }
+  _buildNotifyItem(ChatMessage data) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: data.addUser.map((e) => Text("${e.name}加入群聊",style: TextStyle(
+        color: AppColors.title.withOpacity(0.5),
+        fontSize: 24.sp,
+      ),)).toList(),
     );
   }
 }
