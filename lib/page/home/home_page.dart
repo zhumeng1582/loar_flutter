@@ -100,24 +100,19 @@ class HomeNotifier extends ChangeNotifier {
   }
 
   _addChatMessage(ChatMessage chatMessage) async {
-    if (isMyMessage(chatMessage)) {
-      var room = getRoomInfo(chatMessage);
-      //房间不存在，先创建一个房间
-      room.messagelist.insert(0, chatMessage);
+    var room = getRoomInfo(chatMessage);
+    //房间不存在，先创建一个房间
+    room.messagelist.insert(0, chatMessage);
 
-      //判断用户是否在房间里，不在就添加进去
-      if (!isInRoom(room, chatMessage.user)) {
-        room.userList.add(chatMessage.user);
-      }
-      //判断自己是否在房间里，不在就添加进去
-      if (!isInRoom(room, AccountData.instance.me)) {
-        room.userList.add(AccountData.instance.me);
-      }
-      await Storage.saveIntList(allChatInfoKey, allChatInfo.writeToBuffer());
-    } else if (chatMessage.sendCount == 0) {
-      chatMessage.sendCount++;
-      _sendMessage(chatMessage);
+    //判断用户是否在房间里，不在就添加进去
+    if (!isInRoom(room, chatMessage.user)) {
+      room.userList.add(chatMessage.user);
     }
+    //判断自己是否在房间里，不在就添加进去
+    if (!isInRoom(room, AccountData.instance.me)) {
+      room.userList.add(AccountData.instance.me);
+    }
+    await Storage.saveIntList(allChatInfoKey, allChatInfo.writeToBuffer());
   }
 
   //loar消息分发处理
@@ -130,7 +125,13 @@ class HomeNotifier extends ChangeNotifier {
         _addGroup(loarMessage.addGroupMessage);
         break;
       case LoarMessageType.MESSAGE:
-        _addChatMessage(loarMessage.message);
+        if (isMyMessage(loarMessage.message)) {
+          _addChatMessage(loarMessage.message);
+        } else if (loarMessage.message.sendCount == 0) {
+          loarMessage.message.sendCount++;
+          _sendMessage(loarMessage.message);
+        }
+
         break;
     }
   }
@@ -350,17 +351,20 @@ extension _Action on _HomePageState {
     );
   }
 
-  _getLastText(List<ChatMessage> list) {
+  _getFirstText(List<ChatMessage> list) {
     if (list.isEmpty) {
       return "";
     }
-    var last = list.last;
-    if (list.last.messageType == MessageType.TEXT) {
-      return last.content;
-    } else if (last.messageType == MessageType.ADD_MEMBER) {
-      return "${last.addUser.last.name}加入群聊";
+    var first = list.first;
+    if (first.messageType == MessageType.TEXT) {
+      return first.content;
+    } else if (first.messageType == MessageType.ADD_MEMBER) {
+      return "${first.addUser.last.name}加入群聊";
+    } else if (first.messageType == MessageType.AUDIO) {
+      return "[语音]";
+    } else {
+      return "[收到新消息]";
     }
-    return "收到语音消息";
   }
 
   _getLastTime(List<ChatMessage> list) {
@@ -393,7 +397,7 @@ extension _UI on _HomePageState {
                               ),
                             ),
                             Text(
-                              _getLastText(data.messagelist),
+                              _getFirstText(data.messagelist),
                               style: TextStyle(
                                 fontSize: 22.sp,
                                 color: AppColors.title.withOpacity(0.6),
