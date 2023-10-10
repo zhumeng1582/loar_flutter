@@ -81,16 +81,14 @@ extension _UI on _MePageState {
         ClipOval(
           child: ImageWidget(
             url: AccountData.instance.me.icon,
-            width: 50,
-            height: 50,
-            type: ImageWidgetType.network,
+            width: 100.w,
+            height: 100.h,
+            type: ImageWidgetType.asset,
           ),
-        ),
+        ).paddingTop(80.h),
         Text(AccountData.instance.me.name),
         Text(
           AccountData.instance.me.id,
-          textAlign: TextAlign.right,
-          overflow: TextOverflow.ellipsis,
         )
       ],
     );

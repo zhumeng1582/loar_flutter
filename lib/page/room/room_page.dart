@@ -110,12 +110,3 @@ extension _UI on _RoomPageState {
     );
   }
 }
-
-Widget userAvatar(ChatMessage data) {
-  return ImageWidget(
-    url: data.user.icon,
-    width: 80.w,
-    height: 80.h,
-    type: ImageWidgetType.network,
-  );
-}

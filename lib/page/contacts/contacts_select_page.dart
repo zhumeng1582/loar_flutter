@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/account_data.dart';
+import 'package:loar_flutter/common/ex/ex_string.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
@@ -11,12 +12,15 @@ import '../../common/proto/index.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
 
-final contractSelectProvider =
-ChangeNotifierProvider<ContactsSelectNotifier>((ref) => ContactsSelectNotifier());
+final contractSelectProvider = ChangeNotifierProvider<ContactsSelectNotifier>(
+    (ref) => ContactsSelectNotifier());
 
 class ContactsSelectNotifier extends ChangeNotifier {
   List<UserInfo> data = [];
-  initData(List<UserInfo> data,RoomInfo roomInfo){
+  late RoomInfo roomInfo;
+
+  initData(List<UserInfo> data, RoomInfo roomInfo) {
+    this.roomInfo = roomInfo;
     this.data = data.where((element) => !isInRoom(roomInfo, element)).toList();
     notifyListeners();
   }
@@ -24,11 +28,11 @@ class ContactsSelectNotifier extends ChangeNotifier {
   bool isInRoom(RoomInfo room, UserInfo userInfo) {
     return room.userList.any((element) => element.id == userInfo.id);
   }
-
 }
 
 class ContactsSelectPage extends ConsumerStatefulWidget {
   String roomId;
+
   ContactsSelectPage({super.key, required this.roomId});
 
   @override
@@ -38,9 +42,12 @@ class ContactsSelectPage extends ConsumerStatefulWidget {
 class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
   @override
   void initState() {
-    var userList = ref.read(homeProvider).allChatInfo.userList;
-    var roomInfo = ref.read(homeProvider).getRoomInfoById(widget.roomId);
-    ref.read(contractSelectProvider).initData(userList, roomInfo);
+    Future(() {
+      var userList = ref.read(homeProvider).allChatInfo.userList;
+      var roomInfo = ref.read(homeProvider).getRoomInfoById(widget.roomId);
+      ref.read(contractSelectProvider).initData(userList, roomInfo);
+    });
+
     super.initState();
   }
 
@@ -76,7 +83,7 @@ extension _UI on _ContactsSelectPageState {
       url: data.icon,
       width: 40.w,
       height: 40.h,
-      type: ImageWidgetType.network,
+      type: ImageWidgetType.asset,
     );
   }
 
@@ -97,8 +104,12 @@ extension _UI on _ContactsSelectPageState {
 
 extension _Action on _ContactsSelectPageState {
   _selectUser(UserInfo data) {
-    List<UserInfo> userInfoList = [];
-    userInfoList.add(data);
-    Navigator.pop(context, userInfoList);
+    if (widget.roomId.isGroup) {
+      Navigator.pop(context, [data]);
+    } else {
+      var roomInfo = ref.read(contractSelectProvider).roomInfo;
+      roomInfo.userList.add(data);
+      Navigator.pop(context, roomInfo.userList);
+    }
   }
 }

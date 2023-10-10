@@ -14,7 +14,7 @@ class AppColors {
   static Color get buttonDisableColor => "#000000".toColor.withOpacity(0.08);
   static Color get buttonLoadingColor => "#000000".toColor.withOpacity(0.08);
   static Color get buttonDisableTextColor => "#000000".toColor.withOpacity(0.15);
-  static Color get buttonHighlightColor => "#009230".toColor;
+  static Color get buttonHighlightColor => "#0176D3".toColor.withOpacity(0.3);
   static Color get line => "#000000".toColor.withOpacity(0.08);
 
 }

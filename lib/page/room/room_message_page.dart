@@ -250,6 +250,6 @@ Widget userAvatar(ChatMessage data) {
     url: data.user.icon,
     width: 80.w,
     height: 80.h,
-    type: ImageWidgetType.network,
+    type: ImageWidgetType.asset,
   );
 }

@@ -12,12 +12,14 @@ import 'package:loar_flutter/common/account_data.dart';
 import 'package:loar_flutter/common/proto/index.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
+import 'package:protobuf/protobuf.dart';
 
 import '../../common/blue_tooth.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
+import '../../common/util/images.dart';
 import '../../common/util/storage.dart';
 
 final homeProvider =
@@ -46,18 +48,35 @@ class HomeNotifier extends ChangeNotifier {
   init() async {
     var value = await Storage.getIntList(allChatInfoKey);
     allChatInfo = AllChatInfo.fromBuffer(value);
-
     notifyListeners();
 
+    mockData();
+
+    BlueToothConnect.instance
+        .listenLoar((text) => {getRemoteMessage(LoarMessage.fromBuffer(text))});
+  }
+
+  UserInfo _createNewUser(String id) {
+    var newUser = AccountData.instance.me.deepCopy();
+    newUser.id = id;
+    newUser.name = "王五";
+    newUser.icon = AssetsImages.getRandomAvatar();
+    allChatInfo.userList.add(newUser);
+    return newUser;
+  }
+
+  void mockData() {
     const period = Duration(seconds: 3);
     Timer.periodic(period, (timer) {
       var loarMessage = LoarMessage();
       loarMessage.loarMessageType = LoarMessageType.MESSAGE;
       var chatMessage = ChatMessage();
       chatMessage.messageType = MessageType.TEXT;
-      var newUser = AccountData.instance.me.clone();
-      newUser.id = "user#000000";
-      newUser.name = "张三";
+
+      UserInfo newUser = allChatInfo.userList.firstWhere(
+          (element) => element.id == "user#000002",
+          orElse: () => _createNewUser("user#000002"));
+
       chatMessage.user = newUser;
       chatMessage.content = "当前时间:" +
           DateTime.now().millisecondsSinceEpoch.toString().formatChatTime;
@@ -68,9 +87,6 @@ class HomeNotifier extends ChangeNotifier {
       getRemoteMessage(loarMessage);
       notifyListeners();
     });
-
-    BlueToothConnect.instance
-        .listenLoar((text) => {getRemoteMessage(LoarMessage.fromBuffer(text))});
   }
 
   _addFriend(AddFriendMessage addFriendMessage) {
@@ -166,12 +182,13 @@ class HomeNotifier extends ChangeNotifier {
     if (!id.isGroup) {
       String userId = id.replaceAll(AccountData.instance.me.id, "");
       userId = userId.replaceAll("-", "");
-      var user =
-          allChatInfo.userList.firstWhere((element) => element.id == userId);
-
-      roomInfo.userList.add(AccountData.instance.me);
-      roomInfo.userList.add(user);
-      roomInfo.name = user.name;
+      if (allChatInfo.userList.any((element) => element.id == userId)) {
+        var user =
+            allChatInfo.userList.firstWhere((element) => element.id == userId);
+        roomInfo.userList.add(AccountData.instance.me);
+        roomInfo.userList.add(user);
+        roomInfo.name = user.name;
+      }
     } else {
       roomInfo.name = "群聊";
     }
@@ -202,7 +219,7 @@ class HomeNotifier extends ChangeNotifier {
   }
 
   String createGroup(List<UserInfo> userInfoList) {
-    var time = DateTime.now().millisecond;
+    var time = DateTime.now().millisecondsSinceEpoch;
     var room = RoomInfo();
     room.userList.add(AccountData.instance.me);
     room.userList.addAll(userInfoList);
@@ -396,24 +413,42 @@ extension _UI on _HomePageState {
               ),
             ),
           ],
-        ),
+        ).paddingTop(5.h),
         Gaps.line.paddingLeft(140.w).paddingVertical(15.h)
       ],
     );
   }
 
   Widget _getIcon(RoomInfo data) {
-    return NineGridView(
-      width: 80.w,
-      height: 80.h,
-      type: NineGridType.weChatGp,
-      itemCount: data.userList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ImageWidget(
-          url: data.userList[index].icon,
-          type: ImageWidgetType.network,
-        );
-      },
-    );
+    if (data.userList.length > 3) {
+      return NineGridView(
+        width: 80.w,
+        height: 80.h,
+        type: NineGridType.weChatGp,
+        itemCount: data.userList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ImageWidget(
+            url: data.userList[index].icon,
+            type: ImageWidgetType.asset,
+          );
+        },
+      );
+    } else if (data.userList.isNotEmpty) {
+      var val = data.userList
+          .firstWhere((element) => element.id != AccountData.instance.me.id);
+      return ImageWidget(
+        width: 80.w,
+        height: 80.h,
+        url: val.icon,
+        type: ImageWidgetType.asset,
+      );
+    } else {
+      return ImageWidget(
+        width: 80.w,
+        height: 80.h,
+        url: AssetsImages.getRandomAvatar(),
+        type: ImageWidgetType.asset,
+      );
+    }
   }
 }

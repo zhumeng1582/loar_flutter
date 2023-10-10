@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loar_flutter/common/proto/index.dart';
 import 'package:loar_flutter/page/login/sign_up_page.dart';
@@ -9,6 +8,7 @@ import 'package:loar_flutter/page/room/room_detail_page.dart';
 
 import '../../page/blue/find_device_page.dart';
 import '../../page/contacts/contacts_select_page.dart';
+import '../../page/login/avatar_select_page.dart';
 import '../../page/room/room_page.dart';
 import 'RouteNames.dart';
 
@@ -23,9 +23,9 @@ class RouteObservers {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const SignUpPage());
     } else if (settings.name == RouteNames.qrGenerate) {
-      var qrCode = settings.arguments as String;
+      var qrCodeData = settings.arguments as QrCodeData;
       return MaterialPageRoute(
-          settings: settings, builder: (_) => QRGeneratePage(qrCode: qrCode));
+          settings: settings, builder: (_) => QRGeneratePage(qrCodeData: qrCodeData));
     } else if (settings.name == RouteNames.qrScan) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => ScanQRPage());
@@ -44,6 +44,9 @@ class RouteObservers {
       var roomId = settings.arguments as String;
       return MaterialPageRoute(
           settings: settings, builder: (_) => ContactsSelectPage(roomId:roomId));
+    }  else if (settings.name == RouteNames.selectAvatar) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const AvatarSelectPage());
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(

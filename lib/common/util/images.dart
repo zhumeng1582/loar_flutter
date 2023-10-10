@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class AssetsImages {
 
   static final microphone = _loadFromPath(named: 'microphone');
@@ -11,6 +13,12 @@ class AssetsImages {
   static final voiceVolumeTotal = _loadFromPath(named: 'voice_volume_total');
   static final defaultImage = _loadFromPath(named: 'defaultImage');
 
+  static String getRandomAvatar(){
+    return getAvatar(Random().nextInt(100)+1);
+  }
+  static String getAvatar(int number){
+    return _loadFromPath(named:"avatar$number");
+  }
 
   static String _loadFromPath({required String named}) =>
       'assets/images/$named.png';

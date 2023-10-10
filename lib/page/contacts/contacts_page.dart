@@ -65,7 +65,7 @@ extension _UI on _ContactsPageState {
       url: data.icon,
       width: 80.w,
       height: 80.h,
-      type: ImageWidgetType.network,
+      type: ImageWidgetType.asset,
     );
   }
 

@@ -9,5 +9,6 @@ class RouteNames{
   static const deviceScreen = 'device_Screen';
   static const roomDetail = 'roomDetail';
   static const selectContact = 'selectContact';
+  static const selectAvatar = 'selectAvatar';
 
 }
