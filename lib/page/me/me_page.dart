@@ -7,7 +7,8 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/colors.dart';
 import '../../common/image.dart';
-import '../../common/global_data.dart';
+import '../../common/account_data.dart';
+import '../../common/proto/UserInfo.pb.dart';
 import '../../common/routers/RouteNames.dart';
 
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
@@ -39,16 +40,18 @@ class _MePageState extends ConsumerState<MePage> {
         child: Column(
           children: [
             _topItem(),
-            _getMeItem("账号", GlobalData.instance.me.account,
+            _getMeItem("账号", AccountData.instance.me.account,
                 false),
             _getMeItem("二维码名片", "", true).onTap(() {
-              var newUser = GlobalData.instance.me;
-              newUser.id = "user#000000";
-              newUser.name ="张三";
+              QrCodeData qrCodeData = QrCodeData();
+              qrCodeData.qrCodeType = QrCodeType.QR_USER;
+              qrCodeData.user = AccountData.instance.me;
+              // qrCodeData.user.id = "user#000000";
+              // qrCodeData.user.name ="张三";
               Navigator.pushNamed(
                 context,
                 RouteNames.qrGenerate,
-                arguments: base64Encode(newUser.writeToBuffer())
+                arguments: qrCodeData
               );
             }),
             _getMeItem("蓝牙", "", true).onTap(() {
@@ -77,15 +80,15 @@ extension _UI on _MePageState {
       children: [
         ClipOval(
           child: ImageWidget(
-            url: GlobalData.instance.me.icon,
+            url: AccountData.instance.me.icon,
             width: 50,
             height: 50,
             type: ImageWidgetType.network,
           ),
         ),
-        Text(GlobalData.instance.me.name),
+        Text(AccountData.instance.me.name),
         Text(
-          GlobalData.instance.me.id,
+          AccountData.instance.me.id,
           textAlign: TextAlign.right,
           overflow: TextOverflow.ellipsis,
         )

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:loar_flutter/common/global_data.dart';
+import 'package:loar_flutter/common/account_data.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
@@ -160,7 +160,7 @@ extension _UI on _RoomMessagePageState {
   Widget _buildRoomMessageItem(ChatMessage data) {
     if (data.messageType == MessageType.ADD_MEMBER) {
       return _buildNotifyItem(data);
-    } else if (data.user.id == GlobalData.instance.me.id) {
+    } else if (data.user.id == AccountData.instance.me.id) {
       return _buildChatRightItem(data, _buildChatContent(data));
     } else {
       return _buildChatLeftItem(data, _buildChatContent(data));
@@ -168,7 +168,7 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildChatContent(ChatMessage data) {
-    var isSender = data.user.id == GlobalData.instance.me.id;
+    var isSender = data.user.id == AccountData.instance.me.id;
 
     if (data.messageType == MessageType.IMAGE) {
       return BubbleNormalImage(

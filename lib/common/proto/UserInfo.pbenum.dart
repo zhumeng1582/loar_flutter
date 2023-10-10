@@ -68,5 +68,20 @@ class LoarMessageType extends $pb.ProtobufEnum {
   const LoarMessageType._($core.int v, $core.String n) : super(v, n);
 }
 
+class QrCodeType extends $pb.ProtobufEnum {
+  static const QrCodeType QR_USER = QrCodeType._(0, _omitEnumNames ? '' : 'QR_USER');
+  static const QrCodeType QR_GROUP = QrCodeType._(1, _omitEnumNames ? '' : 'QR_GROUP');
+
+  static const $core.List<QrCodeType> values = <QrCodeType> [
+    QR_USER,
+    QR_GROUP,
+  ];
+
+  static final $core.Map<$core.int, QrCodeType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static QrCodeType? valueOf($core.int value) => _byValue[value];
+
+  const QrCodeType._($core.int v, $core.String n) : super(v, n);
+}
+
 
 const _omitEnumNames = $core.bool.fromEnvironment('protobuf.omit_enum_names');

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
-import '../../common/global_data.dart';
+import '../../common/account_data.dart';
 import '../../common/colors.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
@@ -47,7 +47,7 @@ class LoginNotifier extends ChangeNotifier {
       LoginUserInfo userInfo = LoginUserInfo.fromBuffer(text);
       if (userInfo.password == password &&
           userInfo.user.account == account) {
-        GlobalData.instance.userInfo = userInfo;
+        AccountData.instance.userInfo = userInfo;
         buttonState = ButtonState.normal;
         notifyListeners();
         return true;

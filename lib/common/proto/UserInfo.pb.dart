@@ -109,64 +109,6 @@ class UserInfo extends $pb.GeneratedMessage {
   void clearAccount() => clearField(4);
 }
 
-class UserInfoList extends $pb.GeneratedMessage {
-  factory UserInfoList({
-    $core.String? userId,
-    $core.Iterable<UserInfo>? userList,
-  }) {
-    final $result = create();
-    if (userId != null) {
-      $result.userId = userId;
-    }
-    if (userList != null) {
-      $result.userList.addAll(userList);
-    }
-    return $result;
-  }
-  UserInfoList._() : super();
-  factory UserInfoList.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UserInfoList.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserInfoList', createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'userId', protoName: 'userId')
-    ..pc<UserInfo>(2, _omitFieldNames ? '' : 'userList', $pb.PbFieldType.PM, protoName: 'userList', subBuilder: UserInfo.create)
-    ..hasRequiredFields = false
-  ;
-
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  UserInfoList clone() => UserInfoList()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  UserInfoList copyWith(void Function(UserInfoList) updates) => super.copyWith((message) => updates(message as UserInfoList)) as UserInfoList;
-
-  $pb.BuilderInfo get info_ => _i;
-
-  @$core.pragma('dart2js:noInline')
-  static UserInfoList create() => UserInfoList._();
-  UserInfoList createEmptyInstance() => create();
-  static $pb.PbList<UserInfoList> createRepeated() => $pb.PbList<UserInfoList>();
-  @$core.pragma('dart2js:noInline')
-  static UserInfoList getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UserInfoList>(create);
-  static UserInfoList? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.String get userId => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set userId($core.String v) { $_setString(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasUserId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearUserId() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.List<UserInfo> get userList => $_getList(1);
-}
-
 class RoomInfo extends $pb.GeneratedMessage {
   factory RoomInfo({
     $core.String? id,
@@ -291,27 +233,32 @@ class RoomInfo extends $pb.GeneratedMessage {
   $core.List<ChatMessage> get messagelist => $_getList(6);
 }
 
-class RoomList extends $pb.GeneratedMessage {
-  factory RoomList({
+class AllChatInfo extends $pb.GeneratedMessage {
+  factory AllChatInfo({
     $core.String? userId,
+    $core.Iterable<UserInfo>? userList,
     $core.Iterable<RoomInfo>? roomList,
   }) {
     final $result = create();
     if (userId != null) {
       $result.userId = userId;
     }
+    if (userList != null) {
+      $result.userList.addAll(userList);
+    }
     if (roomList != null) {
       $result.roomList.addAll(roomList);
     }
     return $result;
   }
-  RoomList._() : super();
-  factory RoomList.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory RoomList.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  AllChatInfo._() : super();
+  factory AllChatInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AllChatInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'RoomList', createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AllChatInfo', createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'userId', protoName: 'userId')
-    ..pc<RoomInfo>(2, _omitFieldNames ? '' : 'roomList', $pb.PbFieldType.PM, protoName: 'roomList', subBuilder: RoomInfo.create)
+    ..pc<UserInfo>(2, _omitFieldNames ? '' : 'userList', $pb.PbFieldType.PM, protoName: 'userList', subBuilder: UserInfo.create)
+    ..pc<RoomInfo>(3, _omitFieldNames ? '' : 'roomList', $pb.PbFieldType.PM, protoName: 'roomList', subBuilder: RoomInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -319,22 +266,22 @@ class RoomList extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  RoomList clone() => RoomList()..mergeFromMessage(this);
+  AllChatInfo clone() => AllChatInfo()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  RoomList copyWith(void Function(RoomList) updates) => super.copyWith((message) => updates(message as RoomList)) as RoomList;
+  AllChatInfo copyWith(void Function(AllChatInfo) updates) => super.copyWith((message) => updates(message as AllChatInfo)) as AllChatInfo;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static RoomList create() => RoomList._();
-  RoomList createEmptyInstance() => create();
-  static $pb.PbList<RoomList> createRepeated() => $pb.PbList<RoomList>();
+  static AllChatInfo create() => AllChatInfo._();
+  AllChatInfo createEmptyInstance() => create();
+  static $pb.PbList<AllChatInfo> createRepeated() => $pb.PbList<AllChatInfo>();
   @$core.pragma('dart2js:noInline')
-  static RoomList getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RoomList>(create);
-  static RoomList? _defaultInstance;
+  static AllChatInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AllChatInfo>(create);
+  static AllChatInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get userId => $_getSZ(0);
@@ -346,7 +293,10 @@ class RoomList extends $pb.GeneratedMessage {
   void clearUserId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<RoomInfo> get roomList => $_getList(1);
+  $core.List<UserInfo> get userList => $_getList(1);
+
+  @$pb.TagNumber(3)
+  $core.List<RoomInfo> get roomList => $_getList(2);
 }
 
 class LoginUserInfo extends $pb.GeneratedMessage {
@@ -429,6 +379,7 @@ class ChatMessage extends $pb.GeneratedMessage {
     $core.String? targetId,
     ConversationType? conversationType,
     $core.Iterable<UserInfo>? addUser,
+    $core.int? sendCount,
   }) {
     final $result = create();
     if (user != null) {
@@ -467,6 +418,9 @@ class ChatMessage extends $pb.GeneratedMessage {
     if (addUser != null) {
       $result.addUser.addAll(addUser);
     }
+    if (sendCount != null) {
+      $result.sendCount = sendCount;
+    }
     return $result;
   }
   ChatMessage._() : super();
@@ -486,6 +440,7 @@ class ChatMessage extends $pb.GeneratedMessage {
     ..aOS(10, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
     ..e<ConversationType>(11, _omitFieldNames ? '' : 'conversationType', $pb.PbFieldType.OE, protoName: 'conversationType', defaultOrMaker: ConversationType.PRIVATE, valueOf: ConversationType.valueOf, enumValues: ConversationType.values)
     ..pc<UserInfo>(12, _omitFieldNames ? '' : 'addUser', $pb.PbFieldType.PM, protoName: 'addUser', subBuilder: UserInfo.create)
+    ..a<$core.int>(13, _omitFieldNames ? '' : 'sendCount', $pb.PbFieldType.O3, protoName: 'sendCount')
     ..hasRequiredFields = false
   ;
 
@@ -614,6 +569,15 @@ class ChatMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(12)
   $core.List<UserInfo> get addUser => $_getList(11);
+
+  @$pb.TagNumber(13)
+  $core.int get sendCount => $_getIZ(12);
+  @$pb.TagNumber(13)
+  set sendCount($core.int v) { $_setSignedInt32(12, v); }
+  @$pb.TagNumber(13)
+  $core.bool hasSendCount() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearSendCount() => clearField(13);
 }
 
 class AddFriendMessage extends $pb.GeneratedMessage {
@@ -816,6 +780,88 @@ class LoarMessage extends $pb.GeneratedMessage {
   void clearAddGroupMessage() => clearField(4);
   @$pb.TagNumber(4)
   AddGroupMessage ensureAddGroupMessage() => $_ensure(3);
+}
+
+class QrCodeData extends $pb.GeneratedMessage {
+  factory QrCodeData({
+    QrCodeType? qrCodeType,
+    UserInfo? user,
+    RoomInfo? room,
+  }) {
+    final $result = create();
+    if (qrCodeType != null) {
+      $result.qrCodeType = qrCodeType;
+    }
+    if (user != null) {
+      $result.user = user;
+    }
+    if (room != null) {
+      $result.room = room;
+    }
+    return $result;
+  }
+  QrCodeData._() : super();
+  factory QrCodeData.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory QrCodeData.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'QrCodeData', createEmptyInstance: create)
+    ..e<QrCodeType>(1, _omitFieldNames ? '' : 'qrCodeType', $pb.PbFieldType.OE, protoName: 'qrCodeType', defaultOrMaker: QrCodeType.QR_USER, valueOf: QrCodeType.valueOf, enumValues: QrCodeType.values)
+    ..aOM<UserInfo>(2, _omitFieldNames ? '' : 'user', subBuilder: UserInfo.create)
+    ..aOM<RoomInfo>(3, _omitFieldNames ? '' : 'room', subBuilder: RoomInfo.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  QrCodeData clone() => QrCodeData()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  QrCodeData copyWith(void Function(QrCodeData) updates) => super.copyWith((message) => updates(message as QrCodeData)) as QrCodeData;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static QrCodeData create() => QrCodeData._();
+  QrCodeData createEmptyInstance() => create();
+  static $pb.PbList<QrCodeData> createRepeated() => $pb.PbList<QrCodeData>();
+  @$core.pragma('dart2js:noInline')
+  static QrCodeData getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<QrCodeData>(create);
+  static QrCodeData? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  QrCodeType get qrCodeType => $_getN(0);
+  @$pb.TagNumber(1)
+  set qrCodeType(QrCodeType v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasQrCodeType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearQrCodeType() => clearField(1);
+
+  @$pb.TagNumber(2)
+  UserInfo get user => $_getN(1);
+  @$pb.TagNumber(2)
+  set user(UserInfo v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUser() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUser() => clearField(2);
+  @$pb.TagNumber(2)
+  UserInfo ensureUser() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  RoomInfo get room => $_getN(2);
+  @$pb.TagNumber(3)
+  set room(RoomInfo v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasRoom() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearRoom() => clearField(3);
+  @$pb.TagNumber(3)
+  RoomInfo ensureRoom() => $_ensure(2);
 }
 
 

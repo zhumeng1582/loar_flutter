@@ -1,14 +1,14 @@
 import 'package:loar_flutter/common/proto/UserInfo.pb.dart';
 
 
-class GlobalData{
-  GlobalData._();
+class AccountData{
+  AccountData._();
 
-  static GlobalData get instance => _getInstance();
-  static GlobalData? _instance;
+  static AccountData get instance => _getInstance();
+  static AccountData? _instance;
 
-  static GlobalData _getInstance() {
-    _instance ??= GlobalData._();
+  static AccountData _getInstance() {
+    _instance ??= AccountData._();
     return _instance!;
   }
   UserInfo get me =>_userInfo.user;

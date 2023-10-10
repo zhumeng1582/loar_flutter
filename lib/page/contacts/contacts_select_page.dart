@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loar_flutter/common/global_data.dart';
+import 'package:loar_flutter/common/account_data.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
@@ -38,7 +38,7 @@ class ContactsSelectPage extends ConsumerStatefulWidget {
 class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
   @override
   void initState() {
-    var userList = ref.read(homeProvider).userInfoList.userList;
+    var userList = ref.read(homeProvider).allChatInfo.userList;
     var roomInfo = ref.read(homeProvider).getRoomInfoById(widget.roomId);
     ref.read(contractSelectProvider).initData(userList, roomInfo);
     super.initState();
