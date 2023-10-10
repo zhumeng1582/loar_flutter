@@ -35,6 +35,16 @@ class HomeNotifier extends ChangeNotifier {
       .where((element) => element.messagelist.isNotEmpty)
       .toList();
   UserInfoList userInfoList = UserInfoList();
+//生成两个用户的房间号
+  String _getRoomId(UserInfo data) {
+    var id1 = GlobalData.instance.me.id;
+    var id2 = data.id;
+    if (id1.compareTo(id2) < 0) {
+      return '$id1-$id2';
+    } else {
+      return '$id2-$id1';
+    }
+  }
 
   init() async {
     var roomListIntList = await Storage.getIntList(chatMessageKey);
@@ -43,6 +53,26 @@ class HomeNotifier extends ChangeNotifier {
     var userInfoIntList = await Storage.getIntList(userInfoListKey);
     userInfoList = UserInfoList.fromBuffer(userInfoIntList);
     notifyListeners();
+
+    const period = Duration(seconds: 3);
+    Timer.periodic(period, (timer) {
+      var loarMessage = LoarMessage();
+      loarMessage.loarMessageType = LoarMessageType.MESSAGE;
+      var chatMessage = ChatMessage();
+      chatMessage.messageType = MessageType.TEXT;
+      var newUser = GlobalData.instance.me.clone();
+      newUser.id = "user#000000";
+      newUser.name ="张三";
+      chatMessage.user = newUser;
+      chatMessage.content = "当前时间:"+DateTime.now().millisecondsSinceEpoch.toString().formatChatTime;
+      chatMessage.targetId = _getRoomId(newUser);
+      chatMessage.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
+      loarMessage.message = chatMessage;
+
+      getRemoteMessage(loarMessage);
+      notifyListeners();
+    });
+
 
     BlueToothConnect.instance
         .listenLoar((text) => {getRemoteMessage(LoarMessage.fromBuffer(text))});
@@ -61,7 +91,7 @@ class HomeNotifier extends ChangeNotifier {
   _addChatMessage(ChatMessage chatMessage) async {
     var room = getRoomInfo(chatMessage);
     //房间不存在，先创建一个房间
-    room.messagelist.add(chatMessage);
+    room.messagelist.insert(0, chatMessage);
 
     //判断用户是否在房间里，不在就添加进去
     if (!isInRoom(room, chatMessage.user)) {
@@ -129,6 +159,9 @@ class HomeNotifier extends ChangeNotifier {
       userId = userId.replaceAll("-", "");
       var user =
           userInfoList.userList.firstWhere((element) => element.id == userId);
+
+      roomInfo.userList.add(GlobalData.instance.me);
+      roomInfo.userList.add(user);
       roomInfo.name = user.name;
     } else {
       roomInfo.name = "群聊";
@@ -161,6 +194,7 @@ class HomeNotifier extends ChangeNotifier {
   String createGroup(List<UserInfo> userInfoList) {
     var time = DateTime.now().millisecond;
     var room = RoomInfo();
+    room.userList.add(GlobalData.instance.me);
     room.userList.addAll(userInfoList);
     room.name = "群聊";
     room.id = "room#$time";
@@ -245,6 +279,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     List<RoomInfo> data = ref.watch(homeProvider).messageRoomList;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.bottomBackground,
         title: Text("聊天"),
         centerTitle: true,
         actions: [

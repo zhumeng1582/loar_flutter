@@ -6,6 +6,7 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
 
+import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/proto/index.dart';
 import '../../common/routers/RouteNames.dart';
@@ -29,6 +30,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
     List<UserInfo> data = ref.watch(homeProvider).userInfoList.userList;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.bottomBackground,
         title: Text("联系人"),
         centerTitle: true,
         actions: [

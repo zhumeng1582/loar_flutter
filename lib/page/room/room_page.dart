@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:loar_flutter/page/room/room_message_page.dart';
+import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/proto/index.dart';
 import '../../common/routers/RouteNames.dart';
@@ -31,7 +32,8 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: Text(ref.watch(homeProvider).getRoomTitle(widget.roomId)),
+          backgroundColor: AppColors.bottomBackground,
+          title: Text(ref.read(homeProvider).getRoomTitle(widget.roomId)),
           actions: [
             IconButton(
               icon: const Icon(Icons.more_horiz),

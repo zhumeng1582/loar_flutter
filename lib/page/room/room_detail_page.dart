@@ -63,7 +63,7 @@ class _RoomDetailPageState extends ConsumerState<RoomDetailPage> {
 
 extension _Action on _RoomDetailPageState {
   selectUser() {
-    Navigator.pushNamed(context, RouteNames.selectContact)
+    Navigator.pushNamed(context, RouteNames.selectContact,arguments: widget.roomId)
         .then((value) => {invite(value as List<UserInfo>)});
   }
 

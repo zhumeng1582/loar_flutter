@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
+import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/global_data.dart';
 import '../../common/routers/RouteNames.dart';
@@ -30,6 +31,7 @@ class _MePageState extends ConsumerState<MePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.bottomBackground,
         title: Text("我的"),
         centerTitle: true,
       ),

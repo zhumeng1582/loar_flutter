@@ -69,7 +69,7 @@ class _MainPageState extends ConsumerState<MainPage> {
     return Scaffold(
       body: ref.watch(mainProvider).getCurrentWidget(),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.grey.shade200,
+        backgroundColor: AppColors.bottomBackground,
         selectedFontSize: 14.0,
         unselectedFontSize: 14.0,
         showSelectedLabels: true,

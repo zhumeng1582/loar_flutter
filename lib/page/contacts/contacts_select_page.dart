@@ -11,8 +11,25 @@ import '../../common/proto/index.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
 
+final contractSelectProvider =
+ChangeNotifierProvider<ContactsSelectNotifier>((ref) => ContactsSelectNotifier());
+
+class ContactsSelectNotifier extends ChangeNotifier {
+  List<UserInfo> data = [];
+  initData(List<UserInfo> data,RoomInfo roomInfo){
+    this.data = data.where((element) => !isInRoom(roomInfo, element)).toList();
+    notifyListeners();
+  }
+
+  bool isInRoom(RoomInfo room, UserInfo userInfo) {
+    return room.userList.any((element) => element.id == userInfo.id);
+  }
+
+}
+
 class ContactsSelectPage extends ConsumerStatefulWidget {
-  const ContactsSelectPage({super.key});
+  String roomId;
+  ContactsSelectPage({super.key, required this.roomId});
 
   @override
   ConsumerState<ContactsSelectPage> createState() => _ContactsSelectPageState();
@@ -21,12 +38,16 @@ class ContactsSelectPage extends ConsumerStatefulWidget {
 class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
   @override
   void initState() {
+    var userList = ref.read(homeProvider).userInfoList.userList;
+    var roomInfo = ref.read(homeProvider).getRoomInfoById(widget.roomId);
+    ref.read(contractSelectProvider).initData(userList, roomInfo);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<UserInfo> data = ref.watch(homeProvider).userInfoList.userList;
+    List<UserInfo> data = ref.watch(contractSelectProvider).data;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("选择联系人"),

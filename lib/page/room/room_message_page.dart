@@ -87,13 +87,15 @@ class _RoomMessagePageState extends ConsumerState<RoomMessagePage> {
   Widget build(BuildContext context) {
     List<ChatMessage> data =
         ref.watch(homeProvider).getRoomInfoById(widget.roomId).messagelist;
-    bool isAtBottom = _scrollController.hasClients &&
-        _scrollController.offset >= _scrollController.position.maxScrollExtent;
+
+    double _currentScrollPosition =0;
+    if(_scrollController.hasClients){
+      _currentScrollPosition = _scrollController.position.pixels;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (isAtBottom) {
-        _scrollToBottom();
-      }
+      _scrollController.jumpTo(_currentScrollPosition);
     });
+
 
     return _buildChat(data);
   }
@@ -113,10 +115,6 @@ extension _Action on _RoomMessagePageState {
     player.processingStateStream.listen((state) {
       ref.read(roomMessageProvider).setPlayState(state);
     });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
   }
 
   void _changeSeek(ChatMessage message, double value) async {
@@ -133,31 +131,36 @@ extension _Action on _RoomMessagePageState {
     player.play();
   }
 
-
-  void _scrollToBottom() {
-    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  void _scrollToBottom(double position) {
+    _scrollController.jumpTo(position);
   }
+
 }
 
 extension _UI on _RoomMessagePageState {
-
   Widget _buildChat(List<ChatMessage> data) {
     return Expanded(
-        child: ListView.builder(
-      controller: _scrollController,
-      itemCount: data.length,
-      itemBuilder: (BuildContext context, int index) {
-        return _buildRoomMessageItem(data[index])
-            .paddingVertical(10.w)
-            .paddingHorizontal(30.w);
-      },
-    ));
+        flex: 1,
+        child: Container(
+          alignment: Alignment.topCenter,
+          child: ListView.builder(
+            controller: _scrollController,
+            itemCount: data.length,
+            reverse: true,
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, int index) {
+              return _buildRoomMessageItem(data[index])
+                  .paddingVertical(10.w)
+                  .paddingHorizontal(30.w);
+            },
+          ),
+        ));
   }
 
   Widget _buildRoomMessageItem(ChatMessage data) {
     if (data.messageType == MessageType.ADD_MEMBER) {
       return _buildNotifyItem(data);
-    }else if (data.user.id == GlobalData.instance.me.id) {
+    } else if (data.user.id == GlobalData.instance.me.id) {
       return _buildChatRightItem(data, _buildChatContent(data));
     } else {
       return _buildChatLeftItem(data, _buildChatContent(data));
@@ -225,13 +228,19 @@ extension _UI on _RoomMessagePageState {
       ],
     );
   }
+
   _buildNotifyItem(ChatMessage data) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: data.addUser.map((e) => Text("${e.name}加入群聊",style: TextStyle(
-        color: AppColors.title.withOpacity(0.5),
-        fontSize: 24.sp,
-      ),)).toList(),
+      children: data.addUser
+          .map((e) => Text(
+                "${e.name}加入群聊",
+                style: TextStyle(
+                  color: AppColors.title.withOpacity(0.5),
+                  fontSize: 24.sp,
+                ),
+              ))
+          .toList(),
     );
   }
 }

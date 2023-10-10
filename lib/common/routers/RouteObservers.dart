@@ -41,8 +41,9 @@ class RouteObservers {
       return MaterialPageRoute(
           settings: settings, builder: (_) => RoomDetailPage(roomId: roomId));
     } else if (settings.name == RouteNames.selectContact) {
+      var roomId = settings.arguments as String;
       return MaterialPageRoute(
-          settings: settings, builder: (_) => const ContactsSelectPage());
+          settings: settings, builder: (_) => ContactsSelectPage(roomId:roomId));
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(

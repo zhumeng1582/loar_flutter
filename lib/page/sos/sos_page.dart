@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
+import '../../common/colors.dart';
 import '../../widget/commit_button.dart';
 
 final sosProvider =
@@ -31,6 +32,7 @@ class _SosPageState extends ConsumerState<SosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.bottomBackground,
         title: Text("SOS"),
         centerTitle: true,
       ),
