@@ -36,7 +36,9 @@ class AvatarSelectPage extends ConsumerStatefulWidget {
 class _AvatarSelectPageState extends ConsumerState<AvatarSelectPage> {
   @override
   void initState() {
-    ref.read(avatarSelectProvider).initData();
+    Future(() {
+      ref.read(avatarSelectProvider).initData();
+    });
     super.initState();
   }
 
@@ -52,14 +54,13 @@ class _AvatarSelectPageState extends ConsumerState<AvatarSelectPage> {
       body: GridView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildCellItem(data[index]).onTap(() {
-            _selectAvatar(data[index]);
-          });
+          return _buildCellItem(data[index])
+              .inkWell(onTap: () => {_selectAvatar(data[index])});
         },
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4, //横轴三个子widget
             childAspectRatio: 1.0 //宽高比为1时，子widget
-        ),
+            ),
       ),
     );
   }
@@ -71,17 +72,13 @@ class _AvatarSelectPageState extends ConsumerState<AvatarSelectPage> {
 }
 
 extension _UI on _AvatarSelectPageState {
-  Widget _getIcon(String data) {
+  Widget _buildCellItem(String data) {
     return ImageWidget(
       url: data,
       width: 40.w,
       height: 40.h,
       type: ImageWidgetType.asset,
     ).paddingVertical(5.h).paddingHorizontal(5.w);
-  }
-
-  Widget _buildCellItem(String data) {
-    return _getIcon(data);
   }
 }
 

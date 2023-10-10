@@ -6,12 +6,9 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import '../../common/colors.dart';
 import '../../widget/commit_button.dart';
 
-final sosProvider =
-    ChangeNotifierProvider<SosNotifier>((ref) => SosNotifier());
+final sosProvider = ChangeNotifierProvider<SosNotifier>((ref) => SosNotifier());
 
-class SosNotifier extends ChangeNotifier {
-
-}
+class SosNotifier extends ChangeNotifier {}
 
 class SosPage extends ConsumerStatefulWidget {
   const SosPage({super.key});
@@ -21,11 +18,9 @@ class SosPage extends ConsumerStatefulWidget {
 }
 
 class _SosPageState extends ConsumerState<SosPage> {
-
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -40,9 +35,16 @@ class _SosPageState extends ConsumerState<SosPage> {
         child: Column(
           children: [
             Text("状态：未发起").paddingTop(80.h),
-            CommitButton(buttonState: ButtonState.normal, backgroundColor:Colors.red,text: "发起SOS",  tapAction: ()=>{}).paddingTop(80.h),
-
-            CommitButton(buttonState: ButtonState.normal,backgroundColor:Colors.blue, text: "预设SOS", tapAction: ()=>{}).paddingTop(80.h),
+            CommitButton(
+                buttonState: ButtonState.normal,
+                backgroundColor: Colors.red,
+                text: "发起SOS",
+                tapAction: () => {}).paddingTop(80.h),
+            CommitButton(
+                buttonState: ButtonState.normal,
+                backgroundColor: Colors.blue,
+                text: "预设SOS",
+                tapAction: () => {}).paddingTop(80.h),
           ],
         ).paddingHorizontal(30.w),
       ),
@@ -52,11 +54,9 @@ class _SosPageState extends ConsumerState<SosPage> {
   @override
   void dispose() {
     super.dispose();
-
   }
 }
 
-extension _Action on _SosPageState {
-}
+extension _Action on _SosPageState {}
 
 extension _UI on _SosPageState {}

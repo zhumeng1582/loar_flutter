@@ -11,6 +11,7 @@ import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
 import 'package:loar_flutter/common/util/storage.dart';
 import '../../common/proto/index.dart';
+
 final loginProvider =
     ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
 
@@ -45,8 +46,7 @@ class LoginNotifier extends ChangeNotifier {
 
     if (text.isNotEmpty) {
       LoginUserInfo userInfo = LoginUserInfo.fromBuffer(text);
-      if (userInfo.password == password &&
-          userInfo.user.account == account) {
+      if (userInfo.password == password && userInfo.user.account == account) {
         AccountData.instance.userInfo = userInfo;
         buttonState = ButtonState.normal;
         notifyListeners();
@@ -73,16 +73,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   void initState() {
     super.initState();
-    ref
-        .read(loginProvider)
-        .getAccount(_userAccountController, _userPasswordController);
-    _userAccountController.addListener(() {
-      ref.read(loginProvider).setButtonState(
-          _userAccountController.text, _userPasswordController.text);
-    });
-    _userPasswordController.addListener(() {
-      ref.read(loginProvider).setButtonState(
-          _userAccountController.text, _userPasswordController.text);
+    Future(() {
+      ref
+          .read(loginProvider)
+          .getAccount(_userAccountController, _userPasswordController);
+      _userAccountController.addListener(() {
+        ref.read(loginProvider).setButtonState(
+            _userAccountController.text, _userPasswordController.text);
+      });
+      _userPasswordController.addListener(() {
+        ref.read(loginProvider).setButtonState(
+            _userAccountController.text, _userPasswordController.text);
+      });
     });
   }
 
@@ -166,7 +168,7 @@ extension _Action on _LoginPageState {
         // RouteNames.blueSearchList,
         RouteNames.main,
       );
-        } else {
+    } else {
       EasyLoading.showToast("账号或密码不正确，请重新登陆");
     }
   }

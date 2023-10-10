@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/account_data.dart';
+import 'package:loar_flutter/common/ex/ex_userInfo.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
@@ -86,21 +87,23 @@ extension _UI on _ContactsPageState {
 
 extension _Action on _ContactsPageState {
   _room(UserInfo data) {
+    bool isRoomCreate = ref
+        .read(homeProvider)
+        .allChatInfo
+        .roomList
+        .any((element) => element.id == data.getRoomId);
+    if (!isRoomCreate) {
+      var roomInfo = RoomInfo();
+      roomInfo.id = data.getRoomId;
+      roomInfo.userList.add(AccountData.instance.me);
+      roomInfo.userList.add(data);
+      roomInfo.name = data.name;
+      ref.read(homeProvider).allChatInfo.roomList.insert(0,roomInfo);
+    }
     Navigator.pushNamed(
       context,
       RouteNames.roomPage,
-      arguments: _getRoomId(data),
+      arguments: data.getRoomId,
     );
-  }
-
-  //生成两个用户的房间号
-  String _getRoomId(UserInfo data) {
-    var id1 = AccountData.instance.me.id;
-    var id2 = data.id;
-    if (id1.compareTo(id2) < 0) {
-      return '$id1-$id2';
-    } else {
-      return '$id2-$id1';
-    }
   }
 }

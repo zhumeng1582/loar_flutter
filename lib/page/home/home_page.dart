@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:barcode_scan2/model/android_options.dart';
 import 'package:barcode_scan2/model/scan_options.dart';
@@ -7,8 +8,10 @@ import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loar_flutter/common/ex/ex_num.dart';
 import 'package:loar_flutter/common/ex/ex_string.dart';
 import 'package:loar_flutter/common/account_data.dart';
+import 'package:loar_flutter/common/ex/ex_userInfo.dart';
 import 'package:loar_flutter/common/proto/index.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
@@ -30,21 +33,6 @@ class HomeNotifier extends ChangeNotifier {
 
   AllChatInfo allChatInfo = AllChatInfo();
 
-  List<RoomInfo> get messageRoomList => allChatInfo.roomList
-      .where((element) => element.messagelist.isNotEmpty)
-      .toList();
-
-//生成两个用户的房间号
-  String _getRoomId(UserInfo data) {
-    var id1 = AccountData.instance.me.id;
-    var id2 = data.id;
-    if (id1.compareTo(id2) < 0) {
-      return '$id1-$id2';
-    } else {
-      return '$id2-$id1';
-    }
-  }
-
   init() async {
     var value = await Storage.getIntList(allChatInfoKey);
     allChatInfo = AllChatInfo.fromBuffer(value);
@@ -56,31 +44,45 @@ class HomeNotifier extends ChangeNotifier {
         .listenLoar((text) => {getRemoteMessage(LoarMessage.fromBuffer(text))});
   }
 
-  UserInfo _createNewUser(String id) {
+  UserInfo _createNewUser(String id, String name) {
     var newUser = AccountData.instance.me.deepCopy();
     newUser.id = id;
-    newUser.name = "王五";
+    newUser.account = id;
+    newUser.name = name;
     newUser.icon = AssetsImages.getRandomAvatar();
     allChatInfo.userList.add(newUser);
     return newUser;
   }
 
   void mockData() {
+    if (allChatInfo.userList.isEmpty) {
+      _createNewUser("user#000001", "张三");
+      _createNewUser("user#000002", "李四");
+      _createNewUser("user#000003", "王五");
+      _createNewUser("user#000004", "赵六");
+      _createNewUser("user#000005", "唐七");
+    }
+
     const period = Duration(seconds: 3);
     Timer.periodic(period, (timer) {
+      if (allChatInfo.roomList.isEmpty) {
+        return;
+      }
+
+      var room =
+          allChatInfo.roomList[Random().nextInt(allChatInfo.roomList.length)];
+
       var loarMessage = LoarMessage();
       loarMessage.loarMessageType = LoarMessageType.MESSAGE;
       var chatMessage = ChatMessage();
       chatMessage.messageType = MessageType.TEXT;
 
-      UserInfo newUser = allChatInfo.userList.firstWhere(
-          (element) => element.id == "user#000002",
-          orElse: () => _createNewUser("user#000002"));
+      UserInfo newUser = room.userList[Random().nextInt(room.userList.length)];
 
       chatMessage.user = newUser;
-      chatMessage.content = "当前时间:" +
-          DateTime.now().millisecondsSinceEpoch.toString().formatChatTime;
-      chatMessage.targetId = _getRoomId(newUser);
+      chatMessage.content =
+          "${newUser.name}发送消息，当前时间:${DateTime.now().millisecondsSinceEpoch.toHourMinSecondDate}";
+      chatMessage.targetId = room.id;
       chatMessage.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
       loarMessage.message = chatMessage;
 
@@ -90,17 +92,24 @@ class HomeNotifier extends ChangeNotifier {
   }
 
   _addFriend(AddFriendMessage addFriendMessage) {
-    allChatInfo.userList.add(addFriendMessage.user);
-    notifyListeners();
+    if (addFriendMessage.targetId == AccountData.instance.me.id) {
+      allChatInfo.userList.add(addFriendMessage.user);
+      notifyListeners();
+    }
   }
 
   _addGroup(AddGroupMessage addGroupMessage) {
-    allChatInfo.roomList.add(addGroupMessage.room);
-    notifyListeners();
+    var isMeMessage = addGroupMessage.room.userList
+        .any((element) => AccountData.instance.me.id == element.id);
+    if (isMeMessage) {
+      allChatInfo.addGroup([addGroupMessage.room]);
+      notifyListeners();
+    }
   }
 
   _addChatMessage(ChatMessage chatMessage) async {
     var room = getRoomInfo(chatMessage);
+
     //房间不存在，先创建一个房间
     room.messagelist.insert(0, chatMessage);
 
@@ -137,9 +146,8 @@ class HomeNotifier extends ChangeNotifier {
   }
 
   RoomInfo getRoomInfo(ChatMessage chatMessage) {
-    return allChatInfo.roomList.firstWhere(
-        (element) => element.id == chatMessage.targetId,
-        orElse: () => _createRoomById(chatMessage.targetId));
+    return allChatInfo.roomList
+        .firstWhere((element) => element.id == chatMessage.targetId);
   }
 
   bool isMyMessage(ChatMessage chatMessage) {
@@ -155,47 +163,13 @@ class HomeNotifier extends ChangeNotifier {
     return room.userList.any((element) => element.id == userInfo.id);
   }
 
-  RoomInfo getRoomInfoById(String id) {
-    return allChatInfo.roomList.firstWhere((element) => element.id == id,
-        orElse: () => _createRoomById(id));
-  }
-
   String getRoomTitle(String id) {
-    RoomInfo roomInfo = getRoomInfoById(id);
+    RoomInfo roomInfo = allChatInfo.getRoomById(id);
     if (roomInfo.userList.length < 3) {
-      return getRoomInfoById(id).name;
+      return roomInfo.name;
     } else {
-      return "${getRoomInfoById(id).name}(${roomInfo.userList.length})";
+      return "${roomInfo.name}(${roomInfo.userList.length})";
     }
-  }
-
-  List<ChatMessage> getMessageList(String id) {
-    RoomInfo roomInfo = allChatInfo.roomList.firstWhere(
-        (element) => element.id == id,
-        orElse: () => _createRoomById(id));
-    return roomInfo.messagelist;
-  }
-
-  //创建房间
-  RoomInfo _createRoomById(String id) {
-    var roomInfo = RoomInfo();
-    roomInfo.id = id;
-    if (!id.isGroup) {
-      String userId = id.replaceAll(AccountData.instance.me.id, "");
-      userId = userId.replaceAll("-", "");
-      if (allChatInfo.userList.any((element) => element.id == userId)) {
-        var user =
-            allChatInfo.userList.firstWhere((element) => element.id == userId);
-        roomInfo.userList.add(AccountData.instance.me);
-        roomInfo.userList.add(user);
-        roomInfo.name = user.name;
-      }
-    } else {
-      roomInfo.name = "群聊";
-    }
-
-    allChatInfo.roomList.add(roomInfo);
-    return roomInfo;
   }
 
   //通过loar发送消息
@@ -219,23 +193,14 @@ class HomeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  String createGroup(List<UserInfo> userInfoList) {
-    var time = DateTime.now().millisecondsSinceEpoch;
-    var room = RoomInfo();
-    room.userList.add(AccountData.instance.me);
-    room.userList.addAll(userInfoList);
-    room.name = "群聊";
-    room.id = "room#$time";
-    room.creator = AccountData.instance.me;
-    room.createtime = "$time";
+  sendCreateGroup(RoomInfo room) {
     AddGroupMessage addGroupMessage = AddGroupMessage();
     addGroupMessage.room = room;
     LoarMessage loarMessage = LoarMessage();
     loarMessage.loarMessageType = LoarMessageType.ADD_GROUP;
     loarMessage.addGroupMessage = addGroupMessage;
     BlueToothConnect.instance.writeLoraMessage(loarMessage);
-    allChatInfo.roomList.add(room);
-    return room.id;
+    allChatInfo.addGroup([room]);
   }
 
   inviteFriend(String roomId, List<UserInfo> userInfoList) {
@@ -266,12 +231,6 @@ class HomeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  addUserInfoList(UserInfo userInfo) async {
-    allChatInfo.userList.add(userInfo);
-    await Storage.saveIntList(allChatInfoKey, allChatInfo.writeToBuffer());
-    notifyListeners();
-  }
-
   scan() async {
     var options = const ScanOptions(
         android: AndroidOptions(aspectTolerance: 0.5, useAutoFocus: true),
@@ -288,11 +247,35 @@ class HomeNotifier extends ChangeNotifier {
     var qrCodeData = QrCodeData.fromBuffer(base64Decode(result.rawContent));
 
     if (qrCodeData.qrCodeType == QrCodeType.QR_USER) {
-      addUserInfoList(qrCodeData.user);
+      allChatInfo.addUserInfo([qrCodeData.user]);
+
+      var addFriendMessage = AddFriendMessage()
+        ..targetId = qrCodeData.user.id
+        ..user = AccountData.instance.me;
+
+      var loarMessage = LoarMessage()
+        ..loarMessageType = LoarMessageType.ADD_FRIEND
+        ..addFriendMessage = addFriendMessage;
+
+      BlueToothConnect.instance.writeLoraMessage(loarMessage);
     } else {
-      allChatInfo.roomList.add(qrCodeData.room);
-      inviteFriend(qrCodeData.room.id, [AccountData.instance.me]);
+      allChatInfo.addGroup([qrCodeData.room]);
+      var message = ChatMessage();
+      //扫码加群，模拟对方发送消息
+      message.user = qrCodeData.user;
+      message.addUser.addAll([AccountData.instance.me]);
+      message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
+      message.targetId = qrCodeData.room.id;
+      message.messageType = MessageType.ADD_MEMBER;
+      //邀请好友消息不需要转发
+      message.sendCount = 1;
+      _addChatMessage(message);
+      _sendMessage(message);
+      notifyListeners();
     }
+
+    await Storage.saveIntList(allChatInfoKey, allChatInfo.writeToBuffer());
+    notifyListeners();
   }
 }
 
@@ -311,7 +294,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<RoomInfo> data = ref.watch(homeProvider).messageRoomList;
+    List<RoomInfo> data = ref.watch(homeProvider).allChatInfo.roomList;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
@@ -424,7 +407,7 @@ extension _UI on _HomePageState {
   }
 
   Widget _getIcon(RoomInfo data) {
-    if (data.userList.length > 3) {
+    if (data.userList.length >= 3) {
       return NineGridView(
         width: 80.w,
         height: 80.h,

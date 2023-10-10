@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:loar_flutter/common/account_data.dart';
+import 'package:loar_flutter/common/ex/ex_userInfo.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
@@ -86,17 +87,7 @@ class _RoomMessagePageState extends ConsumerState<RoomMessagePage> {
   @override
   Widget build(BuildContext context) {
     List<ChatMessage> data =
-        ref.watch(homeProvider).getRoomInfoById(widget.roomId).messagelist;
-
-    double _currentScrollPosition =0;
-    if(_scrollController.hasClients){
-      _currentScrollPosition = _scrollController.position.pixels;
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_currentScrollPosition);
-    });
-
-
+        ref.watch(homeProvider).allChatInfo.getRoomById(widget.roomId).messagelist;
     return _buildChat(data);
   }
 

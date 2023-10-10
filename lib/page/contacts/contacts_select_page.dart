@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/account_data.dart';
 import 'package:loar_flutter/common/ex/ex_string.dart';
+import 'package:loar_flutter/common/ex/ex_userInfo.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
@@ -44,7 +45,8 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
   void initState() {
     Future(() {
       var userList = ref.read(homeProvider).allChatInfo.userList;
-      var roomInfo = ref.read(homeProvider).getRoomInfoById(widget.roomId);
+      var roomInfo =
+          ref.read(homeProvider).allChatInfo.getRoomById(widget.roomId);
       ref.read(contractSelectProvider).initData(userList, roomInfo);
     });
 
@@ -104,12 +106,6 @@ extension _UI on _ContactsSelectPageState {
 
 extension _Action on _ContactsSelectPageState {
   _selectUser(UserInfo data) {
-    if (widget.roomId.isGroup) {
-      Navigator.pop(context, [data]);
-    } else {
-      var roomInfo = ref.read(contractSelectProvider).roomInfo;
-      roomInfo.userList.add(data);
-      Navigator.pop(context, roomInfo.userList);
-    }
+    Navigator.pop(context, [data]);
   }
 }

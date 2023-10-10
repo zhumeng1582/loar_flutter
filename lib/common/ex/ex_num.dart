@@ -34,6 +34,33 @@ extension ExInt on int {
     var date = DateTime.fromMillisecondsSinceEpoch(this);
     return DateFormat('MM/dd HH:mm').format(date);
   }
+  String get formatChatTime{
+    try{
+      DateTime messageTime = DateTime.fromMillisecondsSinceEpoch(this);
+      final currentTime = DateTime.now();
+      final difference = currentTime.difference(messageTime);
+
+      if (difference.inDays < 1) {
+        String hourMinute = DateFormat('HH:mm').format(messageTime);
+        String hour = hourMinute.split(':')[0];
+        String minute = hourMinute.split(':')[1];
+
+        if (int.parse(hour) < 12) {
+          return '上午$hour:$minute';
+        } else {
+          int pmHour = int.parse(hour) - 12;
+          return '下午$pmHour:$minute';
+        }
+
+      } else if (difference.inDays < 2) {
+        return '昨天';
+      } else {
+        return DateFormat.yMMMd('zh_CN').format(messageTime);
+      }
+    }catch(e){
+      return "未知时间:$this";
+    }
+  }
 }
 
 extension ExDouble on double {

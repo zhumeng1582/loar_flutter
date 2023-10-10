@@ -582,9 +582,13 @@ class ChatMessage extends $pb.GeneratedMessage {
 
 class AddFriendMessage extends $pb.GeneratedMessage {
   factory AddFriendMessage({
+    $core.String? targetId,
     UserInfo? user,
   }) {
     final $result = create();
+    if (targetId != null) {
+      $result.targetId = targetId;
+    }
     if (user != null) {
       $result.user = user;
     }
@@ -595,7 +599,8 @@ class AddFriendMessage extends $pb.GeneratedMessage {
   factory AddFriendMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AddFriendMessage', createEmptyInstance: create)
-    ..aOM<UserInfo>(1, _omitFieldNames ? '' : 'user', subBuilder: UserInfo.create)
+    ..aOS(1, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
+    ..aOM<UserInfo>(2, _omitFieldNames ? '' : 'user', subBuilder: UserInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -621,22 +626,35 @@ class AddFriendMessage extends $pb.GeneratedMessage {
   static AddFriendMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
-  UserInfo get user => $_getN(0);
+  $core.String get targetId => $_getSZ(0);
   @$pb.TagNumber(1)
-  set user(UserInfo v) { setField(1, v); }
+  set targetId($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasUser() => $_has(0);
+  $core.bool hasTargetId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearUser() => clearField(1);
-  @$pb.TagNumber(1)
-  UserInfo ensureUser() => $_ensure(0);
+  void clearTargetId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  UserInfo get user => $_getN(1);
+  @$pb.TagNumber(2)
+  set user(UserInfo v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUser() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUser() => clearField(2);
+  @$pb.TagNumber(2)
+  UserInfo ensureUser() => $_ensure(1);
 }
 
 class AddGroupMessage extends $pb.GeneratedMessage {
   factory AddGroupMessage({
+    $core.String? targetId,
     RoomInfo? room,
   }) {
     final $result = create();
+    if (targetId != null) {
+      $result.targetId = targetId;
+    }
     if (room != null) {
       $result.room = room;
     }
@@ -647,7 +665,8 @@ class AddGroupMessage extends $pb.GeneratedMessage {
   factory AddGroupMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AddGroupMessage', createEmptyInstance: create)
-    ..aOM<RoomInfo>(1, _omitFieldNames ? '' : 'room', subBuilder: RoomInfo.create)
+    ..aOS(1, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
+    ..aOM<RoomInfo>(2, _omitFieldNames ? '' : 'room', subBuilder: RoomInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -673,15 +692,24 @@ class AddGroupMessage extends $pb.GeneratedMessage {
   static AddGroupMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
-  RoomInfo get room => $_getN(0);
+  $core.String get targetId => $_getSZ(0);
   @$pb.TagNumber(1)
-  set room(RoomInfo v) { setField(1, v); }
+  set targetId($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasRoom() => $_has(0);
+  $core.bool hasTargetId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearRoom() => clearField(1);
-  @$pb.TagNumber(1)
-  RoomInfo ensureRoom() => $_ensure(0);
+  void clearTargetId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  RoomInfo get room => $_getN(1);
+  @$pb.TagNumber(2)
+  set room(RoomInfo v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasRoom() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearRoom() => clearField(2);
+  @$pb.TagNumber(2)
+  RoomInfo ensureRoom() => $_ensure(1);
 }
 
 class LoarMessage extends $pb.GeneratedMessage {
