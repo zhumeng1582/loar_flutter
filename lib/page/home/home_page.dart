@@ -84,19 +84,24 @@ class HomeNotifier extends ChangeNotifier {
   }
 
   _addChatMessage(ChatMessage chatMessage) async {
-    var room = getRoomInfo(chatMessage);
-    //房间不存在，先创建一个房间
-    room.messagelist.insert(0, chatMessage);
+    if (isMyMessage(chatMessage)) {
+      var room = getRoomInfo(chatMessage);
+      //房间不存在，先创建一个房间
+      room.messagelist.insert(0, chatMessage);
 
-    //判断用户是否在房间里，不在就添加进去
-    if (!isInRoom(room, chatMessage.user)) {
-      room.userList.add(chatMessage.user);
+      //判断用户是否在房间里，不在就添加进去
+      if (!isInRoom(room, chatMessage.user)) {
+        room.userList.add(chatMessage.user);
+      }
+      //判断自己是否在房间里，不在就添加进去
+      if (!isInRoom(room, AccountData.instance.me)) {
+        room.userList.add(AccountData.instance.me);
+      }
+      await Storage.saveIntList(allChatInfoKey, allChatInfo.writeToBuffer());
+    } else if (chatMessage.sendCount == 0) {
+      chatMessage.sendCount++;
+      _sendMessage(chatMessage);
     }
-    //判断自己是否在房间里，不在就添加进去
-    if (!isInRoom(room, AccountData.instance.me)) {
-      room.userList.add(AccountData.instance.me);
-    }
-    await Storage.saveIntList(allChatInfoKey, allChatInfo.writeToBuffer());
   }
 
   //loar消息分发处理
@@ -118,6 +123,15 @@ class HomeNotifier extends ChangeNotifier {
     return allChatInfo.roomList.firstWhere(
         (element) => element.id == chatMessage.targetId,
         orElse: () => _createRoomById(chatMessage.targetId));
+  }
+
+  bool isMyMessage(ChatMessage chatMessage) {
+    var isMe = allChatInfo.roomList
+        .any((element) => element.id == chatMessage.targetId);
+    if (!isMe) {
+      isMe = chatMessage.targetId.contains(AccountData.instance.me.id);
+    }
+    return isMe;
   }
 
   bool isInRoom(RoomInfo room, UserInfo userInfo) {
@@ -181,6 +195,7 @@ class HomeNotifier extends ChangeNotifier {
     message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
     message.targetId = roomId;
     message.messageType = MessageType.TEXT;
+    message.sendCount = 0;
     _addChatMessage(message);
     _sendMessage(message);
     notifyListeners();
@@ -212,6 +227,8 @@ class HomeNotifier extends ChangeNotifier {
     message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
     message.targetId = roomId;
     message.messageType = MessageType.ADD_MEMBER;
+    //邀请好友消息不需要转发
+    message.sendCount = 1;
     _addChatMessage(message);
     _sendMessage(message);
     notifyListeners();
@@ -225,6 +242,7 @@ class HomeNotifier extends ChangeNotifier {
     message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
     message.targetId = roomId;
     message.messageType = MessageType.AUDIO;
+    message.sendCount = 0;
     _addChatMessage(message);
     _sendMessage(message);
     notifyListeners();
