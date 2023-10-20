@@ -12,6 +12,7 @@ class AssetsImages {
   static final voiceVolume7 = _loadFromPath(named: 'voice_volume_7');
   static final voiceVolumeTotal = _loadFromPath(named: 'voice_volume_total');
   static final defaultImage = _loadFromPath(named: 'defaultImage');
+  static final iconMaker = _loadFromPath(named: 'iconMaker');
 
   static String getRandomAvatar(){
     return getAvatar(Random().nextInt(100)+1);

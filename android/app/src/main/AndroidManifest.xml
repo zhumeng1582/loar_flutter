@@ -26,21 +26,16 @@
     <!-- legacy for Android 11 or lower -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
-    <!-- legacy for Android 9 or lower -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
 
     <application
-        android:name="${applicationName}"
+        android:name=".MyApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="loar_flutter">
         <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="11410eb4cecfe4710758acf4abca3130" />
-
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="GgPTsWVhcdwLFHO6aeGcib3zcCOadR23" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

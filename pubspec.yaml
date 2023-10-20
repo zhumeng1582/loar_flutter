@@ -59,7 +59,13 @@ dependencies:
   # 二维码扫描
   barcode_scan2: ^4.2.4
   flutter_blue_plus: ^1.16.2
-  amap_flutter_map: ^3.0.0
+  # 百度地图
+  flutter_bmflocation: ^3.3.0
+  flutter_baidu_mapapi_map: ^3.3.1
+  flutter_baidu_mapapi_search: ^3.3.1
+#  flutter_baidu_mapapi_utils: ^3.3.1
+#  flutter_baidu_yingyan_trace: ^2.1.0
+
   permission_handler: ^10.2.0
   protobuf: ^2.1.0
   nine_grid_view: ^2.0.0

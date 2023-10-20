@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
+import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,10 +10,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'common/routers/RouteObservers.dart';
 import 'dart:io' show Platform;
 
+import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
+    show BMFMapSDK, BMF_COORD_TYPE;
+
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   initMap();
   if (Platform.isAndroid) {
-    WidgetsFlutterBinding.ensureInitialized();
     [
       Permission.location,
       Permission.storage,
@@ -24,9 +29,8 @@ void main() async {
   } else {
     runApp(const ProviderScope(child: MyApp()));
   }
-
-
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -65,5 +69,17 @@ class MyApp extends StatelessWidget {
 }
 
 void initMap() async {
+  BMFMapSDK.setAgreePrivacy(true);
 
+  if (Platform.isAndroid) {
+    await BMFAndroidVersion.initAndroidVersion();
+    // Android 目前不支持接口设置Apikey,
+    // 请在主工程的Manifest文件里设置，详细配置方法请参考官网(https://lbsyun.baidu.com/)demo
+    BMFMapSDK.setCoordType(BMF_COORD_TYPE.BD09LL);
+    Map? map = await BMFMapVersion.nativeMapVersion;
+    print('获取原生地图版本号：$map');
+  } else {
+    BMFMapSDK.setApiKeyAndCoordType(
+        'we6iOj29YBaaGjdxcrqMdXFSBXSeEG7g', BMF_COORD_TYPE.BD09LL);
+  }
 }

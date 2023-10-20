@@ -6,7 +6,7 @@ import '../common/blue_tooth.dart';
 import '../common/colors.dart';
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
-import 'map/map_page.dart';
+import 'map/baidu_map_page.dart';
 import 'me/me_page.dart';
 
 final mainProvider =
@@ -16,7 +16,7 @@ class MainNotifier extends ChangeNotifier {
   final List tabPages = [
     const HomePage(),
     const ContactsPage(),
-    MarkerAddAfterMapPage(),
+    BaiduMapPage(),
     const SosPage(),
     const MePage(),
   ]; // 列举所有 Tab 控制切换将用到的页面
