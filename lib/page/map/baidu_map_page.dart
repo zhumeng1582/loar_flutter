@@ -5,6 +5,7 @@ import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../common/account_data.dart';
 import '../../common/util/images.dart';
 
 class BaiduMapPage extends StatefulWidget {
@@ -24,9 +25,9 @@ class _BodyState extends State<BaiduMapPage> {
 
   late BMFMapController _controller;
   final LocationFlutterPlugin _myLocPlugin = LocationFlutterPlugin();
-
+  // 30.665777-104.082469
   BMFMarker marker1 = BMFMarker.icon(
-      position: BMFCoordinate(39.928617, 116.40329), icon: AssetsImages.iconMaker);
+      position: BMFCoordinate(30.665777, 104.082469), icon: AssetsImages.iconMaker);
 
 
   void _setLocOption(){
@@ -55,8 +56,11 @@ class _BodyState extends State<BaiduMapPage> {
 
       print(('获取定位-${result.latitude}-${result.longitude}'));
       setState(() async {
-        var success =  await _controller.setCenterCoordinate( BMFCoordinate(result.latitude!, result.longitude!),false);
-        print(('设置中心位置：-$success'));
+        BMFMarker me = BMFMarker.icon(
+            position: BMFCoordinate(result.latitude!, result.longitude!), icon: AssetsImages.iconMe);
+        _controller.addMarker(me);
+        // var success =  await _controller.setCenterCoordinate( BMFCoordinate(result.latitude!, result.longitude!),false);
+        // print(('设置中心位置：-$success'));
       });
     });
 
@@ -78,6 +82,7 @@ class _BodyState extends State<BaiduMapPage> {
 
   void onBMFMapCreated(BMFMapController controller) {
     _controller = controller;
+
     _controller.showUserLocation(true);
 
 
@@ -103,7 +108,7 @@ class _BodyState extends State<BaiduMapPage> {
 
   /// 设置地图0参数
   BMFMapOptions initMapOptions0() {
-    BMFCoordinate center = BMFCoordinate(39.965, 116.404);
+    BMFCoordinate center = BMFCoordinate(30.665777, 104.082469);
     BMFMapOptions mapOptions = BMFMapOptions(
         mapType: BMFMapType.Standard,
         zoomLevel: 15,

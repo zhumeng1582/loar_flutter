@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
-import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,15 +23,16 @@ void main() async {
       Permission.bluetoothConnect,
       Permission.bluetoothScan
     ].request().then((status) {
-      runApp(const ProviderScope(child: MyApp()));
+      runApp(ProviderScope(child: MyApp(entryPoint: "")));
     });
   } else {
-    runApp(const ProviderScope(child: MyApp()));
+    runApp(ProviderScope(child: MyApp(entryPoint: "")));
   }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({Key? key, required this.entryPoint}) : super(key: key) {}
+  final String entryPoint;
 
   // This widget is the root of your application.
   @override
@@ -55,13 +55,20 @@ class MyApp extends StatelessWidget {
           //   const Locale('zh', 'CH'),
           // ],
           onGenerateRoute: (RouteSettings settings) =>
-              RouteObservers.didPush(settings),
+              RouteObservers.didPush(entryPoint, settings),
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
           title: 'loar',
-          home: EasyLoading.init()(context, const LoginPage()),
+          // home: EasyLoading.init()(context, const LoginPage()),
+          builder: (context, child) {
+            child = EasyLoading.init()(context, child); // EasyLoading 初始化
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: child,
+            );
+          },
         );
       },
     );

@@ -10,5 +10,6 @@ class RouteNames{
   static const roomDetail = 'roomDetail';
   static const selectContact = 'selectContact';
   static const selectAvatar = 'selectAvatar';
+  static const offlineMap = 'offlineMap';
 
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/account_data.dart';
 import '../../common/colors.dart';
+import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
@@ -169,7 +169,7 @@ extension _Action on _LoginPageState {
         RouteNames.main,
       );
     } else {
-      EasyLoading.showToast("账号或密码不正确，请重新登陆");
+      Loading.toast("账号或密码不正确，请重新登陆");
     }
   }
 }

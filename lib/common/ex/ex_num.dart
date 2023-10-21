@@ -61,6 +61,10 @@ extension ExInt on int {
       return "未知时间:$this";
     }
   }
+  String get getMB{
+    double value = toDouble()/1000000;
+    return value.toStringAsFixed(2);
+  }
 }
 
 extension ExDouble on double {

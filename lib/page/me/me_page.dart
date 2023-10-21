@@ -60,6 +60,12 @@ class _MePageState extends ConsumerState<MePage> {
                   RouteNames.blueSearchList
               );
             }),
+            _getMeItem("离线地址管理", "", true).onTap(() {
+              Navigator.pushNamed(
+                  context,
+                  RouteNames.offlineMap
+              );
+            }),
           ],
         ).paddingHorizontal(30.w),
       ),

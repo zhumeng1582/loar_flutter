@@ -1,8 +1,4 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
@@ -11,6 +7,7 @@ import 'package:loar_flutter/common/util/images.dart';
 import '../../common/account_data.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
+import '../../common/loading.dart';
 import '../../common/proto/UserInfo.pb.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
@@ -159,7 +156,7 @@ extension _Action on _SignUpPageState {
     String password = _userPasswordController.text;
     String password2 = _userPassword2Controller.text;
     if (password != password2) {
-      EasyLoading.showToast("两次密码不一致，请重新输入");
+      Loading.toast("两次密码不一致，请重新输入");
       return;
     }
 
