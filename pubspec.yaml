@@ -71,7 +71,8 @@ dependencies:
   nine_grid_view: ^2.0.0
   flutter_localization: ^0.1.14
   scrollview_observer: ^1.16.5
-
+  azlistview: ^2.0.0
+  lpinyin: ^2.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

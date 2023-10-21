@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.16"
+  azlistview:
+    dependency: "direct main"
+    description:
+      name: azlistview
+      sha256: "93e865f11777a271b439f0d6b00799c0797e9daeec2e082a2e01373809c4b90d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   barcode_scan2:
     dependency: "direct main"
     description:
@@ -178,10 +186,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_blue_plus
-      sha256: "2901ab602d29b8103a4229b524e394900b33bbdab90a4c037fa0b51dab414adb"
+      sha256: fccf1a72e3022453719d17c91e3701a3781e1eb27a9411f6b9ec2bcc41e68dfa
       url: "https://pub.dev"
     source: hosted
-    version: "1.20.1"
+    version: "1.20.3"
   flutter_bmflocation:
     dependency: "direct main"
     description:
@@ -365,6 +373,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  lpinyin:
+    dependency: "direct main"
+    description:
+      name: lpinyin
+      sha256: "0bb843363f1f65170efd09fbdfc760c7ec34fc6354f9fcb2f89e74866a0d814a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   matcher:
     dependency: transitive
     description:
@@ -549,6 +565,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
+  scrollable_positioned_list:
+    dependency: transitive
+    description:
+      name: scrollable_positioned_list
+      sha256: "9566352ab9ba05794ee6c8864f154afba5d36c5637d0e3e32c615ba4ceb92772"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.3"
   scrollview_observer:
     dependency: "direct main"
     description:

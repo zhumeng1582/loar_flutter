@@ -7,6 +7,7 @@ import '../common/colors.dart';
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
 import 'map/baidu_map_page.dart';
+import 'map/city_list_page.dart';
 import 'map/offline_map_page.dart';
 import 'me/me_page.dart';
 
@@ -18,7 +19,7 @@ class MainNotifier extends ChangeNotifier {
     const HomePage(),
     const ContactsPage(),
     BaiduMapPage(),
-    const OfflineMapPage(),
+    CityListPage(),
     // const SosPage(),
     const MePage(),
   ]; // 列举所有 Tab 控制切换将用到的页面

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loar_flutter/common/colors.dart';
 import 'package:loar_flutter/common/ex/ex_num.dart';
 import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
@@ -187,18 +188,24 @@ extension _UI on _OfflineMapPageState {
               Text("${data.dataSize?.getMB}M")
             ],
           ).expanded(),
-          Icon(
-            Icons.download,
-            color: progress == 0.0 ? Colors.black : Colors.grey,
-            size: 50.w,
-          ).padding(all: 10.w).onTap(() => ref
-              .read(offlineMapProvider)
-              .setUpdateInfo(_offlineController, progress, data.cityID!)),
+          progress == 0.0
+              ? Icon(
+                  Icons.download,
+                  color: Colors.black,
+                  size: 50.w,
+                ).padding(all: 10.w).onTap(() => ref
+                  .read(offlineMapProvider)
+                  .setUpdateInfo(_offlineController, progress, data.cityID!))
+              : progress == 1
+                  ? Text("已下载", style: TextStyle(color: AppColors.downloaded))
+                  : Text("下载中",
+                      style: TextStyle(color: AppColors.commonPrimary))
         ],
       ),
       LinearProgressIndicator(
         value: progress,
       ),
+      Divider()
     ]);
   }
 }
