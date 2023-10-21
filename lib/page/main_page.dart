@@ -7,20 +7,17 @@ import '../common/colors.dart';
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
 import 'map/baidu_map_page.dart';
-import 'map/city_list_page.dart';
-import 'map/offline_map_page.dart';
 import 'me/me_page.dart';
 
 final mainProvider =
-ChangeNotifierProvider<MainNotifier>((ref) => MainNotifier());
+    ChangeNotifierProvider<MainNotifier>((ref) => MainNotifier());
 
 class MainNotifier extends ChangeNotifier {
   final List tabPages = [
     const HomePage(),
     const ContactsPage(),
     BaiduMapPage(),
-    CityListPage(),
-    // const SosPage(),
+    const SosPage(),
     const MePage(),
   ]; // 列举所有 Tab 控制切换将用到的页面
   int selectedIndex = 0;
@@ -36,7 +33,7 @@ class MainNotifier extends ChangeNotifier {
 
   getLocation() {
     BlueToothConnect.instance
-        .listenGps((message) =>gpsParser(String.fromCharCodes(message)));
+        .listenGps((message) => gpsParser(String.fromCharCodes(message)));
   }
 
   String text = "";
@@ -46,7 +43,7 @@ class MainNotifier extends ChangeNotifier {
       text = "";
     }
     text += value;
-    if(value.contains("*") && text.contains("GNRMC")){
+    if (value.contains("*") && text.contains("GNRMC")) {
       debugPrint("定位数据------->" + text);
     }
   }
@@ -119,9 +116,7 @@ class _MainPageState extends ConsumerState<MainPage> {
         ],
 
         // 设置当前（即被选中时）页面
-        currentIndex: ref
-            .watch(mainProvider)
-            .selectedIndex,
+        currentIndex: ref.watch(mainProvider).selectedIndex,
 
         // 当点击其中一个[items]被触发
         onTap: (int index) {
