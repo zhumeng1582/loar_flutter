@@ -1,4 +1,5 @@
-import 'package:loar_flutter/common/proto/UserInfo.pb.dart';
+import 'package:loar_flutter/common/ex/ex_userInfo.dart';
+import 'package:loar_flutter/common/proto/index.dart';
 
 
 class AccountData{
@@ -18,4 +19,15 @@ class AccountData{
   set userInfo(loginUserInfo){
     _userInfo = loginUserInfo;
   }
+
+  RoomInfo createRoom() {
+    var time = DateTime.now().millisecondsSinceEpoch;
+    var room = RoomInfo();
+    room.name = "群聊";
+    room.id = "room#$time";
+    room.creator = AccountData.instance.me;
+    room.createtime = "$time";
+    return room;
+  }
+
 }

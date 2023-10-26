@@ -6,6 +6,7 @@ import '../common/blue_tooth.dart';
 import '../common/colors.dart';
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
+import 'home/provider/home_provider.dart';
 import 'map/baidu_map_page.dart';
 import 'me/me_page.dart';
 

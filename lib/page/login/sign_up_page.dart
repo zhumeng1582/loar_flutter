@@ -8,7 +8,7 @@ import '../../common/account_data.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/loading.dart';
-import '../../common/proto/UserInfo.pb.dart';
+import 'package:loar_flutter/common/proto/index.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';

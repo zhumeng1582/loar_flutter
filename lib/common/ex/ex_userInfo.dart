@@ -11,20 +11,30 @@ extension ExUserInfo on UserInfo {
       return '$id-$id1';
     }
   }
+
+  bool get isMe {
+    return id == AccountData.instance.me.id;
+  }
 }
 
 extension ExRoom on RoomInfo {
   addUserList(List<UserInfo> list) {
     for (var element in list) {
-      if (!_containsUserInfo(element)) {
+      if (!containsUserInfo(element)) {
         userList.add(element);
       }
     }
   }
 
-  bool _containsUserInfo(UserInfo userInfo) {
+  bool containsUserInfo(UserInfo userInfo) {
     return userList.any((element) => userInfo.id == element.id);
   }
+
+  bool containsMe() {
+    return userList.any((element) => AccountData.instance.me.id == element.id);
+  }
+
+
 }
 
 extension ExAllChatInfo on AllChatInfo {

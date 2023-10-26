@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,26 +6,15 @@ import 'package:loar_flutter/common/ex/ex_userInfo.dart';
 import 'package:loar_flutter/common/ex/ex_widget.dart';
 import 'package:loar_flutter/common/account_data.dart';
 import 'package:loar_flutter/common/proto/index.dart';
-import 'package:loar_flutter/page/home/home_page.dart';
 import 'package:protobuf/protobuf.dart';
 import '../../common/routers/RouteNames.dart';
+import '../home/provider/home_provider.dart';
 
 final roomProvider =
     ChangeNotifierProvider<RoomDetailNotifier>((ref) => RoomDetailNotifier());
 
 class RoomDetailNotifier extends ChangeNotifier {
   roomDetail() {}
-
-  RoomInfo createGroup(List<UserInfo> userInfoList) {
-    var time = DateTime.now().millisecondsSinceEpoch;
-    var room = RoomInfo();
-    room.addUserList(userInfoList);
-    room.name = "群聊";
-    room.id = "room#$time";
-    room.creator = AccountData.instance.me;
-    room.createtime = "$time";
-    return room;
-  }
 }
 
 class RoomDetailPage extends ConsumerStatefulWidget {
@@ -95,14 +82,13 @@ extension _Action on _RoomDetailPageState {
 
     if (widget.roomId.isGroup) {
       room.addUserList(userInfoList);
-      ref.read(homeProvider).inviteFriend(widget.roomId, userInfoList);
+      ref.read(homeProvider).inviteFriend(room, userInfoList);
       Navigator.pop(context);
     } else {
       //将当前房间的两人拉入群聊
       userInfoList.insertAll(0, room.userList);
-
-      var newRoom = ref.read(roomProvider).createGroup(userInfoList);
-      ref.read(homeProvider).sendCreateGroup(newRoom);
+      var newRoom = AccountData.instance.createRoom();
+      ref.read(homeProvider).inviteFriend(room, userInfoList);
       Navigator.pushNamedAndRemoveUntil(
           context, RouteNames.roomPage, ModalRoute.withName(RouteNames.main),
           arguments: newRoom.id);

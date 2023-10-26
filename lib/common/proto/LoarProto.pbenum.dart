@@ -1,6 +1,6 @@
 //
 //  Generated code. Do not modify.
-//  source: UserInfo.proto
+//  source: LoarProto.proto
 //
 // @dart = 2.12
 
@@ -13,36 +13,15 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-class ConversationType extends $pb.ProtobufEnum {
-  static const ConversationType PRIVATE = ConversationType._(0, _omitEnumNames ? '' : 'PRIVATE');
-  static const ConversationType GROUP = ConversationType._(1, _omitEnumNames ? '' : 'GROUP');
-
-  static const $core.List<ConversationType> values = <ConversationType> [
-    PRIVATE,
-    GROUP,
-  ];
-
-  static final $core.Map<$core.int, ConversationType> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static ConversationType? valueOf($core.int value) => _byValue[value];
-
-  const ConversationType._($core.int v, $core.String n) : super(v, n);
-}
-
 class MessageType extends $pb.ProtobufEnum {
   static const MessageType TEXT = MessageType._(0, _omitEnumNames ? '' : 'TEXT');
-  static const MessageType AUDIO = MessageType._(1, _omitEnumNames ? '' : 'AUDIO');
-  static const MessageType IMAGE = MessageType._(2, _omitEnumNames ? '' : 'IMAGE');
-  static const MessageType MAP = MessageType._(3, _omitEnumNames ? '' : 'MAP');
-  static const MessageType FILE = MessageType._(4, _omitEnumNames ? '' : 'FILE');
-  static const MessageType ADD_MEMBER = MessageType._(5, _omitEnumNames ? '' : 'ADD_MEMBER');
+  static const MessageType MAP = MessageType._(1, _omitEnumNames ? '' : 'MAP');
+  static const MessageType NEW_USER = MessageType._(3, _omitEnumNames ? '' : 'NEW_USER');
 
   static const $core.List<MessageType> values = <MessageType> [
     TEXT,
-    AUDIO,
-    IMAGE,
     MAP,
-    FILE,
-    ADD_MEMBER,
+    NEW_USER,
   ];
 
   static final $core.Map<$core.int, MessageType> _byValue = $pb.ProtobufEnum.initByValue(values);
@@ -52,14 +31,12 @@ class MessageType extends $pb.ProtobufEnum {
 }
 
 class LoarMessageType extends $pb.ProtobufEnum {
-  static const LoarMessageType ADD_FRIEND = LoarMessageType._(0, _omitEnumNames ? '' : 'ADD_FRIEND');
-  static const LoarMessageType ADD_GROUP = LoarMessageType._(1, _omitEnumNames ? '' : 'ADD_GROUP');
-  static const LoarMessageType MESSAGE = LoarMessageType._(3, _omitEnumNames ? '' : 'MESSAGE');
+  static const LoarMessageType CHAT_MESSAGE = LoarMessageType._(0, _omitEnumNames ? '' : 'CHAT_MESSAGE');
+  static const LoarMessageType ADD_GROUP = LoarMessageType._(4, _omitEnumNames ? '' : 'ADD_GROUP');
 
   static const $core.List<LoarMessageType> values = <LoarMessageType> [
-    ADD_FRIEND,
+    CHAT_MESSAGE,
     ADD_GROUP,
-    MESSAGE,
   ];
 
   static final $core.Map<$core.int, LoarMessageType> _byValue = $pb.ProtobufEnum.initByValue(values);

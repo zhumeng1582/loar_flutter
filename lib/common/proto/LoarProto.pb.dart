@@ -1,6 +1,6 @@
 //
 //  Generated code. Do not modify.
-//  source: UserInfo.proto
+//  source: LoarProto.proto
 //
 // @dart = 2.12
 
@@ -13,9 +13,9 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'UserInfo.pbenum.dart';
+import 'LoarProto.pbenum.dart';
 
-export 'UserInfo.pbenum.dart';
+export 'LoarProto.pbenum.dart';
 
 class UserInfo extends $pb.GeneratedMessage {
   factory UserInfo({
@@ -365,61 +365,97 @@ class LoginUserInfo extends $pb.GeneratedMessage {
   void clearPassword() => clearField(2);
 }
 
-class ChatMessage extends $pb.GeneratedMessage {
-  factory ChatMessage({
-    UserInfo? user,
-    MessageType? messageType,
-    $core.int? playTimeLength,
-    $core.int? playPosition,
-    $core.bool? isPlaying,
-    $core.bool? isLoading,
-    $core.String? content,
-    $core.String? fileName,
-    $core.String? sendtime,
-    $core.String? targetId,
-    ConversationType? conversationType,
-    $core.Iterable<UserInfo>? addUser,
-    $core.int? sendCount,
+class MapMessage extends $pb.GeneratedMessage {
+  factory MapMessage({
+    $core.String? longitude,
+    $core.String? latitude,
   }) {
     final $result = create();
-    if (user != null) {
-      $result.user = user;
+    if (longitude != null) {
+      $result.longitude = longitude;
+    }
+    if (latitude != null) {
+      $result.latitude = latitude;
+    }
+    return $result;
+  }
+  MapMessage._() : super();
+  factory MapMessage.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MapMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MapMessage', createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'longitude')
+    ..aOS(2, _omitFieldNames ? '' : 'latitude')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  MapMessage clone() => MapMessage()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  MapMessage copyWith(void Function(MapMessage) updates) => super.copyWith((message) => updates(message as MapMessage)) as MapMessage;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MapMessage create() => MapMessage._();
+  MapMessage createEmptyInstance() => create();
+  static $pb.PbList<MapMessage> createRepeated() => $pb.PbList<MapMessage>();
+  @$core.pragma('dart2js:noInline')
+  static MapMessage getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MapMessage>(create);
+  static MapMessage? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get longitude => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set longitude($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLongitude() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLongitude() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get latitude => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set latitude($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasLatitude() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearLatitude() => clearField(2);
+}
+
+class ChatMessage extends $pb.GeneratedMessage {
+  factory ChatMessage({
+    $core.String? recipientId,
+    UserInfo? sender,
+    MessageType? messageType,
+    $core.String? content,
+    MapMessage? mapMessage,
+    $core.String? sendtime,
+  }) {
+    final $result = create();
+    if (recipientId != null) {
+      $result.recipientId = recipientId;
+    }
+    if (sender != null) {
+      $result.sender = sender;
     }
     if (messageType != null) {
       $result.messageType = messageType;
     }
-    if (playTimeLength != null) {
-      $result.playTimeLength = playTimeLength;
-    }
-    if (playPosition != null) {
-      $result.playPosition = playPosition;
-    }
-    if (isPlaying != null) {
-      $result.isPlaying = isPlaying;
-    }
-    if (isLoading != null) {
-      $result.isLoading = isLoading;
-    }
     if (content != null) {
       $result.content = content;
     }
-    if (fileName != null) {
-      $result.fileName = fileName;
+    if (mapMessage != null) {
+      $result.mapMessage = mapMessage;
     }
     if (sendtime != null) {
       $result.sendtime = sendtime;
-    }
-    if (targetId != null) {
-      $result.targetId = targetId;
-    }
-    if (conversationType != null) {
-      $result.conversationType = conversationType;
-    }
-    if (addUser != null) {
-      $result.addUser.addAll(addUser);
-    }
-    if (sendCount != null) {
-      $result.sendCount = sendCount;
     }
     return $result;
   }
@@ -428,19 +464,12 @@ class ChatMessage extends $pb.GeneratedMessage {
   factory ChatMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatMessage', createEmptyInstance: create)
-    ..aOM<UserInfo>(1, _omitFieldNames ? '' : 'user', subBuilder: UserInfo.create)
-    ..e<MessageType>(2, _omitFieldNames ? '' : 'messageType', $pb.PbFieldType.OE, protoName: 'messageType', defaultOrMaker: MessageType.TEXT, valueOf: MessageType.valueOf, enumValues: MessageType.values)
-    ..a<$core.int>(3, _omitFieldNames ? '' : 'playTimeLength', $pb.PbFieldType.O3, protoName: 'playTimeLength')
-    ..a<$core.int>(4, _omitFieldNames ? '' : 'playPosition', $pb.PbFieldType.O3, protoName: 'playPosition')
-    ..aOB(5, _omitFieldNames ? '' : 'isPlaying', protoName: 'isPlaying')
-    ..aOB(6, _omitFieldNames ? '' : 'isLoading', protoName: 'isLoading')
-    ..aOS(7, _omitFieldNames ? '' : 'content')
-    ..aOS(8, _omitFieldNames ? '' : 'fileName', protoName: 'fileName')
-    ..aOS(9, _omitFieldNames ? '' : 'sendtime')
-    ..aOS(10, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
-    ..e<ConversationType>(11, _omitFieldNames ? '' : 'conversationType', $pb.PbFieldType.OE, protoName: 'conversationType', defaultOrMaker: ConversationType.PRIVATE, valueOf: ConversationType.valueOf, enumValues: ConversationType.values)
-    ..pc<UserInfo>(12, _omitFieldNames ? '' : 'addUser', $pb.PbFieldType.PM, protoName: 'addUser', subBuilder: UserInfo.create)
-    ..a<$core.int>(13, _omitFieldNames ? '' : 'sendCount', $pb.PbFieldType.O3, protoName: 'sendCount')
+    ..aOS(1, _omitFieldNames ? '' : 'recipientId', protoName: 'recipientId')
+    ..aOM<UserInfo>(3, _omitFieldNames ? '' : 'sender', subBuilder: UserInfo.create)
+    ..e<MessageType>(4, _omitFieldNames ? '' : 'messageType', $pb.PbFieldType.OE, protoName: 'messageType', defaultOrMaker: MessageType.TEXT, valueOf: MessageType.valueOf, enumValues: MessageType.values)
+    ..aOS(5, _omitFieldNames ? '' : 'content')
+    ..aOM<MapMessage>(7, _omitFieldNames ? '' : 'mapMessage', protoName: 'mapMessage', subBuilder: MapMessage.create)
+    ..aOS(11, _omitFieldNames ? '' : 'sendtime')
     ..hasRequiredFields = false
   ;
 
@@ -466,197 +495,86 @@ class ChatMessage extends $pb.GeneratedMessage {
   static ChatMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
-  UserInfo get user => $_getN(0);
+  $core.String get recipientId => $_getSZ(0);
   @$pb.TagNumber(1)
-  set user(UserInfo v) { setField(1, v); }
+  set recipientId($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasUser() => $_has(0);
+  $core.bool hasRecipientId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearUser() => clearField(1);
-  @$pb.TagNumber(1)
-  UserInfo ensureUser() => $_ensure(0);
+  void clearRecipientId() => clearField(1);
 
-  @$pb.TagNumber(2)
-  MessageType get messageType => $_getN(1);
-  @$pb.TagNumber(2)
-  set messageType(MessageType v) { setField(2, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasMessageType() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearMessageType() => clearField(2);
-
+  /// ConversationType conversationType = 2;//群聊，私聊
   @$pb.TagNumber(3)
-  $core.int get playTimeLength => $_getIZ(2);
+  UserInfo get sender => $_getN(1);
   @$pb.TagNumber(3)
-  set playTimeLength($core.int v) { $_setSignedInt32(2, v); }
+  set sender(UserInfo v) { setField(3, v); }
   @$pb.TagNumber(3)
-  $core.bool hasPlayTimeLength() => $_has(2);
+  $core.bool hasSender() => $_has(1);
   @$pb.TagNumber(3)
-  void clearPlayTimeLength() => clearField(3);
+  void clearSender() => clearField(3);
+  @$pb.TagNumber(3)
+  UserInfo ensureSender() => $_ensure(1);
 
   @$pb.TagNumber(4)
-  $core.int get playPosition => $_getIZ(3);
+  MessageType get messageType => $_getN(2);
   @$pb.TagNumber(4)
-  set playPosition($core.int v) { $_setSignedInt32(3, v); }
+  set messageType(MessageType v) { setField(4, v); }
   @$pb.TagNumber(4)
-  $core.bool hasPlayPosition() => $_has(3);
+  $core.bool hasMessageType() => $_has(2);
   @$pb.TagNumber(4)
-  void clearPlayPosition() => clearField(4);
+  void clearMessageType() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.bool get isPlaying => $_getBF(4);
+  $core.String get content => $_getSZ(3);
   @$pb.TagNumber(5)
-  set isPlaying($core.bool v) { $_setBool(4, v); }
+  set content($core.String v) { $_setString(3, v); }
   @$pb.TagNumber(5)
-  $core.bool hasIsPlaying() => $_has(4);
+  $core.bool hasContent() => $_has(3);
   @$pb.TagNumber(5)
-  void clearIsPlaying() => clearField(5);
+  void clearContent() => clearField(5);
 
-  @$pb.TagNumber(6)
-  $core.bool get isLoading => $_getBF(5);
-  @$pb.TagNumber(6)
-  set isLoading($core.bool v) { $_setBool(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasIsLoading() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearIsLoading() => clearField(6);
-
+  /// FileMessage FileMessage = 6;//文件消息
   @$pb.TagNumber(7)
-  $core.String get content => $_getSZ(6);
+  MapMessage get mapMessage => $_getN(4);
   @$pb.TagNumber(7)
-  set content($core.String v) { $_setString(6, v); }
+  set mapMessage(MapMessage v) { setField(7, v); }
   @$pb.TagNumber(7)
-  $core.bool hasContent() => $_has(6);
+  $core.bool hasMapMessage() => $_has(4);
   @$pb.TagNumber(7)
-  void clearContent() => clearField(7);
-
-  @$pb.TagNumber(8)
-  $core.String get fileName => $_getSZ(7);
-  @$pb.TagNumber(8)
-  set fileName($core.String v) { $_setString(7, v); }
-  @$pb.TagNumber(8)
-  $core.bool hasFileName() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearFileName() => clearField(8);
-
-  @$pb.TagNumber(9)
-  $core.String get sendtime => $_getSZ(8);
-  @$pb.TagNumber(9)
-  set sendtime($core.String v) { $_setString(8, v); }
-  @$pb.TagNumber(9)
-  $core.bool hasSendtime() => $_has(8);
-  @$pb.TagNumber(9)
-  void clearSendtime() => clearField(9);
-
-  /// 目标ID,单聊是为用户id,群聊时为群id
-  @$pb.TagNumber(10)
-  $core.String get targetId => $_getSZ(9);
-  @$pb.TagNumber(10)
-  set targetId($core.String v) { $_setString(9, v); }
-  @$pb.TagNumber(10)
-  $core.bool hasTargetId() => $_has(9);
-  @$pb.TagNumber(10)
-  void clearTargetId() => clearField(10);
+  void clearMapMessage() => clearField(7);
+  @$pb.TagNumber(7)
+  MapMessage ensureMapMessage() => $_ensure(4);
 
   @$pb.TagNumber(11)
-  ConversationType get conversationType => $_getN(10);
+  $core.String get sendtime => $_getSZ(5);
   @$pb.TagNumber(11)
-  set conversationType(ConversationType v) { setField(11, v); }
+  set sendtime($core.String v) { $_setString(5, v); }
   @$pb.TagNumber(11)
-  $core.bool hasConversationType() => $_has(10);
+  $core.bool hasSendtime() => $_has(5);
   @$pb.TagNumber(11)
-  void clearConversationType() => clearField(11);
-
-  @$pb.TagNumber(12)
-  $core.List<UserInfo> get addUser => $_getList(11);
-
-  @$pb.TagNumber(13)
-  $core.int get sendCount => $_getIZ(12);
-  @$pb.TagNumber(13)
-  set sendCount($core.int v) { $_setSignedInt32(12, v); }
-  @$pb.TagNumber(13)
-  $core.bool hasSendCount() => $_has(12);
-  @$pb.TagNumber(13)
-  void clearSendCount() => clearField(13);
+  void clearSendtime() => clearField(11);
 }
 
-class AddFriendMessage extends $pb.GeneratedMessage {
-  factory AddFriendMessage({
-    $core.String? targetId,
-    UserInfo? user,
-  }) {
-    final $result = create();
-    if (targetId != null) {
-      $result.targetId = targetId;
-    }
-    if (user != null) {
-      $result.user = user;
-    }
-    return $result;
-  }
-  AddFriendMessage._() : super();
-  factory AddFriendMessage.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory AddFriendMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AddFriendMessage', createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
-    ..aOM<UserInfo>(2, _omitFieldNames ? '' : 'user', subBuilder: UserInfo.create)
-    ..hasRequiredFields = false
-  ;
-
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  AddFriendMessage clone() => AddFriendMessage()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  AddFriendMessage copyWith(void Function(AddFriendMessage) updates) => super.copyWith((message) => updates(message as AddFriendMessage)) as AddFriendMessage;
-
-  $pb.BuilderInfo get info_ => _i;
-
-  @$core.pragma('dart2js:noInline')
-  static AddFriendMessage create() => AddFriendMessage._();
-  AddFriendMessage createEmptyInstance() => create();
-  static $pb.PbList<AddFriendMessage> createRepeated() => $pb.PbList<AddFriendMessage>();
-  @$core.pragma('dart2js:noInline')
-  static AddFriendMessage getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AddFriendMessage>(create);
-  static AddFriendMessage? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.String get targetId => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set targetId($core.String v) { $_setString(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasTargetId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearTargetId() => clearField(1);
-
-  @$pb.TagNumber(2)
-  UserInfo get user => $_getN(1);
-  @$pb.TagNumber(2)
-  set user(UserInfo v) { setField(2, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasUser() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearUser() => clearField(2);
-  @$pb.TagNumber(2)
-  UserInfo ensureUser() => $_ensure(1);
-}
-
+///
+/// message AddFriendMessage{
+/// string recipientId = 1;
+/// UserInfo sender = 2;
+/// }
 class AddGroupMessage extends $pb.GeneratedMessage {
   factory AddGroupMessage({
-    $core.String? targetId,
+    $core.Iterable<$core.String>? recipientIds,
     RoomInfo? room,
+    UserInfo? sender,
   }) {
     final $result = create();
-    if (targetId != null) {
-      $result.targetId = targetId;
+    if (recipientIds != null) {
+      $result.recipientIds.addAll(recipientIds);
     }
     if (room != null) {
       $result.room = room;
+    }
+    if (sender != null) {
+      $result.sender = sender;
     }
     return $result;
   }
@@ -665,8 +583,9 @@ class AddGroupMessage extends $pb.GeneratedMessage {
   factory AddGroupMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AddGroupMessage', createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'targetId', protoName: 'targetId')
+    ..pPS(1, _omitFieldNames ? '' : 'recipientIds', protoName: 'recipientIds')
     ..aOM<RoomInfo>(2, _omitFieldNames ? '' : 'room', subBuilder: RoomInfo.create)
+    ..aOM<UserInfo>(3, _omitFieldNames ? '' : 'sender', subBuilder: UserInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -692,13 +611,7 @@ class AddGroupMessage extends $pb.GeneratedMessage {
   static AddGroupMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get targetId => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set targetId($core.String v) { $_setString(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasTargetId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearTargetId() => clearField(1);
+  $core.List<$core.String> get recipientIds => $_getList(0);
 
   @$pb.TagNumber(2)
   RoomInfo get room => $_getN(1);
@@ -710,14 +623,25 @@ class AddGroupMessage extends $pb.GeneratedMessage {
   void clearRoom() => clearField(2);
   @$pb.TagNumber(2)
   RoomInfo ensureRoom() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  UserInfo get sender => $_getN(2);
+  @$pb.TagNumber(3)
+  set sender(UserInfo v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasSender() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearSender() => clearField(3);
+  @$pb.TagNumber(3)
+  UserInfo ensureSender() => $_ensure(2);
 }
 
 class LoarMessage extends $pb.GeneratedMessage {
   factory LoarMessage({
     LoarMessageType? loarMessageType,
     ChatMessage? message,
-    AddFriendMessage? addFriendMessage,
     AddGroupMessage? addGroupMessage,
+    $core.int? sendCount,
   }) {
     final $result = create();
     if (loarMessageType != null) {
@@ -726,11 +650,11 @@ class LoarMessage extends $pb.GeneratedMessage {
     if (message != null) {
       $result.message = message;
     }
-    if (addFriendMessage != null) {
-      $result.addFriendMessage = addFriendMessage;
-    }
     if (addGroupMessage != null) {
       $result.addGroupMessage = addGroupMessage;
+    }
+    if (sendCount != null) {
+      $result.sendCount = sendCount;
     }
     return $result;
   }
@@ -739,10 +663,10 @@ class LoarMessage extends $pb.GeneratedMessage {
   factory LoarMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'LoarMessage', createEmptyInstance: create)
-    ..e<LoarMessageType>(1, _omitFieldNames ? '' : 'loarMessageType', $pb.PbFieldType.OE, protoName: 'loarMessageType', defaultOrMaker: LoarMessageType.ADD_FRIEND, valueOf: LoarMessageType.valueOf, enumValues: LoarMessageType.values)
+    ..e<LoarMessageType>(1, _omitFieldNames ? '' : 'loarMessageType', $pb.PbFieldType.OE, protoName: 'loarMessageType', defaultOrMaker: LoarMessageType.CHAT_MESSAGE, valueOf: LoarMessageType.valueOf, enumValues: LoarMessageType.values)
     ..aOM<ChatMessage>(2, _omitFieldNames ? '' : 'message', subBuilder: ChatMessage.create)
-    ..aOM<AddFriendMessage>(3, _omitFieldNames ? '' : 'addFriendMessage', protoName: 'addFriendMessage', subBuilder: AddFriendMessage.create)
-    ..aOM<AddGroupMessage>(4, _omitFieldNames ? '' : 'addGroupMessage', protoName: 'addGroupMessage', subBuilder: AddGroupMessage.create)
+    ..aOM<AddGroupMessage>(5, _omitFieldNames ? '' : 'addGroupMessage', protoName: 'addGroupMessage', subBuilder: AddGroupMessage.create)
+    ..a<$core.int>(12, _omitFieldNames ? '' : 'sendCount', $pb.PbFieldType.O3, protoName: 'sendCount')
     ..hasRequiredFields = false
   ;
 
@@ -787,27 +711,27 @@ class LoarMessage extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   ChatMessage ensureMessage() => $_ensure(1);
 
-  @$pb.TagNumber(3)
-  AddFriendMessage get addFriendMessage => $_getN(2);
-  @$pb.TagNumber(3)
-  set addFriendMessage(AddFriendMessage v) { setField(3, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasAddFriendMessage() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearAddFriendMessage() => clearField(3);
-  @$pb.TagNumber(3)
-  AddFriendMessage ensureAddFriendMessage() => $_ensure(2);
+  /// AddFriendMessage addFriendMessage = 3;
+  /// AgreenAddFriendMessage agreenAddFriendMessage = 4;
+  @$pb.TagNumber(5)
+  AddGroupMessage get addGroupMessage => $_getN(2);
+  @$pb.TagNumber(5)
+  set addGroupMessage(AddGroupMessage v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasAddGroupMessage() => $_has(2);
+  @$pb.TagNumber(5)
+  void clearAddGroupMessage() => clearField(5);
+  @$pb.TagNumber(5)
+  AddGroupMessage ensureAddGroupMessage() => $_ensure(2);
 
-  @$pb.TagNumber(4)
-  AddGroupMessage get addGroupMessage => $_getN(3);
-  @$pb.TagNumber(4)
-  set addGroupMessage(AddGroupMessage v) { setField(4, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasAddGroupMessage() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearAddGroupMessage() => clearField(4);
-  @$pb.TagNumber(4)
-  AddGroupMessage ensureAddGroupMessage() => $_ensure(3);
+  @$pb.TagNumber(12)
+  $core.int get sendCount => $_getIZ(3);
+  @$pb.TagNumber(12)
+  set sendCount($core.int v) { $_setSignedInt32(3, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasSendCount() => $_has(3);
+  @$pb.TagNumber(12)
+  void clearSendCount() => clearField(12);
 }
 
 class QrCodeData extends $pb.GeneratedMessage {

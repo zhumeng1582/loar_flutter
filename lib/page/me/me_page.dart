@@ -8,7 +8,7 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/account_data.dart';
-import '../../common/proto/UserInfo.pb.dart';
+import 'package:loar_flutter/common/proto/index.dart';
 import '../../common/routers/RouteNames.dart';
 
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());

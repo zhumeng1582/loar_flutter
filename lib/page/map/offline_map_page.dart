@@ -219,7 +219,7 @@ extension _UI on _OfflineMapPageState {
       color: Color(0xFFF3F4F5),
       alignment: Alignment.centerLeft,
       child: Text(
-        '$tag',
+        tag,
         softWrap: false,
         style: TextStyle(
           fontSize: 14.0,

@@ -1,283 +1,18 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:math';
-
-import 'package:barcode_scan2/model/android_options.dart';
-import 'package:barcode_scan2/model/scan_options.dart';
-import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loar_flutter/common/ex/ex_num.dart';
 import 'package:loar_flutter/common/ex/ex_string.dart';
 import 'package:loar_flutter/common/account_data.dart';
-import 'package:loar_flutter/common/ex/ex_userInfo.dart';
 import 'package:loar_flutter/common/proto/index.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
+import 'package:loar_flutter/page/home/provider/home_provider.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
-import 'package:protobuf/protobuf.dart';
 
-import '../../common/blue_tooth.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
-import '../../common/util/storage.dart';
-
-final homeProvider =
-    ChangeNotifierProvider<HomeNotifier>((ref) => HomeNotifier());
-
-class HomeNotifier extends ChangeNotifier {
-  String get allChatInfoKey => "AllChatInfo${AccountData.instance.me.id}";
-
-  AllChatInfo allChatInfo = AllChatInfo();
-
-  init() async {
-    var value = await Storage.getIntList(allChatInfoKey);
-    allChatInfo = AllChatInfo.fromBuffer(value);
-    notifyListeners();
-
-    mockData();
-
-    BlueToothConnect.instance
-        .listenLoar((text) => {getRemoteMessage(LoarMessage.fromBuffer(text))});
-  }
-
-  UserInfo _createNewUser(String id, String name) {
-    var newUser = AccountData.instance.me.deepCopy();
-    newUser.id = id;
-    newUser.account = id;
-    newUser.name = name;
-    newUser.icon = AssetsImages.getRandomAvatar();
-    allChatInfo.userList.add(newUser);
-    return newUser;
-  }
-
-  void mockData() {
-    if (allChatInfo.userList.isEmpty) {
-      _createNewUser("user#000001", "张三");
-      _createNewUser("user#000002", "李四");
-      _createNewUser("user#000003", "王五");
-      _createNewUser("user#000004", "赵六");
-      _createNewUser("user#000005", "唐七");
-    }
-
-    const period = Duration(seconds: 3);
-    Timer.periodic(period, (timer) {
-      if (allChatInfo.roomList.isEmpty) {
-        return;
-      }
-
-      var room =
-          allChatInfo.roomList[Random().nextInt(allChatInfo.roomList.length)];
-
-      var loarMessage = LoarMessage();
-      loarMessage.loarMessageType = LoarMessageType.MESSAGE;
-      var chatMessage = ChatMessage();
-      chatMessage.messageType = MessageType.TEXT;
-
-      UserInfo newUser = room.userList[Random().nextInt(room.userList.length)];
-
-      chatMessage.user = newUser;
-      chatMessage.content =
-          "${newUser.name}发送消息，当前时间:${DateTime.now().millisecondsSinceEpoch.toHourMinSecondDate}";
-      chatMessage.targetId = room.id;
-      chatMessage.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
-      loarMessage.message = chatMessage;
-
-      getRemoteMessage(loarMessage);
-      notifyListeners();
-    });
-  }
-
-  _addFriend(AddFriendMessage addFriendMessage) {
-    if (addFriendMessage.targetId == AccountData.instance.me.id) {
-      allChatInfo.userList.add(addFriendMessage.user);
-      notifyListeners();
-    }
-  }
-
-  _addGroup(AddGroupMessage addGroupMessage) {
-    var isMeMessage = addGroupMessage.room.userList
-        .any((element) => AccountData.instance.me.id == element.id);
-    if (isMeMessage) {
-      allChatInfo.addGroup([addGroupMessage.room]);
-      notifyListeners();
-    }
-  }
-
-  _addChatMessage(ChatMessage chatMessage) async {
-    var room = getRoomInfo(chatMessage);
-
-    //房间不存在，先创建一个房间
-    room.messagelist.insert(0, chatMessage);
-
-    //判断用户是否在房间里，不在就添加进去
-    if (!isInRoom(room, chatMessage.user)) {
-      room.userList.add(chatMessage.user);
-    }
-    //判断自己是否在房间里，不在就添加进去
-    if (!isInRoom(room, AccountData.instance.me)) {
-      room.userList.add(AccountData.instance.me);
-    }
-    await Storage.saveIntList(allChatInfoKey, allChatInfo.writeToBuffer());
-  }
-
-  //loar消息分发处理
-  getRemoteMessage(LoarMessage loarMessage) {
-    switch (loarMessage.loarMessageType) {
-      case LoarMessageType.ADD_FRIEND:
-        _addFriend(loarMessage.addFriendMessage);
-        break;
-      case LoarMessageType.ADD_GROUP:
-        _addGroup(loarMessage.addGroupMessage);
-        break;
-      case LoarMessageType.MESSAGE:
-        if (isMyMessage(loarMessage.message)) {
-          _addChatMessage(loarMessage.message);
-        } else if (loarMessage.message.sendCount == 0) {
-          loarMessage.message.sendCount++;
-          _sendMessage(loarMessage.message);
-        }
-
-        break;
-    }
-  }
-
-  RoomInfo getRoomInfo(ChatMessage chatMessage) {
-    return allChatInfo.roomList
-        .firstWhere((element) => element.id == chatMessage.targetId);
-  }
-
-  bool isMyMessage(ChatMessage chatMessage) {
-    var isMe = allChatInfo.roomList
-        .any((element) => element.id == chatMessage.targetId);
-    if (!isMe) {
-      isMe = chatMessage.targetId.contains(AccountData.instance.me.id);
-    }
-    return isMe;
-  }
-
-  bool isInRoom(RoomInfo room, UserInfo userInfo) {
-    return room.userList.any((element) => element.id == userInfo.id);
-  }
-
-  String getRoomTitle(String id) {
-    RoomInfo roomInfo = allChatInfo.getRoomById(id);
-    if (roomInfo.userList.length < 3) {
-      return roomInfo.name;
-    } else {
-      return "${roomInfo.name}(${roomInfo.userList.length})";
-    }
-  }
-
-  //通过loar发送消息
-  _sendMessage(ChatMessage message) {
-    LoarMessage loarMessage = LoarMessage();
-    loarMessage.loarMessageType = LoarMessageType.MESSAGE;
-    loarMessage.message = message;
-    BlueToothConnect.instance.writeLoraMessage(loarMessage);
-  }
-
-  addTextMessage(String roomId, String text) {
-    var message = ChatMessage();
-    message.user = AccountData.instance.me;
-    message.content = text;
-    message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
-    message.targetId = roomId;
-    message.messageType = MessageType.TEXT;
-    message.sendCount = 0;
-    _addChatMessage(message);
-    _sendMessage(message);
-    notifyListeners();
-  }
-
-  sendCreateGroup(RoomInfo room) {
-    AddGroupMessage addGroupMessage = AddGroupMessage();
-    addGroupMessage.room = room;
-    LoarMessage loarMessage = LoarMessage();
-    loarMessage.loarMessageType = LoarMessageType.ADD_GROUP;
-    loarMessage.addGroupMessage = addGroupMessage;
-    BlueToothConnect.instance.writeLoraMessage(loarMessage);
-    allChatInfo.addGroup([room]);
-  }
-
-  inviteFriend(String roomId, List<UserInfo> userInfoList) {
-    var message = ChatMessage();
-    message.user = AccountData.instance.me;
-    message.addUser.addAll(userInfoList);
-    message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
-    message.targetId = roomId;
-    message.messageType = MessageType.ADD_MEMBER;
-    //邀请好友消息不需要转发
-    message.sendCount = 1;
-    _addChatMessage(message);
-    _sendMessage(message);
-    notifyListeners();
-  }
-
-  addAudioMessage(String roomId, String audioFileName, int audioTimeLength) {
-    var message = ChatMessage();
-    message.user = AccountData.instance.me;
-    message.fileName = audioFileName;
-    message.playTimeLength = audioTimeLength;
-    message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
-    message.targetId = roomId;
-    message.messageType = MessageType.AUDIO;
-    message.sendCount = 0;
-    _addChatMessage(message);
-    _sendMessage(message);
-    notifyListeners();
-  }
-
-  scan() async {
-    var options = const ScanOptions(
-        android: AndroidOptions(aspectTolerance: 0.5, useAutoFocus: true),
-        //(默认已配)添加Android自动对焦
-        autoEnableFlash: false,
-        //true打开闪光灯, false关闭闪光灯
-        strings: {
-          'cancel': '退出',
-          'flash_on': '开闪光灯',
-          'flash_off': '关闪光灯'
-        } //标题栏添加闪光灯按钮、退出按钮
-        );
-    var result = await BarcodeScanner.scan(options: options);
-    var qrCodeData = QrCodeData.fromBuffer(base64Decode(result.rawContent));
-
-    if (qrCodeData.qrCodeType == QrCodeType.QR_USER) {
-      allChatInfo.addUserInfo([qrCodeData.user]);
-
-      var addFriendMessage = AddFriendMessage()
-        ..targetId = qrCodeData.user.id
-        ..user = AccountData.instance.me;
-
-      var loarMessage = LoarMessage()
-        ..loarMessageType = LoarMessageType.ADD_FRIEND
-        ..addFriendMessage = addFriendMessage;
-
-      BlueToothConnect.instance.writeLoraMessage(loarMessage);
-    } else {
-      allChatInfo.addGroup([qrCodeData.room]);
-      var message = ChatMessage();
-      //扫码加群，模拟对方发送消息
-      message.user = qrCodeData.user;
-      message.addUser.addAll([AccountData.instance.me]);
-      message.sendtime = "${DateTime.now().millisecondsSinceEpoch}";
-      message.targetId = qrCodeData.room.id;
-      message.messageType = MessageType.ADD_MEMBER;
-      //邀请好友消息不需要转发
-      message.sendCount = 1;
-      _addChatMessage(message);
-      _sendMessage(message);
-      notifyListeners();
-    }
-
-    await Storage.saveIntList(allChatInfoKey, allChatInfo.writeToBuffer());
-    notifyListeners();
-  }
-}
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -339,15 +74,19 @@ extension _Action on _HomePageState {
       return "";
     }
     var first = list.first;
-    if (first.messageType == MessageType.TEXT) {
-      return first.content;
-    } else if (first.messageType == MessageType.ADD_MEMBER) {
-      return "${first.addUser.last.name}加入群聊";
-    } else if (first.messageType == MessageType.AUDIO) {
-      return "[语音]";
-    } else {
-      return "[收到新消息]";
+    var message = "[收到新消息]";
+    switch (first.messageType) {
+      case MessageType.TEXT:
+        message = first.content;
+        break;
+      case MessageType.NEW_USER:
+        message = "${first.sender.name}加入群聊";
+        break;
+      case MessageType.MAP:
+        message = "${first.sender.name}发送了位置";
+        break;
     }
+    return message;
   }
 
   _getLastTime(List<ChatMessage> list) {

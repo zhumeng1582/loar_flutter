@@ -6,6 +6,7 @@ import '../../common/colors.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/message_bar.dart';
 import '../../widget/voice_widget.dart';
+import '../home/provider/home_provider.dart';
 
 final roomProvider =
     ChangeNotifierProvider<RoomNotifier>((ref) => RoomNotifier());
@@ -69,18 +70,6 @@ extension _Action on _RoomPageState {
     ref.read(homeProvider).addTextMessage(widget.roomId, message);
   }
 
-  startRecord() {
-    print("开始录制");
-  }
-
-  stopRecord(String path, double audioTimeLength) {
-    print("结束束录制");
-    print("音频文件位置" + path);
-    print("音频录制时长" + audioTimeLength.toString());
-    ref
-        .read(homeProvider)
-        .addAudioMessage(widget.roomId, path, audioTimeLength.toInt());
-  }
 }
 
 extension _UI on _RoomPageState {
@@ -96,12 +85,6 @@ extension _UI on _RoomPageState {
             size: 24,
           ),
           onTap: () {},
-        ),
-        VoiceWidget(
-          startRecord: startRecord,
-          stopRecord: stopRecord,
-          // 加入定制化Container的相关属性
-          height: 40.0,
         ),
       ],
     );

@@ -4,14 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/account_data.dart';
 import 'package:loar_flutter/common/ex/ex_userInfo.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-import 'package:loar_flutter/page/home/home_page.dart';
-import 'package:nine_grid_view/nine_grid_view.dart';
 
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/proto/index.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
+import '../home/provider/home_provider.dart';
 
 class ContactsPage extends ConsumerStatefulWidget {
   const ContactsPage({super.key});
@@ -87,12 +86,12 @@ extension _UI on _ContactsPageState {
 
 extension _Action on _ContactsPageState {
   _room(UserInfo data) {
-    bool isRoomCreate = ref
+    bool isRoomExist = ref
         .read(homeProvider)
         .allChatInfo
         .roomList
         .any((element) => element.id == data.getRoomId);
-    if (!isRoomCreate) {
+    if (!isRoomExist) {
       var roomInfo = RoomInfo();
       roomInfo.id = data.getRoomId;
       roomInfo.userList.add(AccountData.instance.me);
