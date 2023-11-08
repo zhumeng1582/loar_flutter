@@ -100,7 +100,7 @@ extension _UI on _UserInfoPageState {
       children: [
         ClipOval(
           child: ImageWidget(
-            url: widget.userInfo.avatarUrl ?? AssetsImages.getRandomAvatar(),
+            url: widget.userInfo.avatarUrl ?? AssetsImages.getDefaultAvatar(),
             width: 100.w,
             height: 100.h,
             type: ImageWidgetType.asset,

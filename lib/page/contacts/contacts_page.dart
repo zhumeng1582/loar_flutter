@@ -63,7 +63,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
 extension _UI on _ContactsPageState {
   Widget _getIcon(EMUserInfo data) {
     return ImageWidget(
-      url: data.avatarUrl ?? AssetsImages.getRandomAvatar(),
+      url: data.avatarUrl ?? AssetsImages.getDefaultAvatar(),
       width: 80.w,
       height: 80.h,
       type: ImageWidgetType.asset,

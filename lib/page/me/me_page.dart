@@ -73,7 +73,7 @@ extension _UI on _MePageState {
         ClipOval(
           child: ImageWidget(
             url: AccountData.instance.me.avatarUrl ??
-                AssetsImages.getRandomAvatar(),
+                AssetsImages.getDefaultAvatar(),
             width: 100.w,
             height: 100.h,
             type: ImageWidgetType.asset,

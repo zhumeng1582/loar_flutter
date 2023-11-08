@@ -72,7 +72,7 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
 extension _UI on _ContactsSelectPageState {
   Widget _getIcon(EMUserInfo data) {
     return ImageWidget(
-      url: data.avatarUrl ?? AssetsImages.getRandomAvatar(),
+      url: data.avatarUrl ?? AssetsImages.getDefaultAvatar(),
       width: 40.w,
       height: 40.h,
       type: ImageWidgetType.asset,

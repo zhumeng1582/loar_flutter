@@ -74,8 +74,7 @@ extension _Action on _RoomPageState {
         arguments: {"userInfo": userInfo},
       );
     } else {
-      var chatRoom = await EMClient.getInstance.chatRoomManager
-          .getChatRoomWithId(widget.conversationBean.id);
+      var chatRoom = await ref.read(imProvider).getChatRoomWithId(widget.conversationBean.id);
 
       Navigator.pushNamed(
         context,

@@ -19,6 +19,9 @@ class AssetsImages {
   static String getRandomAvatar(){
     return getAvatar(Random().nextInt(100)+1);
   }
+  static String getDefaultAvatar(){
+    return getAvatar(1);
+  }
   static String getAvatar(int number){
     return _loadFromPath(named:"avatar$number");
   }

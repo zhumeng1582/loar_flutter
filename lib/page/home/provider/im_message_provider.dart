@@ -15,7 +15,7 @@ final imProvider = ChangeNotifierProvider<ImNotifier>((ref) => ImNotifier());
 class ImNotifier extends ChangeNotifier {
   List<ConversationBean> conversationsList = [];
   Map<String, EMUserInfo> contacts = {};
-  List<EMChatRoom> chatRoomList = [];
+  Map<String, EMUserInfo> allUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
 
   addMessageToMap(String conversationId, EMMessage message) {
@@ -24,11 +24,19 @@ class ImNotifier extends ChangeNotifier {
     messageMap[conversationId] = messageList;
   }
 
-  String? getAvatarUrl(String? userId) {
-    if (AccountData.instance.me.userId == userId) {
-      return AccountData.instance.me.avatarUrl;
+  String getAvatarUrl(String? userId) {
+    if (allUsers.containsKey(userId)) {
+      return allUsers[userId]?.avatarUrl ?? AssetsImages.getRandomAvatar();
     }
-    return contacts[userId]?.avatarUrl;
+    if (contacts.containsKey(userId)) {
+      return contacts[userId]?.avatarUrl ?? AssetsImages.getRandomAvatar();
+    }
+
+    if (AccountData.instance.me.userId == userId) {
+      return AccountData.instance.me.avatarUrl ??
+          AssetsImages.getRandomAvatar();
+    }
+    return AssetsImages.getRandomAvatar();
   }
 
   void addImListener() {
@@ -77,6 +85,13 @@ class ImNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
+  Future<EMChatRoom?> getChatRoomWithId(String roomId) async {
+    try {
+      return await EMClient.getInstance.chatRoomManager
+          .getChatRoomWithId(roomId);
+    } on EMError catch (e) {}
+  }
+
   init() async {
     try {
       AccountData.instance.getUserInfo();
@@ -85,13 +100,14 @@ class ImNotifier extends ChangeNotifier {
           await EMClient.getInstance.chatManager.loadAllConversations();
 
       List<String> contacts =
-          await EMClient.getInstance.contactManager.getAllContactsFromDB();
+          await EMClient.getInstance.contactManager.getAllContactsFromServer();
 
       this.contacts = await EMClient.getInstance.userInfoManager
           .fetchUserInfoById(contacts);
-      var roomResult = await EMClient.getInstance.chatRoomManager
-          .fetchPublicChatRoomsFromServer();
-      chatRoomList = roomResult.data ?? [];
+      this.contacts.forEach((key, value) {
+        allUsers[key] = value;
+      });
+
       getConversationList(result);
       notifyListeners();
     } on EMError catch (e) {}
@@ -143,28 +159,35 @@ class ImNotifier extends ChangeNotifier {
       var lastMessage = await value.lastReceivedMessage();
       if (lastMessage != null) {
         if (lastMessage.chatType == ChatType.Chat) {
-          var user = await EMClient.getInstance.userInfoManager
+          var roomUserMap = await EMClient.getInstance.userInfoManager
               .fetchUserInfoById([lastMessage.from!]);
+          roomUserMap.forEach((key, value) {
+            allUsers[key] = value;
+          });
           conversationsList.add(ConversationBean.createByConversation(
               value,
               "${lastMessage.localTime}",
-              user[lastMessage.from]?.nickName ?? "匿名",
+              roomUserMap[lastMessage.from]?.nickName ?? "匿名",
               getMessageText(lastMessage), [
-            user[lastMessage.from]?.avatarUrl ?? AssetsImages.getRandomAvatar()
+            roomUserMap[lastMessage.from]?.avatarUrl ?? AssetsImages.getDefaultAvatar()
           ]));
         } else if (lastMessage.chatType == ChatType.ChatRoom) {
-          var room = chatRoomList
-              .firstWhere((element) => element.roomId == lastMessage.from);
+          var chatRoom = await getChatRoomWithId(value.id);
+
           var roomUserMap = await EMClient.getInstance.userInfoManager
-              .fetchUserInfoById(room.memberList ?? []);
+              .fetchUserInfoById(chatRoom?.memberList ?? []);
+
+          roomUserMap.forEach((key, value) {
+            allUsers[key] = value;
+          });
 
           conversationsList.add(ConversationBean.createByConversation(
               value,
               "${lastMessage.serverTime}",
-              room.name ?? "群聊（${room.memberList}）",
+              chatRoom?.name ?? "群聊（${chatRoom?.memberList}）",
               getMessageText(lastMessage),
               roomUserMap.values
-                  .map((e) => e.avatarUrl ?? AssetsImages.getRandomAvatar())
+                  .map((e) => e.avatarUrl ?? AssetsImages.getDefaultAvatar())
                   .toList()));
         }
       }

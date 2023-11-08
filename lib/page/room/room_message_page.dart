@@ -113,8 +113,7 @@ extension _UI on _RoomMessagePageState {
 
   Widget userAvatar(EMMessage data) {
     return ImageWidget(
-      url: ref.read(imProvider).getAvatarUrl(data.from) ??
-          AssetsImages.getRandomAvatar(),
+      url: ref.read(imProvider).getAvatarUrl(data.from),
       width: 80.w,
       height: 80.h,
       type: ImageWidgetType.asset,

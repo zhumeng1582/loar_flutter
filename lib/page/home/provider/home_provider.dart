@@ -28,6 +28,6 @@ class HomeNotifier extends ChangeNotifier {
         );
     var result = await BarcodeScanner.scan(options: options);
     var qrCodeData = jsonDecode(result.rawContent);
-    return qrCodeData as QrCodeData;
+    return QrCodeData.fromJson(qrCodeData);
   }
 }
