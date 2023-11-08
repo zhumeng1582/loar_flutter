@@ -65,18 +65,22 @@ class _RoomPageState extends ConsumerState<RoomPage> {
 }
 
 extension _Action on _RoomPageState {
-  roomDetail() {
+  roomDetail() async {
     if (widget.conversationBean.type == EMConversationType.Chat) {
-      // Navigator.pushNamed(
-      //   context,
-      //   RouteNames.me,
-      //   arguments: widget.conversationBean.id,
-      // );
+      var userInfo = ref.read(imProvider).contacts[widget.conversationBean.id];
+      Navigator.pushNamed(
+        context,
+        RouteNames.usesInfoPage,
+        arguments: {"userInfo": userInfo},
+      );
     } else {
+      var chatRoom = await EMClient.getInstance.chatRoomManager
+          .getChatRoomWithId(widget.conversationBean.id);
+
       Navigator.pushNamed(
         context,
         RouteNames.roomDetail,
-        arguments: widget.conversationBean,
+        arguments: chatRoom,
       );
     }
   }

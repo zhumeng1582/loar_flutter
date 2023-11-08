@@ -4,10 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/home_provider.dart';
+import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import 'package:loar_flutter/widget/commit_button.dart';
 
 import '../../common/image.dart';
+import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
+import '../home/bean/ConversationBean.dart';
 
 final userInfoProvider =
     ChangeNotifierProvider<UserInfoNotifier>((ref) => UserInfoNotifier());
@@ -15,7 +18,6 @@ final userInfoProvider =
 class UserInfoNotifier extends ChangeNotifier {}
 
 class UserInfoPage extends ConsumerStatefulWidget {
-
   EMUserInfo userInfo;
   String message;
 
@@ -65,54 +67,30 @@ class _UserInfoPageState extends ConsumerState<UserInfoPage> {
 
 extension _Action on _UserInfoPageState {
   String getButtonText() {
-    // bool isFriend = ref
-    //     .watch(homeProvider)
-    //     .allChatInfo
-    //     .userList
-    //     .any((element) => element.id == widget.userInfo.userId);
-    // if (isFriend) {
-    //   return "聊天";
-    // }
-    // if (widget.message.isNotEmpty) {
-    //   return "同意";
-    // }
-    return "添加好友";
+    if (ref.read(imProvider).contacts.containsKey(widget.userInfo.userId)) {
+      return "聊天";
+    } else if (widget.message.isNotEmpty) {
+      return "同意";
+    } else {
+      return "添加好友";
+    }
   }
 
   void _tapAction() {
-    // bool isFriend = ref
-    //     .watch(homeProvider)
-    //     .allChatInfo
-    //     .userList
-    //     .any((element) => element.id == widget.userInfo.userId);
-    // if (isFriend) {
-    //   chatRoom(widget.userInfo);
-    // } else if (widget.message.isNotEmpty) {
-    // } else {
-    //
-    // }
-  }
-
-  chatRoom(EMUserInfo data) {
-
-    // bool isRoomExist = ref
-    //     .read(homeProvider)
-    //     .allChatInfo
-    //     .roomList
-    //     .any((element) => element.id == data.getRoomId);
-    // if (!isRoomExist) {
-    //   var roomInfo = RoomInfo();
-    //   roomInfo.id = data.getRoomId;
-    //   roomInfo.userList.add(AccountData.instance.me);
-    //   roomInfo.userList.add(data);
-    //   roomInfo.name = data.name;
-    //   ref.read(homeProvider).allChatInfo.roomList.insert(0, roomInfo);
-    // }
-    // Navigator.pushNamed(
-    //   context,
-    //   RouteNames.roomPage,
-    //   arguments: data.getRoomId,
-    // );
+    if (ref.read(imProvider).contacts.containsKey(widget.userInfo.userId)) {
+      ConversationBean conversationBean = ConversationBean(
+          widget.userInfo.userId, "", widget.userInfo.nickName ?? "", "", []);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        RouteNames.roomPage,
+        (route) => route.settings.name == RouteNames.main,
+        arguments: conversationBean,
+      );
+    } else if (widget.message.isNotEmpty) {
+      ref.read(imProvider).acceptInvitation(widget.userInfo.userId);
+    } else {
+      ref.read(imProvider).addContact(widget.userInfo.userId, "请求添加好友");
+    }
   }
 }
 
@@ -122,13 +100,13 @@ extension _UI on _UserInfoPageState {
       children: [
         ClipOval(
           child: ImageWidget(
-            url: widget.userInfo.avatarUrl??AssetsImages.getRandomAvatar(),
+            url: widget.userInfo.avatarUrl ?? AssetsImages.getRandomAvatar(),
             width: 100.w,
             height: 100.h,
             type: ImageWidgetType.asset,
           ),
         ).paddingTop(80.h),
-        Text(widget.userInfo.nickName??"--"),
+        Text(widget.userInfo.nickName ?? "--"),
       ],
     );
   }

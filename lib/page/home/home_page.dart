@@ -11,6 +11,7 @@ import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
+import '../../common/util/images.dart';
 import 'bean/ConversationBean.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -35,11 +36,12 @@ class _HomePageState extends ConsumerState<HomePage> {
         title: Text("聊天"),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.qr_code_scanner),
-            tooltip: 'Scan',
-            onPressed: ref.read(homeProvider).scan,
-          )
+          ImageWidget(
+            url: AssetsImages.iconScan,
+            width: 46.w,
+            height: 46.h,
+            type: ImageWidgetType.asset,
+          ).paddingRight(30.w).onTap(scan)
         ],
       ),
       body: ListView.builder(
@@ -60,6 +62,23 @@ class _HomePageState extends ConsumerState<HomePage> {
 }
 
 extension _Action on _HomePageState {
+  scan() async {
+    var qrCodeData = await ref.read(homeProvider).scan();
+    if (qrCodeData.userInfo != null) {
+      Navigator.pushNamed(
+        context,
+        RouteNames.usesInfoPage,
+        arguments: {"userInfo": qrCodeData.userInfo},
+      );
+    } else if (qrCodeData.room != null) {
+      Navigator.pushNamed(
+        context,
+        RouteNames.roomDetail,
+        arguments: qrCodeData.room,
+      );
+    }
+  }
+
   _room(ConversationBean data) {
     Navigator.pushNamed(
       context,

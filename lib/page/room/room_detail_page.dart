@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import '../home/bean/ConversationBean.dart';
 import '../home/provider/im_message_provider.dart';
 
@@ -11,9 +12,9 @@ class RoomDetailNotifier extends ChangeNotifier {
 }
 
 class RoomDetailPage extends ConsumerStatefulWidget {
-  ConversationBean conversationBean;
+  EMChatRoom chatRoom;
 
-  RoomDetailPage({super.key, required this.conversationBean});
+  RoomDetailPage({super.key, required this.chatRoom});
 
   @override
   ConsumerState<RoomDetailPage> createState() => _RoomDetailPageState();
@@ -27,7 +28,7 @@ class _RoomDetailPageState extends ConsumerState<RoomDetailPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(widget.conversationBean.title),
+        title: Text(widget.chatRoom.name ?? "群聊"),
       ),
       body: SafeArea(
         child: Column(

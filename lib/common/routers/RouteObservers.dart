@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/proto/index.dart';
 import 'package:loar_flutter/page/login/login_page.dart';
 import 'package:loar_flutter/page/login/sign_up_page.dart';
@@ -6,6 +7,7 @@ import 'package:loar_flutter/page/main_page.dart';
 import 'package:loar_flutter/page/map/offline_map_page.dart';
 import 'package:loar_flutter/page/me/QR_generate_page.dart';
 import 'package:loar_flutter/page/me/scan_qr_page.dart';
+import 'package:loar_flutter/page/me/user_info_page.dart';
 import 'package:loar_flutter/page/room/room_detail_page.dart';
 
 import '../../page/blue/find_device_page.dart';
@@ -43,11 +45,15 @@ class RouteObservers {
     } else if (settings.name == RouteNames.roomPage) {
       var conversation = settings.arguments as ConversationBean;
       return MaterialPageRoute(
-          settings: settings, builder: (_) => RoomPage(conversationBean: conversation,));
+          settings: settings,
+          builder: (_) => RoomPage(
+                conversationBean: conversation,
+              ));
     } else if (settings.name == RouteNames.roomDetail) {
-      var conversation = settings.arguments as ConversationBean;
+      var chatRoom = settings.arguments as EMChatRoom;
       return MaterialPageRoute(
-          settings: settings, builder: (_) => RoomDetailPage(conversationBean: conversation));
+          settings: settings,
+          builder: (_) => RoomDetailPage(chatRoom: chatRoom));
     } else if (settings.name == RouteNames.selectContact) {
       var roomId = settings.arguments as String;
       return MaterialPageRoute(
@@ -59,6 +65,14 @@ class RouteObservers {
     } else if (settings.name == RouteNames.offlineMap) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const OfflineMapPage());
+    } else if (settings.name == RouteNames.usesInfoPage) {
+      var arguments = settings.arguments as Map;
+      var userInfo = arguments["userInfo"] as EMUserInfo;
+      var message = arguments["message"] as String?;
+      return MaterialPageRoute(
+          settings: settings,
+          builder: (_) =>
+              UserInfoPage(userInfo: userInfo, message: message ?? ""));
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(

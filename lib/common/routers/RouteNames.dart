@@ -1,6 +1,7 @@
 
 class RouteNames{
   static const roomPage = 'roomPage';
+  static const usesInfoPage = 'usesInfoPage';
   static const main = 'main';
   static const signUp = 'signUp';
   static const qrGenerate = 'qr_generate';

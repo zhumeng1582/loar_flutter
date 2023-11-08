@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../common/image.dart';
 import '../../common/proto/qr_code_data.dart';
 
 class QRGeneratePage extends ConsumerStatefulWidget {
@@ -33,12 +34,18 @@ class _QRGeneratePageState extends ConsumerState<QRGeneratePage> {
       body: Center(
         child: Column(
           children: [
-            QrImageView(
-              data: jsonEncode(widget.qrCodeData.toJson()),
-              version: QrVersions.auto,
-              size: 200,
+            Stack(
+              children: [
+                QrImageView(
+                  data: jsonEncode(widget.qrCodeData.toJson()),
+                  version: QrVersions.auto,
+                  gapless: false,
+                  size: 200,
+                ),
+                getImage()
+              ],
             ).paddingTop(180.h),
-            Text('请扫码')
+            Text('扫码上方的二维码，加我为朋友').paddingTop(50.h)
           ],
         ),
       ),
@@ -51,5 +58,34 @@ extension _Action on _QRGeneratePageState {
     return widget.qrCodeData.room?.name ??
         widget.qrCodeData.userInfo?.nickName ??
         "";
+  }
+
+  Widget getImage() {
+    if(widget.qrCodeData.userInfo?.avatarUrl!=null){
+      return Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: Center(
+            child: Container(
+              width: 30,
+              height: 30,
+              margin: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: Colors.white,
+              ),
+              child: ImageWidget(
+                url: widget.qrCodeData.userInfo!.avatarUrl!,
+                width: 80.w,
+                height: 80.h,
+                type: ImageWidgetType.asset,
+              ),
+            ),
+          ));
+    }
+    return Container();
   }
 }

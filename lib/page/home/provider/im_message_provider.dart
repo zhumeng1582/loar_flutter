@@ -64,7 +64,7 @@ class ImNotifier extends ChangeNotifier {
     );
   }
 
-  addContact(userId, reason) async {
+  addContact(String userId, String reason) async {
     try {
       await EMClient.getInstance.contactManager
           .addContact(userId, reason: reason);
@@ -80,6 +80,7 @@ class ImNotifier extends ChangeNotifier {
   init() async {
     try {
       AccountData.instance.getUserInfo();
+
       List<EMConversation> result =
           await EMClient.getInstance.chatManager.loadAllConversations();
 

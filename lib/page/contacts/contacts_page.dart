@@ -35,11 +35,12 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
         title: Text("联系人"),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.qr_code_scanner),
-            tooltip: 'Scan',
-            onPressed: scan,
-          )
+          ImageWidget(
+            url: AssetsImages.iconScan,
+            width: 46.w,
+            height: 46.h,
+            type: ImageWidgetType.asset,
+          ).paddingRight(30.w)
         ],
       ),
       body: ListView.builder(
