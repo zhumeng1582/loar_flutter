@@ -1,15 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
+import '../../common/account_data.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
-import '../../common/account_data.dart';
-import 'package:loar_flutter/common/proto/index.dart';
+import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/images.dart';
 
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
 
@@ -40,31 +39,18 @@ class _MePageState extends ConsumerState<MePage> {
         child: Column(
           children: [
             _topItem(),
-            _getMeItem("账号", AccountData.instance.me.account,
-                false),
+            _getMeItem("账号", AccountData.instance.me.userId, false),
             _getMeItem("二维码名片", "", true).onTap(() {
-              QrCodeData qrCodeData = QrCodeData();
-              qrCodeData.qrCodeType = QrCodeType.QR_USER;
-              qrCodeData.user = AccountData.instance.me;
-              // qrCodeData.user.id = "user#000000";
-              // qrCodeData.user.name ="张三";
-              Navigator.pushNamed(
-                context,
-                RouteNames.qrGenerate,
-                arguments: qrCodeData
-              );
+              QrCodeData qrCodeData =
+                  QrCodeData(userInfo: AccountData.instance.me);
+              Navigator.pushNamed(context, RouteNames.qrGenerate,
+                  arguments: qrCodeData);
             }),
             _getMeItem("蓝牙", "", true).onTap(() {
-              Navigator.pushNamed(
-                  context,
-                  RouteNames.blueSearchList
-              );
+              Navigator.pushNamed(context, RouteNames.blueSearchList);
             }),
             _getMeItem("离线地址管理", "", true).onTap(() {
-              Navigator.pushNamed(
-                  context,
-                  RouteNames.offlineMap
-              );
+              Navigator.pushNamed(context, RouteNames.offlineMap);
             }),
           ],
         ).paddingHorizontal(30.w),
@@ -86,15 +72,16 @@ extension _UI on _MePageState {
       children: [
         ClipOval(
           child: ImageWidget(
-            url: AccountData.instance.me.icon,
+            url: AccountData.instance.me.avatarUrl ??
+                AssetsImages.getRandomAvatar(),
             width: 100.w,
             height: 100.h,
             type: ImageWidgetType.asset,
           ),
         ).paddingTop(80.h),
-        Text(AccountData.instance.me.name),
+        Text(AccountData.instance.me.nickName ?? ""),
         Text(
-          AccountData.instance.me.id,
+          AccountData.instance.me.userId,
         )
       ],
     );

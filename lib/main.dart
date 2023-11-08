@@ -3,6 +3,7 @@ import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/page/login/login_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -12,9 +13,13 @@ import 'dart:io' show Platform;
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
     show BMFMapSDK, BMF_COORD_TYPE;
 
+var appKey = "1106231108210776#demo";
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initMap();
+  await initIm();
+
   if (Platform.isAndroid) {
     [
       Permission.location,
@@ -28,6 +33,13 @@ void main() async {
   } else {
     runApp(ProviderScope(child: MyApp(entryPoint: "")));
   }
+}
+
+Future<void> initIm() async {
+  EMOptions options =
+      EMOptions(appKey: appKey, autoLogin: false, debugModel: true);
+  await EMClient.getInstance.init(options);
+  await EMClient.getInstance.startCallback();
 }
 
 class MyApp extends StatelessWidget {

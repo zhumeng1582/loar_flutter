@@ -10,8 +10,10 @@ import 'package:loar_flutter/page/room/room_detail_page.dart';
 
 import '../../page/blue/find_device_page.dart';
 import '../../page/contacts/contacts_select_page.dart';
+import '../../page/home/bean/ConversationBean.dart';
 import '../../page/login/avatar_select_page.dart';
 import '../../page/room/room_page.dart';
+import '../proto/qr_code_data.dart';
 import 'RouteNames.dart';
 
 class RouteObservers {
@@ -39,13 +41,13 @@ class RouteObservers {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const FindDevicesScreen());
     } else if (settings.name == RouteNames.roomPage) {
-      var roomId = settings.arguments as String;
+      var conversation = settings.arguments as ConversationBean;
       return MaterialPageRoute(
-          settings: settings, builder: (_) => RoomPage(roomId: roomId));
+          settings: settings, builder: (_) => RoomPage(conversationBean: conversation,));
     } else if (settings.name == RouteNames.roomDetail) {
-      var roomId = settings.arguments as String;
+      var conversation = settings.arguments as ConversationBean;
       return MaterialPageRoute(
-          settings: settings, builder: (_) => RoomDetailPage(roomId: roomId));
+          settings: settings, builder: (_) => RoomDetailPage(conversationBean: conversation));
     } else if (settings.name == RouteNames.selectContact) {
       var roomId = settings.arguments as String;
       return MaterialPageRoute(

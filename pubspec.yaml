@@ -65,6 +65,7 @@ dependencies:
   flutter_baidu_mapapi_search: ^3.3.1
 #  flutter_baidu_mapapi_utils: ^3.3.1
 #  flutter_baidu_yingyan_trace: ^2.1.0
+  im_flutter_sdk: ^4.1.3
 
   permission_handler: ^10.2.0
   protobuf: ^2.1.0

@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/account_data.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
-import '../../common/account_data.dart';
 import '../../common/colors.dart';
 import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
-import 'package:loar_flutter/common/util/storage.dart';
-import '../../common/proto/index.dart';
 
 final loginProvider =
     ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
 
 class LoginNotifier extends ChangeNotifier {
-  get key => "LoginUserInfo";
-
-  var buttonState = ButtonState.disabled;
+  var buttonState = ButtonState.normal;
 
   setButtonState(String account, String password) {
     if (account.isEmpty || password.isEmpty) {
@@ -31,31 +28,35 @@ class LoginNotifier extends ChangeNotifier {
 
   getAccount(TextEditingController userAccountController,
       TextEditingController userPasswordController) async {
-    var text = await Storage.getIntList(key);
-    if (text.isNotEmpty) {
-      LoginUserInfo userInfo = LoginUserInfo.fromBuffer(text);
-      userAccountController.text = userInfo.user.account;
-      userPasswordController.text = userInfo.password;
-    }
+    // if (text.isNotEmpty) {
+    //   LoginUserInfo userInfo = LoginUserInfo.fromBuffer(text);
+    //   userAccountController.text = userInfo.user.account;
+    //   userPasswordController.text = userInfo.password;
+    // }
   }
 
   Future<bool> login(String account, String password) async {
     buttonState = ButtonState.loading;
     notifyListeners();
-    var text = await Storage.getIntList(key);
 
-    if (text.isNotEmpty) {
-      LoginUserInfo userInfo = LoginUserInfo.fromBuffer(text);
-      if (userInfo.password == password && userInfo.user.account == account) {
-        AccountData.instance.userInfo = userInfo;
-        buttonState = ButtonState.normal;
-        notifyListeners();
-        return true;
-      }
+    if (account.isNotEmpty && password.isNotEmpty) {
+      await EMClient.getInstance
+          .login(account, password)
+          .catchError((value) => error(value));
+      buttonState = ButtonState.normal;
+      notifyListeners();
+      return true;
     }
     buttonState = ButtonState.normal;
     notifyListeners();
     return false;
+  }
+
+  error(value) {
+    Loading.toast((value as EMError).description);
+    buttonState = ButtonState.normal;
+    notifyListeners();
+    throw value;
   }
 }
 
@@ -73,6 +74,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   void initState() {
     super.initState();
+    _userAccountController.text = "13265468736";
+    _userPasswordController.text = "123456";
     Future(() {
       ref
           .read(loginProvider)
@@ -93,6 +96,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("登陆"),
+        actions: [
+          Text("跳过").onTap(() {
+            Navigator.popAndPushNamed(
+              context,
+              // RouteNames.blueSearchList,
+              RouteNames.main,
+            );
+          }),
+        ],
       ),
       body: SafeArea(
         child: Column(

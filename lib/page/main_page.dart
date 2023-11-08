@@ -6,7 +6,7 @@ import '../common/blue_tooth.dart';
 import '../common/colors.dart';
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
-import 'home/provider/home_provider.dart';
+import 'home/provider/im_message_provider.dart';
 import 'map/baidu_map_page.dart';
 import 'me/me_page.dart';
 
@@ -61,8 +61,9 @@ class _MainPageState extends ConsumerState<MainPage> {
   @override
   void initState() {
     Future(() {
+      ref.read(imProvider).addImListener();
       ref.read(mainProvider).getLocation();
-      ref.read(homeProvider).init();
+      ref.read(imProvider).init();
     });
 
     super.initState();
@@ -130,5 +131,6 @@ class _MainPageState extends ConsumerState<MainPage> {
   @override
   void dispose() {
     super.dispose();
+    ref.read(imProvider).removeImListener();
   }
 }

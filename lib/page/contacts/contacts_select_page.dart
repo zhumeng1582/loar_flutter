@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loar_flutter/common/ex/ex_userInfo.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/image.dart';
-import '../../common/proto/index.dart';
 import '../../common/util/gaps.dart';
+import '../../common/util/images.dart';
 import '../home/provider/home_provider.dart';
+import '../home/provider/im_message_provider.dart';
 
 final contractSelectProvider = ChangeNotifierProvider<ContactsSelectNotifier>(
     (ref) => ContactsSelectNotifier());
 
 class ContactsSelectNotifier extends ChangeNotifier {
-  List<UserInfo> data = [];
-  late RoomInfo roomInfo;
+  List<EMUserInfo> data = [];
 
-  initData(List<UserInfo> data, RoomInfo roomInfo) {
-    this.roomInfo = roomInfo;
-    this.data = data.where((element) => !isInRoom(roomInfo, element)).toList();
+  initData(List<EMUserInfo> data, String roomId) {
+    this.data =
+        data; //data.where((element) => !isInRoom(roomInfo, element)).toList();
     notifyListeners();
-  }
-
-  bool isInRoom(RoomInfo room, UserInfo userInfo) {
-    return room.userList.any((element) => element.id == userInfo.id);
   }
 }
 
@@ -40,10 +36,8 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
   @override
   void initState() {
     Future(() {
-      var userList = ref.read(homeProvider).allChatInfo.userList;
-      var roomInfo =
-          ref.read(homeProvider).allChatInfo.getRoomById(widget.roomId);
-      ref.read(contractSelectProvider).initData(userList, roomInfo);
+      List<EMUserInfo> data = ref.watch(imProvider).contacts.values.toList();
+      ref.read(contractSelectProvider).initData(data, widget.roomId);
     });
 
     super.initState();
@@ -51,7 +45,7 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<UserInfo> data = ref.watch(contractSelectProvider).data;
+    List<EMUserInfo> data = ref.watch(contractSelectProvider).data;
 
     return Scaffold(
       appBar: AppBar(
@@ -76,22 +70,22 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
 }
 
 extension _UI on _ContactsSelectPageState {
-  Widget _getIcon(UserInfo data) {
+  Widget _getIcon(EMUserInfo data) {
     return ImageWidget(
-      url: data.icon,
+      url: data.avatarUrl ?? AssetsImages.getRandomAvatar(),
       width: 40.w,
       height: 40.h,
       type: ImageWidgetType.asset,
     );
   }
 
-  Widget _buildCellItem(UserInfo data) {
+  Widget _buildCellItem(EMUserInfo data) {
     return Column(
       children: [
         Row(
           children: [
             _getIcon(data).paddingHorizontal(30.w),
-            Text(data.name),
+            Text(data.nickName ?? ""),
           ],
         ),
         Gaps.line.paddingLeft(140.w).paddingVertical(15.h)
@@ -101,7 +95,7 @@ extension _UI on _ContactsSelectPageState {
 }
 
 extension _Action on _ContactsSelectPageState {
-  _selectUser(UserInfo data) {
+  _selectUser(EMUserInfo data) {
     Navigator.pop(context, [data]);
   }
 }

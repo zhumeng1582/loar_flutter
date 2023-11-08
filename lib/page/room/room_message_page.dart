@@ -2,24 +2,23 @@ import 'package:chat_bubbles/bubbles/bubble_special_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loar_flutter/common/ex/ex_userInfo.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/account_data.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-import '../../common/colors.dart';
 import '../../common/image.dart';
-import '../../common/proto/index.dart';
+import '../../common/util/images.dart';
 import '../home/provider/home_provider.dart';
+import '../home/provider/im_message_provider.dart';
 
 final roomMessageProvider =
     ChangeNotifierProvider<RoomMessageNotifier>((ref) => RoomMessageNotifier());
 
-class RoomMessageNotifier extends ChangeNotifier {
-
-}
+class RoomMessageNotifier extends ChangeNotifier {}
 
 class RoomMessagePage extends ConsumerStatefulWidget {
-  String roomId;
+  String conversationId;
 
-  RoomMessagePage({super.key, required this.roomId});
+  RoomMessagePage({super.key, required this.conversationId});
 
   @override
   ConsumerState<RoomMessagePage> createState() => _RoomMessagePageState();
@@ -36,11 +35,8 @@ class _RoomMessagePageState extends ConsumerState<RoomMessagePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<ChatMessage> data = ref
-        .watch(homeProvider)
-        .allChatInfo
-        .getRoomById(widget.roomId)
-        .messagelist;
+    List<EMMessage> data =
+        ref.watch(imProvider).messageMap[widget.conversationId] ?? [];
     return _buildChat(data);
   }
 
@@ -52,14 +48,11 @@ class _RoomMessagePageState extends ConsumerState<RoomMessagePage> {
 }
 
 extension _Action on _RoomMessagePageState {
-  void init() async {
-
-  }
-
+  void init() async {}
 }
 
 extension _UI on _RoomMessagePageState {
-  Widget _buildChat(List<ChatMessage> data) {
+  Widget _buildChat(List<EMMessage> data) {
     return Expanded(
         flex: 1,
         child: Container(
@@ -78,20 +71,19 @@ extension _UI on _RoomMessagePageState {
         ));
   }
 
-  Widget _buildRoomMessageItem(ChatMessage data) {
-    if (data.messageType == MessageType.NEW_USER) {
-      return _buildNotifyItem(data);
-    } else if (data.sender.isMe) {
+  Widget _buildRoomMessageItem(EMMessage data) {
+    if (data.from == AccountData.instance.me.userId) {
       return _buildChatRightItem(data, _buildChatContent(data));
     } else {
       return _buildChatLeftItem(data, _buildChatContent(data));
     }
   }
 
-  Widget _buildChatContent(ChatMessage data) {
-    var isSender = data.sender.isMe;
+  Widget _buildChatContent(EMMessage data) {
+    var isSender = data.from == AccountData.instance.me.userId;
+    EMTextMessageBody body = data.body as EMTextMessageBody;
     return BubbleSpecialOne(
-      text: data.content,
+      text: body.content,
       isSender: isSender,
       color: !isSender ? Colors.grey : const Color(0xFF1B97F3),
       textStyle: TextStyle(
@@ -100,7 +92,7 @@ extension _UI on _RoomMessagePageState {
     );
   }
 
-  _buildChatLeftItem(ChatMessage data, Widget child) {
+  _buildChatLeftItem(EMMessage data, Widget child) {
     return Row(
       children: [
         userAvatar(data),
@@ -109,7 +101,7 @@ extension _UI on _RoomMessagePageState {
     );
   }
 
-  _buildChatRightItem(ChatMessage data, Widget child) {
+  _buildChatRightItem(EMMessage data, Widget child) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -119,27 +111,28 @@ extension _UI on _RoomMessagePageState {
     );
   }
 
-  _buildNotifyItem(ChatMessage data) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          "${data.sender.name}加入群聊",
-          style: TextStyle(
-            color: AppColors.title.withOpacity(0.5),
-            fontSize: 24.sp,
-          ),
-        )
-      ],
+  Widget userAvatar(EMMessage data) {
+    return ImageWidget(
+      url: ref.read(imProvider).getAvatarUrl(data.from) ??
+          AssetsImages.getRandomAvatar(),
+      width: 80.w,
+      height: 80.h,
+      type: ImageWidgetType.asset,
     );
   }
-}
 
-Widget userAvatar(ChatMessage data) {
-  return ImageWidget(
-    url: data.sender.icon,
-    width: 80.w,
-    height: 80.h,
-    type: ImageWidgetType.asset,
-  );
+// _buildNotifyItem(EMMessage data) {
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.center,
+//     children: [
+//       Text(
+//         "${data.sender.name}加入群聊",
+//         style: TextStyle(
+//           color: AppColors.title.withOpacity(0.5),
+//           fontSize: 24.sp,
+//         ),
+//       )
+//     ],
+//   );
+// }
 }

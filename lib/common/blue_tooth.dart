@@ -78,11 +78,11 @@ class BlueToothConnect {
     }
   }
 
-  writeLoraMessage(LoarMessage value) {
-    if (loarChar != null) {
-      _write(loarChar!, value.writeToBuffer());
-    }
-  }
+  // writeLoraMessage(LoarMessage value) {
+  //   if (loarChar != null) {
+  //     _write(loarChar!, value.writeToBuffer());
+  //   }
+  // }
 
   _writeLoraString(List<int> value) {
     if (loarChar != null) {

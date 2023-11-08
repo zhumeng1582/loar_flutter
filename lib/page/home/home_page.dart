@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/ex/ex_string.dart';
-import 'package:loar_flutter/common/account_data.dart';
-import 'package:loar_flutter/common/proto/index.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/home_provider.dart';
+import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
 
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
-import '../../common/util/images.dart';
+import 'bean/ConversationBean.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -29,7 +28,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<RoomInfo> data = ref.watch(homeProvider).allChatInfo.roomList;
+    List<ConversationBean> data = ref.watch(imProvider).conversationsList;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
@@ -61,41 +60,17 @@ class _HomePageState extends ConsumerState<HomePage> {
 }
 
 extension _Action on _HomePageState {
-  _room(RoomInfo data) {
+  _room(ConversationBean data) {
     Navigator.pushNamed(
       context,
       RouteNames.roomPage,
-      arguments: data.id,
+      arguments: data,
     );
-  }
-
-  _getFirstText(List<ChatMessage> list) {
-    if (list.isEmpty) {
-      return "";
-    }
-    var first = list.first;
-    var message = "[收到新消息]";
-    switch (first.messageType) {
-      case MessageType.TEXT:
-        message = first.content;
-        break;
-      case MessageType.NEW_USER:
-        message = "${first.sender.name}加入群聊";
-        break;
-      case MessageType.MAP:
-        message = "${first.sender.name}发送了位置";
-        break;
-    }
-    return message;
-  }
-
-  _getLastTime(List<ChatMessage> list) {
-    return list.isNotEmpty ? list.last.sendtime.formatChatTime : "";
   }
 }
 
 extension _UI on _HomePageState {
-  Widget _buildRoomItem(RoomInfo data) {
+  Widget _buildRoomItem(ConversationBean data) {
     return Column(
       children: [
         Row(
@@ -112,14 +87,14 @@ extension _UI on _HomePageState {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              data.name,
+                              data.title,
                               style: TextStyle(
                                 fontSize: 24.sp,
                                 color: AppColors.title,
                               ),
                             ),
                             Text(
-                              _getFirstText(data.messagelist),
+                              data.message,
                               style: TextStyle(
                                 fontSize: 22.sp,
                                 color: AppColors.title.withOpacity(0.6),
@@ -128,7 +103,7 @@ extension _UI on _HomePageState {
                           ],
                         ),
                       ),
-                      Text(_getLastTime(data.messagelist),
+                      Text(data.time.formatChatTime,
                           style: TextStyle(
                             fontSize: 22.sp,
                             color: AppColors.title.withOpacity(0.6),
@@ -145,36 +120,18 @@ extension _UI on _HomePageState {
     );
   }
 
-  Widget _getIcon(RoomInfo data) {
-    if (data.userList.length >= 3) {
-      return NineGridView(
-        width: 80.w,
-        height: 80.h,
-        type: NineGridType.weChatGp,
-        itemCount: data.userList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ImageWidget(
-            url: data.userList[index].icon,
-            type: ImageWidgetType.asset,
-          );
-        },
-      );
-    } else if (data.userList.isNotEmpty) {
-      var val = data.userList
-          .firstWhere((element) => element.id != AccountData.instance.me.id);
-      return ImageWidget(
-        width: 80.w,
-        height: 80.h,
-        url: val.icon,
-        type: ImageWidgetType.asset,
-      );
-    } else {
-      return ImageWidget(
-        width: 80.w,
-        height: 80.h,
-        url: AssetsImages.getRandomAvatar(),
-        type: ImageWidgetType.asset,
-      );
-    }
+  Widget _getIcon(ConversationBean data) {
+    return NineGridView(
+      width: 80.w,
+      height: 80.h,
+      type: NineGridType.weChatGp,
+      itemCount: data.avatarUrls.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ImageWidget(
+          url: data.avatarUrls[index],
+          type: ImageWidgetType.asset,
+        );
+      },
+    );
   }
 }

@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loar_flutter/common/account_data.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-import 'package:loar_flutter/page/home/home_page.dart';
-import 'package:nine_grid_view/nine_grid_view.dart';
 
 import '../../common/image.dart';
-import '../../common/proto/index.dart';
-import '../../common/routers/RouteNames.dart';
-import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
 
 final avatarSelectProvider = ChangeNotifierProvider<AvatarSelectNotifier>(

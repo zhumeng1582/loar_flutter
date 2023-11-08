@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/images.dart';
+import 'package:loar_flutter/page/login/login_page.dart';
 
 import '../../common/account_data.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/loading.dart';
-import 'package:loar_flutter/common/proto/index.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
-import 'package:loar_flutter/common/util/storage.dart';
 
 final signUpProvider =
     ChangeNotifierProvider<SignUpNotifier>((ref) => SignUpNotifier());
@@ -39,17 +39,36 @@ class SignUpNotifier extends ChangeNotifier {
 
   Future<bool> saveUser(
       String account, String userName, String password) async {
-    LoginUserInfo userInfo = LoginUserInfo();
-    userInfo.user = UserInfo();
-    userInfo.user.account = account;
-    userInfo.user.name = userName;
-    userInfo.user.id = "user#${DateTime.now().millisecondsSinceEpoch}";
-    userInfo.user.icon = avatar;
-    userInfo.password = password;
-    bool isSuccess = await Storage.saveIntList(key, userInfo.writeToBuffer());
-    AccountData.instance.userInfo = userInfo;
+    await EMClient.getInstance
+        .createAccount(account, password)
+        .catchError((value) => error(value));
+    EMClient.getInstance.userInfoManager
+        .updateUserInfo(nickname: userName, phone: account, avatarUrl: avatar);
+    return true;
+  }
 
-    return isSuccess;
+  Future<bool> login(String account, String password) async {
+    buttonState = ButtonState.loading;
+    notifyListeners();
+
+    if (account.isNotEmpty && password.isNotEmpty) {
+      await EMClient.getInstance
+          .login(account, password)
+          .catchError((value) => error(value));
+      buttonState = ButtonState.normal;
+      notifyListeners();
+      return true;
+    }
+    buttonState = ButtonState.normal;
+    notifyListeners();
+    return false;
+  }
+
+  error(value) {
+    Loading.toast((value as EMError).description);
+    buttonState = ButtonState.normal;
+    notifyListeners();
+    throw value;
   }
 }
 
@@ -163,6 +182,7 @@ extension _Action on _SignUpPageState {
     bool isSuccess =
         await ref.read(signUpProvider).saveUser(account, userName, password);
     if (isSuccess) {
+      isSuccess = await ref.read(signUpProvider).login(account, password);
       Navigator.popAndPushNamed(
         context,
         RouteNames.main,

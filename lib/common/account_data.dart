@@ -1,8 +1,7 @@
-import 'package:loar_flutter/common/ex/ex_userInfo.dart';
-import 'package:loar_flutter/common/proto/index.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/util/images.dart';
 
-
-class AccountData{
+class AccountData {
   AccountData._();
 
   static AccountData get instance => _getInstance();
@@ -12,22 +11,17 @@ class AccountData{
     _instance ??= AccountData._();
     return _instance!;
   }
-  UserInfo get me =>_userInfo.user;
 
-  late LoginUserInfo _userInfo;
+  late EMUserInfo me;
 
-  set userInfo(loginUserInfo){
-    _userInfo = loginUserInfo;
+  getUserInfo() async {
+    try {
+      var value = await EMClient.getInstance.userInfoManager.fetchOwnInfo();
+      if (value != null) {
+        me = value;
+      }
+    } on EMError catch (e) {
+      // 获取当前用户属性失败，返回错误信息。
+    }
   }
-
-  RoomInfo createRoom() {
-    var time = DateTime.now().millisecondsSinceEpoch;
-    var room = RoomInfo();
-    room.name = "群聊";
-    room.id = "room#$time";
-    room.creator = AccountData.instance.me;
-    room.createtime = "$time";
-    return room;
-  }
-
 }
