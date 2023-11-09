@@ -5,7 +5,7 @@ import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../common/account_data.dart';
+import '../../common/im_data.dart';
 import '../../common/util/images.dart';
 
 class BaiduMapPage extends StatefulWidget {

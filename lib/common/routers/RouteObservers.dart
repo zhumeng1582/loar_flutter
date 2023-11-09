@@ -8,13 +8,13 @@ import 'package:loar_flutter/page/map/offline_map_page.dart';
 import 'package:loar_flutter/page/me/QR_generate_page.dart';
 import 'package:loar_flutter/page/me/scan_qr_page.dart';
 import 'package:loar_flutter/page/me/user_info_page.dart';
-import 'package:loar_flutter/page/room/room_detail_page.dart';
+import 'package:loar_flutter/page/room/chat_detail_page.dart';
 
 import '../../page/blue/find_device_page.dart';
 import '../../page/contacts/contacts_select_page.dart';
 import '../../page/home/bean/ConversationBean.dart';
 import '../../page/login/avatar_select_page.dart';
-import '../../page/room/room_page.dart';
+import '../../page/room/chat_page.dart';
 import '../proto/qr_code_data.dart';
 import 'RouteNames.dart';
 
@@ -46,19 +46,19 @@ class RouteObservers {
       var conversation = settings.arguments as ConversationBean;
       return MaterialPageRoute(
           settings: settings,
-          builder: (_) => RoomPage(
+          builder: (_) => ChatPage(
                 conversationBean: conversation,
               ));
     } else if (settings.name == RouteNames.roomDetail) {
-      var chatRoom = settings.arguments as EMChatRoom;
+      var conversation = settings.arguments as ConversationBean;
       return MaterialPageRoute(
           settings: settings,
-          builder: (_) => RoomDetailPage(chatRoom: chatRoom));
+          builder: (_) => ChatDetailPage(conversationBean: conversation));
     } else if (settings.name == RouteNames.selectContact) {
-      var roomId = settings.arguments as String;
+      var userList = settings.arguments as List<EMUserInfo>;
       return MaterialPageRoute(
           settings: settings,
-          builder: (_) => ContactsSelectPage(roomId: roomId));
+          builder: (_) => ContactsSelectPage(userList: userList));
     } else if (settings.name == RouteNames.selectAvatar) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const AvatarSelectPage());

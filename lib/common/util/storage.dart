@@ -25,17 +25,24 @@ class StorageUtils {
     throw UnimplementedError('Type ${value.runtimeType} not implemented');
   }
 
-  static Future<dynamic> saveIntList(String key, List<int> value) async {
-    return save(key, base64Encode(value));
+  static void saveList(String key, List<dynamic> value) async {
+    save(key, json.encode(value));
   }
 
-  static Future<List<int>> getIntList(String key) async {
-    var value = await getString(key);
-    if (value != null) {
-      return base64Decode(value);
-    } else {
-      return [];
-    }
+  static Future<List<dynamic>> loadList(String key) async {
+    String? jsonString = await getString(key);
+
+    return json.decode(jsonString ?? "");
+  }
+
+  static void saveMap(String key, Map<String, dynamic> value) async {
+    save(key, json.encode(value));
+  }
+
+  static Future<Map<String, dynamic>> loadMap(String key) async {
+    String? jsonString = await getString(key);
+
+    return json.decode(jsonString ?? "");
   }
 
   static Future<String?> getString(String key) async {
@@ -43,16 +50,6 @@ class StorageUtils {
     return prefs!.getString(key);
   }
 
-  static Future<List<String>?> getListString(String key,
-      [List<String>? defaultValue]) async {
-    final prefs = await getPreferences();
-    return prefs!.getStringList(key) ?? defaultValue;
-  }
-
-  static setStringList(String key, List<String> defaultValue) async {
-    final prefs = await getPreferences();
-    prefs!.setStringList(key, defaultValue);
-  }
 
   static Future<bool> remove(String key) async {
     final prefs = await getPreferences();

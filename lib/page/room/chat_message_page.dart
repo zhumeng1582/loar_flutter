@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/account_data.dart';
+import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import '../../common/image.dart';
-import '../../common/util/images.dart';
-import '../home/provider/home_provider.dart';
+import '../../common/routers/RouteNames.dart';
 import '../home/provider/im_message_provider.dart';
 
 final roomMessageProvider =
@@ -15,16 +14,16 @@ final roomMessageProvider =
 
 class RoomMessageNotifier extends ChangeNotifier {}
 
-class RoomMessagePage extends ConsumerStatefulWidget {
+class ChatMessagePage extends ConsumerStatefulWidget {
   String conversationId;
 
-  RoomMessagePage({super.key, required this.conversationId});
+  ChatMessagePage({super.key, required this.conversationId});
 
   @override
-  ConsumerState<RoomMessagePage> createState() => _RoomMessagePageState();
+  ConsumerState<ChatMessagePage> createState() => _RoomMessagePageState();
 }
 
-class _RoomMessagePageState extends ConsumerState<RoomMessagePage> {
+class _RoomMessagePageState extends ConsumerState<ChatMessagePage> {
   final _scrollController = ScrollController();
 
   @override
@@ -72,7 +71,7 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildRoomMessageItem(EMMessage data) {
-    if (data.from == AccountData.instance.me.userId) {
+    if (data.from == ImDataManager.instance.me.userId) {
       return _buildChatRightItem(data, _buildChatContent(data));
     } else {
       return _buildChatLeftItem(data, _buildChatContent(data));
@@ -80,7 +79,7 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildChatContent(EMMessage data) {
-    var isSender = data.from == AccountData.instance.me.userId;
+    var isSender = data.from == ImDataManager.instance.me.userId;
     EMTextMessageBody body = data.body as EMTextMessageBody;
     return BubbleSpecialOne(
       text: body.content,
@@ -117,7 +116,14 @@ extension _UI on _RoomMessagePageState {
       width: 80.w,
       height: 80.h,
       type: ImageWidgetType.asset,
-    );
+    ).onTap(() {
+      var userInfo = ref.read(imProvider).allUsers[data.from];
+      Navigator.pushNamed(
+        context,
+        RouteNames.usesInfoPage,
+        arguments: {"userInfo": userInfo},
+      );
+    });
   }
 
 // _buildNotifyItem(EMMessage data) {

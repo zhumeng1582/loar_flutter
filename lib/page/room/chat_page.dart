@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/page/room/room_message_page.dart';
+import 'package:loar_flutter/page/room/chat_message_page.dart';
 import '../../common/colors.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/message_bar.dart';
@@ -13,16 +13,16 @@ final roomProvider =
 
 class RoomNotifier extends ChangeNotifier {}
 
-class RoomPage extends ConsumerStatefulWidget {
+class ChatPage extends ConsumerStatefulWidget {
   ConversationBean conversationBean;
 
-  RoomPage({super.key, required this.conversationBean});
+  ChatPage({super.key, required this.conversationBean});
 
   @override
-  ConsumerState<RoomPage> createState() => _RoomPageState();
+  ConsumerState<ChatPage> createState() => _ChatPageState();
 }
 
-class _RoomPageState extends ConsumerState<RoomPage> {
+class _ChatPageState extends ConsumerState<ChatPage> {
   final _controller = TextEditingController();
 
   @override
@@ -49,7 +49,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
       body: SafeArea(
         child: Column(
           children: [
-            RoomMessagePage(conversationId: widget.conversationBean.id),
+            ChatMessagePage(conversationId: widget.conversationBean.id),
             _buildBottomItem()
           ],
         ),
@@ -64,24 +64,13 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   }
 }
 
-extension _Action on _RoomPageState {
+extension _Action on _ChatPageState {
   roomDetail() async {
-    if (widget.conversationBean.type == EMConversationType.Chat) {
-      var userInfo = ref.read(imProvider).contacts[widget.conversationBean.id];
-      Navigator.pushNamed(
-        context,
-        RouteNames.usesInfoPage,
-        arguments: {"userInfo": userInfo},
-      );
-    } else {
-      var chatRoom = await ref.read(imProvider).getChatRoomWithId(widget.conversationBean.id);
-
-      Navigator.pushNamed(
-        context,
-        RouteNames.roomDetail,
-        arguments: chatRoom,
-      );
-    }
+    Navigator.pushNamed(
+      context,
+      RouteNames.roomDetail,
+      arguments: widget.conversationBean,
+    );
   }
 
   sendMessage(String message) {
@@ -89,7 +78,7 @@ extension _Action on _RoomPageState {
   }
 }
 
-extension _UI on _RoomPageState {
+extension _UI on _ChatPageState {
   _buildBottomItem() {
     return MessageBar(
       textController: _controller,

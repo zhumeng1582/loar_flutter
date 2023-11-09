@@ -1,14 +1,12 @@
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/util/images.dart';
+class ImDataManager {
+  ImDataManager._();
 
-class AccountData {
-  AccountData._();
+  static ImDataManager get instance => _getInstance();
+  static ImDataManager? _instance;
 
-  static AccountData get instance => _getInstance();
-  static AccountData? _instance;
-
-  static AccountData _getInstance() {
-    _instance ??= AccountData._();
+  static ImDataManager _getInstance() {
+    _instance ??= ImDataManager._();
     return _instance!;
   }
 

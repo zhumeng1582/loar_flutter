@@ -14,19 +14,13 @@ final contractSelectProvider = ChangeNotifierProvider<ContactsSelectNotifier>(
     (ref) => ContactsSelectNotifier());
 
 class ContactsSelectNotifier extends ChangeNotifier {
-  List<EMUserInfo> data = [];
 
-  initData(List<EMUserInfo> data, String roomId) {
-    this.data =
-        data; //data.where((element) => !isInRoom(roomInfo, element)).toList();
-    notifyListeners();
-  }
 }
 
 class ContactsSelectPage extends ConsumerStatefulWidget {
-  String roomId;
+  List<EMUserInfo> userList;
 
-  ContactsSelectPage({super.key, required this.roomId});
+  ContactsSelectPage({super.key, required this.userList});
 
   @override
   ConsumerState<ContactsSelectPage> createState() => _ContactsSelectPageState();
@@ -35,17 +29,12 @@ class ContactsSelectPage extends ConsumerStatefulWidget {
 class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
   @override
   void initState() {
-    Future(() {
-      List<EMUserInfo> data = ref.watch(imProvider).contacts.values.toList();
-      ref.read(contractSelectProvider).initData(data, widget.roomId);
-    });
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<EMUserInfo> data = ref.watch(contractSelectProvider).data;
+    List<EMUserInfo> data = widget.userList;
 
     return Scaffold(
       appBar: AppBar(

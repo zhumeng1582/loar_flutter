@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
-import '../../common/account_data.dart';
+import '../../common/im_data.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/proto/qr_code_data.dart';
@@ -39,10 +39,10 @@ class _MePageState extends ConsumerState<MePage> {
         child: Column(
           children: [
             _topItem(),
-            _getMeItem("账号", AccountData.instance.me.userId, false),
+            _getMeItem("账号", ImDataManager.instance.me.userId, false),
             _getMeItem("二维码名片", "", true).onTap(() {
               QrCodeData qrCodeData =
-                  QrCodeData(userInfo: AccountData.instance.me);
+                  QrCodeData(userInfo: ImDataManager.instance.me);
               Navigator.pushNamed(context, RouteNames.qrGenerate,
                   arguments: qrCodeData);
             }),
@@ -72,16 +72,16 @@ extension _UI on _MePageState {
       children: [
         ClipOval(
           child: ImageWidget(
-            url: AccountData.instance.me.avatarUrl ??
+            url: ImDataManager.instance.me.avatarUrl ??
                 AssetsImages.getDefaultAvatar(),
             width: 100.w,
             height: 100.h,
             type: ImageWidgetType.asset,
           ),
         ).paddingTop(80.h),
-        Text(AccountData.instance.me.nickName ?? ""),
+        Text(ImDataManager.instance.me.nickName ?? ""),
         Text(
-          AccountData.instance.me.userId,
+          ImDataManager.instance.me.userId,
         )
       ],
     );
