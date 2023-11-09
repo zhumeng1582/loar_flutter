@@ -85,7 +85,7 @@ extension _Action on _RoomPageState {
   }
 
   sendMessage(String message) {
-    ref.read(imProvider).addTextMessage(widget.conversationBean.id, message);
+    ref.read(imProvider).sendTextMessage(widget.conversationBean.id, message);
   }
 }
 

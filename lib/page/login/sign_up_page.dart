@@ -4,13 +4,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/images.dart';
-import 'package:loar_flutter/page/login/login_page.dart';
+import 'package:loar_flutter/common/util/storage.dart';
 
-import '../../common/account_data.dart';
 import '../../common/colors.dart';
+import '../../common/constant.dart';
 import '../../common/image.dart';
 import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/reg.dart';
+import '../../main.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
 
@@ -18,7 +20,6 @@ final signUpProvider =
     ChangeNotifierProvider<SignUpNotifier>((ref) => SignUpNotifier());
 
 class SignUpNotifier extends ChangeNotifier {
-  get key => "LoginUserInfo";
   var avatar = AssetsImages.getRandomAvatar();
 
   setAvatar(String avatar) {
@@ -39,6 +40,19 @@ class SignUpNotifier extends ChangeNotifier {
 
   Future<bool> saveUser(
       String account, String userName, String password) async {
+    if (!isConnectionSuccessful) {
+      Loading.toast("请先连接网络");
+      return false;
+    }
+
+    if (!Reg.isPhone(account)) {
+      Loading.toast("请输入正确的手机号");
+      return false;
+    }
+    if (!Reg.isLoginPassword(password)) {
+      Loading.toast("请输入6-16为数字或字母密码");
+      return false;
+    }
     await EMClient.getInstance
         .createAccount(account, password)
         .catchError((value) => error(value));
@@ -57,6 +71,7 @@ class SignUpNotifier extends ChangeNotifier {
           .catchError((value) => error(value));
       buttonState = ButtonState.normal;
       notifyListeners();
+      StorageUtils.save(Constant.password + account, password);
       return true;
     }
     buttonState = ButtonState.normal;

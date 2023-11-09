@@ -7,7 +7,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Storage {
+class StorageUtils {
   static SharedPreferences? _prefs;
 
   static Future<SharedPreferences?> getPreferences() async {

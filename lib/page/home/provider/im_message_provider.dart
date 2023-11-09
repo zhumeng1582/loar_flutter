@@ -113,7 +113,7 @@ class ImNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
-  addTextMessage(String targetId, String messageContent) async {
+  sendTextMessage(String targetId, String messageContent) async {
     var msg = EMMessage.createTxtSendMessage(
       targetId: targetId,
       content: messageContent,
