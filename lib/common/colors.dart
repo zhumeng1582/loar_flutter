@@ -17,5 +17,6 @@ class AppColors {
   static Color get buttonHighlightColor => "#0176D3".toColor.withOpacity(0.3);
   static Color get line => "#000000".toColor.withOpacity(0.08);
   static Color get downloaded => "#000000".toColor.withOpacity(0.3);
+  static Color get coverFull => "#000000".toColor.withOpacity(0.6);
 
 }

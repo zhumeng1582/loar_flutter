@@ -2,7 +2,7 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 
 class QrCodeData {
   EMUserInfo? userInfo;
-  EMChatRoom? room;
+  EMGroup? room;
 
   QrCodeData({this.userInfo, this.room});
 
@@ -11,7 +11,7 @@ class QrCodeData {
       userInfo = EMUserInfo.fromJson(json["userInfo"]);
     }
     if (json["room"] != null) {
-      room = EMChatRoom.fromJson(json["room"]);
+      room = EMGroup.fromJson(json["room"]);
     }
   }
 

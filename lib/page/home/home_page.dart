@@ -103,7 +103,7 @@ extension _Action on _HomePageState {
   _invite(NotifyBean data) {
     Navigator.pushNamed(
       context,
-      RouteNames.roomPage,
+      RouteNames.notifyPage,
       arguments: data,
     );
   }

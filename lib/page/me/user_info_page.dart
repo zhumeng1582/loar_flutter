@@ -67,14 +67,14 @@ extension _Action on _UserInfoPageState {
   String getButtonText() {
     if (ref.read(imProvider).contacts.contains(widget.userInfo.userId)) {
       return "聊天";
-    }else {
+    } else {
       return "添加好友";
     }
   }
 
   void _tapAction() {
     if (ref.read(imProvider).contacts.contains(widget.userInfo.userId)) {
-      ConversationBean conversationBean = ConversationBean(
+      ConversationBean conversationBean = ConversationBean(0,
           widget.userInfo.userId, "", widget.userInfo.nickName ?? "", "", []);
       Navigator.pushNamedAndRemoveUntil(
         context,
@@ -82,7 +82,7 @@ extension _Action on _UserInfoPageState {
         (route) => route.settings.name == RouteNames.main,
         arguments: conversationBean,
       );
-    }else {
+    } else {
       ref.read(imProvider).addContact(widget.userInfo.userId, "请求添加好友");
     }
   }

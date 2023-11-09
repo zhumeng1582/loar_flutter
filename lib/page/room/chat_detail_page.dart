@@ -6,6 +6,7 @@ import 'package:loar_flutter/common/ex/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../widget/edit_remark_sheet.dart';
 import '../home/bean/conversation_bean.dart';
 
 final roomProvider =
@@ -13,6 +14,70 @@ final roomProvider =
 
 class RoomDetailNotifier extends ChangeNotifier {
   roomDetail() {}
+  EMGroup? group;
+  EMUserInfo? userInfo;
+
+  Future<EMGroup> fetchGroupInfoFromServer(String groupId) async {
+    return await EMClient.getInstance.groupManager
+        .fetchGroupInfoFromServer(groupId, fetchMembers: true);
+  }
+
+  Future<Map<String, EMUserInfo>> fetchUserInfoById(String groupId) async {
+    return await EMClient.getInstance.userInfoManager
+        .fetchUserInfoById([groupId]);
+  }
+
+  Future<EMGroup> createGroup() async {
+    EMGroupOptions groupOptions = EMGroupOptions(
+      style: EMGroupStyle.PrivateMemberCanInvite,
+      inviteNeedConfirm: true,
+      maxCount: 10,
+    );
+
+    return await EMClient.getInstance.groupManager.createGroup(
+      options: groupOptions,
+    );
+  }
+
+  getChatInfo(ConversationBean conversationBean) async {
+    group = null;
+    userInfo = null;
+
+    if (conversationBean.getChatType() == ChatType.GroupChat) {
+      group = await fetchGroupInfoFromServer(conversationBean.id);
+      var userInfoMap = await fetchUserInfoById(group?.owner ?? "");
+      userInfo = userInfoMap[group?.owner ?? ""];
+    } else {
+      var userInfoMap = await fetchUserInfoById(conversationBean.id);
+      userInfo = userInfoMap[conversationBean.id];
+    }
+
+    notifyListeners();
+  }
+
+  changeGroupName(String groupId, String name) async {
+    try {
+      await EMClient.getInstance.groupManager.changeGroupName(
+        groupId,
+        name,
+      );
+      group = await fetchGroupInfoFromServer(groupId);
+      notifyListeners();
+    } on EMError catch (e) {}
+    return null;
+  }
+
+  changeGroupDescription(String groupId, String name) async {
+    try {
+      await EMClient.getInstance.groupManager.changeGroupDescription(
+        groupId,
+        name,
+      );
+      group = await fetchGroupInfoFromServer(groupId);
+      notifyListeners();
+    } on EMError catch (e) {}
+    return null;
+  }
 }
 
 class ChatDetailPage extends ConsumerStatefulWidget {
@@ -28,6 +93,12 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
   final _controller = TextEditingController();
 
   @override
+  void initState() {
+    ref.read(roomProvider).getChatInfo(widget.conversationBean);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -38,13 +109,9 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
         child: Column(
           children: [
             _getMeItem("邀请好友", "", true).onTap(selectUser),
-            _getMeItem("群二维码名片", "", true).onTap(() {
-              QrCodeData qrCodeData = QrCodeData();
-              Navigator.pushNamed(context, RouteNames.qrGenerate,
-                  arguments: qrCodeData);
-            }),
+            ...getGroup(),
           ],
-        ),
+        ).paddingHorizontal(30.h),
       ),
     );
   }
@@ -57,51 +124,70 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
 }
 
 extension _Action on _RoomDetailPageState {
-  invite(List<EMUserInfo> data) async {
-    EMGroup? group;
-    if (widget.conversationBean.type == EMConversationType.Chat) {
-      group = await ref.read(imProvider).createGroup();
-    } else {
-      group =
-          await ref.read(imProvider).getGroupWithId(widget.conversationBean.id);
+  invite(List<EMUserInfo>? data) async {
+    if (data == null) {
+      return;
     }
-    if (group != null) {
-      await ref
-          .read(imProvider)
-          .addMembers(group.groupId, data.map((e) => e.userId).toList());
+    EMGroup? group = ref.read(roomProvider).group;
+    group ??= await ref.read(roomProvider).createGroup();
 
-      ConversationBean conversationBean =
-          ConversationBean(group.groupId, "", group.name ?? "", "", []);
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        RouteNames.roomPage,
-        (route) => route.settings.name == RouteNames.main,
-        arguments: conversationBean,
-      );
-    }
+    await ref
+        .read(imProvider)
+        .addMembers(group.groupId, data.map((e) => e.userId).toList());
+
+    ConversationBean conversationBean =
+        ConversationBean(1, group.groupId, "", group.name ?? "", "", []);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      RouteNames.roomPage,
+      (route) => route.settings.name == RouteNames.main,
+      arguments: conversationBean,
+    );
   }
 
   selectUser() async {
     List<String> data = [];
-    if (widget.conversationBean.type == EMConversationType.Chat) {
+    if (widget.conversationBean.getConversationType() ==
+        EMConversationType.Chat) {
       ref.read(imProvider).contacts.forEach((value) {
         if (value != widget.conversationBean.id) {
           data.add(value);
         }
       });
     } else {
-      var group =
-          await ref.read(imProvider).getGroupWithId(widget.conversationBean.id);
+      EMGroup? group = ref.read(roomProvider).group;
       //排除已经在群里的用户
       ref.read(imProvider).contacts.forEach((value) {
-        if (group?.memberList?.contains(value) == false) {
+        if (group?.memberList?.contains(value) == true) {
+        } else if (group?.adminList?.contains(value) == true) {
+        } else {
           data.add(value);
         }
       });
     }
 
     Navigator.pushNamed(context, RouteNames.selectContact, arguments: data)
-        .then((value) => {invite(value as List<EMUserInfo>)});
+        .then((value) => {invite(value as List<EMUserInfo>?)});
+  }
+
+  changeName(String groupId, String? name) {
+    EditRemarkBottomSheet.show(
+      context: context,
+      maxLength: 12,
+      data: name ?? "",
+      onConfirm: (value) =>
+          {ref.read(roomProvider).changeGroupName(groupId, value)},
+    );
+  }
+
+  changeDescription(String groupId, String? name) {
+    EditRemarkBottomSheet.show(
+      context: context,
+      maxLength: 12,
+      data: name ?? "",
+      onConfirm: (value) =>
+          {ref.read(roomProvider).changeGroupDescription(groupId, value)},
+    );
   }
 }
 
@@ -131,5 +217,24 @@ extension _UI on _RoomDetailPageState {
         ),
       ],
     );
+  }
+
+  List<Widget> getGroup() {
+    List<Widget> list = [];
+    var group = ref.watch(roomProvider).group;
+    if (group != null) {
+      list.add(_getMeItem("群名称", group.name, true)
+          .onTap(() => changeName(group.groupId, group.name)));
+      list.add(_getMeItem("群说明", group.description, true)
+          .onTap(() => changeDescription(group.groupId, group.description)));
+      list.add(_getMeItem("群二维码名片", "", true).onTap(() {
+        QrCodeData qrCodeData = QrCodeData(
+            userInfo: ref.read(roomProvider).userInfo,
+            room: ref.read(roomProvider).group);
+        Navigator.pushNamed(context, RouteNames.qrGenerate,
+            arguments: qrCodeData);
+      }));
+    }
+    return list;
   }
 }

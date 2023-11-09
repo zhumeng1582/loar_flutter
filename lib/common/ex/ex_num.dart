@@ -34,8 +34,9 @@ extension ExInt on int {
     var date = DateTime.fromMillisecondsSinceEpoch(this);
     return DateFormat('MM/dd HH:mm').format(date);
   }
-  String get formatChatTime{
-    try{
+
+  String get formatChatTime {
+    try {
       DateTime messageTime = DateTime.fromMillisecondsSinceEpoch(this);
       final currentTime = DateTime.now();
       final difference = currentTime.difference(messageTime);
@@ -51,18 +52,18 @@ extension ExInt on int {
           int pmHour = int.parse(hour) - 12;
           return '下午$pmHour:$minute';
         }
-
       } else if (difference.inDays < 2) {
         return '昨天';
       } else {
         return DateFormat.yMMMd('zh_CN').format(messageTime);
       }
-    }catch(e){
-      return "未知时间:$this";
+    } catch (e) {
+      return "";
     }
   }
-  String get getMB{
-    double value = toDouble()/1000000;
+
+  String get getMB {
+    double value = toDouble() / 1000000;
     return value.toStringAsFixed(2);
   }
 }
@@ -80,6 +81,7 @@ extension ExDouble on double {
     return (p1 - p2).abs() < 0.00001;
   }
 }
+
 extension ShowAmountInt on int? {
   String toStringAmount() {
     if (this == null) {

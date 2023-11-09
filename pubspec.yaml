@@ -74,6 +74,9 @@ dependencies:
   azlistview: ^2.0.0
   lpinyin: ^2.0.2
 
+  # 底部弹出层
+  modal_bottom_sheet: ^3.0.0-Pre
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

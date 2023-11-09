@@ -45,7 +45,7 @@ class _QRGeneratePageState extends ConsumerState<QRGeneratePage> {
                 getImage()
               ],
             ).paddingTop(180.h),
-            Text('扫码上方的二维码，加我为朋友').paddingTop(50.h)
+            Text(getTips()).paddingTop(50.h)
           ],
         ),
       ),
@@ -60,32 +60,39 @@ extension _Action on _QRGeneratePageState {
         "";
   }
 
-  Widget getImage() {
-    if(widget.qrCodeData.userInfo?.avatarUrl!=null){
-      return Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: Center(
-            child: Container(
-              width: 30,
-              height: 30,
-              margin: const EdgeInsets.all(5),
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: Colors.white,
-              ),
-              child: ImageWidget(
-                url: widget.qrCodeData.userInfo!.avatarUrl!,
-                width: 80.w,
-                height: 80.h,
-                type: ImageWidgetType.asset,
-              ),
-            ),
-          ));
+  String getTips() {
+    if (widget.qrCodeData.room == null) {
+      return "扫码上方的二维码，加我为朋友";
+    } else {
+      return "扫码上方的二维码，加入群聊";
     }
-    return Container();
+  }
+
+  Widget getImage() {
+    return Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        child: Center(
+          child: Container(
+            width: 30,
+            height: 30,
+            margin: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+            child: widget.qrCodeData.userInfo?.avatarUrl != null
+                ? ImageWidget(
+                    url: widget.qrCodeData.userInfo!.avatarUrl!,
+                    width: 80.w,
+                    height: 80.h,
+                    type: ImageWidgetType.asset,
+                  )
+                : Container(),
+          ),
+        ));
   }
 }

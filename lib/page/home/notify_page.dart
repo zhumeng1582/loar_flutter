@@ -5,6 +5,7 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 
+import '../../common/colors.dart';
 import '../../widget/commit_button.dart';
 import 'bean/notify_bean.dart';
 
@@ -60,13 +61,16 @@ class _NotifyPageState extends ConsumerState<NotifyPage> {
                     "${ref.watch(notifyProvider).userInfo?.nickName}希望成为您的好友"),
             Text("${widget.data.reason}"),
             CommitButton(
-                buttonState: ButtonState.normal,
-                text: "同意",
-                tapAction: _agree),
+                    buttonState: ButtonState.normal,
+                    text: "同意",
+                    tapAction: _agree)
+                .paddingTop(20.h),
             CommitButton(
-                buttonState: ButtonState.normal,
-                text: "拒绝",
-                tapAction: _reject)
+                    buttonState: ButtonState.normal,
+                    backgroundColor: AppColors.disableButtonBackgroundColor,
+                    text: "拒绝",
+                    tapAction: _reject)
+                .paddingTop(20.h)
           ],
         ).paddingHorizontal(30.w),
       ),
@@ -83,8 +87,9 @@ extension _Action on _NotifyPageState {
   _agree() {
     ref.read(imProvider).acceptInvitation(widget.data);
   }
+
   _reject() {
-    ref.read(imProvider).acceptInvitation(widget.data);
+    ref.read(imProvider).rejectInvitation(widget.data);
   }
 }
 

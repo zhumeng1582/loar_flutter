@@ -107,16 +107,16 @@ extension ExWidget on Widget {
       child: this,
     );
   }
-
   /// 圆角
-  Widget borderRadius({
-    Key? key,
-    double? all,
-    double? topLeft,
-    double? topRight,
-    double? bottomLeft,
-    double? bottomRight,
-  }) {
+  Widget borderRadius(
+      double r, {
+        Key? key,
+        double? all,
+        double? topLeft,
+        double? topRight,
+        double? bottomLeft,
+        double? bottomRight,
+      }) {
     BoxDecoration decoration = BoxDecoration(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(topLeft ?? all ?? 0.0),
@@ -131,6 +131,7 @@ extension ExWidget on Widget {
       child: this,
     );
   }
+
 
   /// 圆角
   Widget roundedBorder(

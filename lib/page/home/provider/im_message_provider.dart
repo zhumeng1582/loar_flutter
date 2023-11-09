@@ -24,41 +24,43 @@ class ImNotifier extends ChangeNotifier {
   Map<String, List<EMMessage>> messageMap = {};
 
   init() async {
-    try {
-      if (isConnectionSuccessful) {
-        ImDataManager.instance.getUserInfo();
+    if (true) {
+      ImDataManager.instance.getUserInfo();
 
-        List<EMConversation> result =
-            await EMClient.getInstance.chatManager.loadAllConversations();
-        contacts = await EMClient.getInstance.contactManager
-            .getAllContactsFromServer();
-        var contactsMap = await EMClient.getInstance.userInfoManager
-            .fetchUserInfoById(contacts);
-        contactsMap.forEach((key, value) {
-          allUsers[key] = value;
-        });
-        conversationsList = await getConversationList(result);
+      // EMCursorResult<EMConversation> result =
+      // await EMClient.getInstance.chatManager.fetchConversation();
 
-        StorageUtils.saveList(Constant.contacts, contacts);
-        StorageUtils.saveMap(Constant.allUsers, allUsers);
-        StorageUtils.saveList(Constant.conversationsList, conversationsList);
-      } else {
-        contacts = StorageUtils.loadList(Constant.contacts) as List<String>;
-        allUsers =
-            StorageUtils.loadMap(Constant.allUsers) as Map<String, EMUserInfo>;
+      List<EMConversation> result =
+          await EMClient.getInstance.chatManager.loadAllConversations();
+      contacts =
+          await EMClient.getInstance.contactManager.getAllContactsFromServer();
+      var contactsMap = await EMClient.getInstance.userInfoManager
+          .fetchUserInfoById(contacts);
+      contactsMap.forEach((key, value) {
+        allUsers[key] = value;
+      });
+      conversationsList = await getConversationList(result);
 
-        conversationsList = StorageUtils.loadList(Constant.conversationsList)
-            as List<ConversationBean>;
-      }
+      // StorageUtils.saveList(Constant.contacts, contacts);
+      // StorageUtils.saveMap(Constant.allUsers, allUsers);
+      // StorageUtils.saveList(Constant.conversationsList, conversationsList);
+    } else {
+      contacts = StorageUtils.loadList(Constant.contacts) as List<String>;
+      allUsers =
+          StorageUtils.loadMap(Constant.allUsers) as Map<String, EMUserInfo>;
 
-      notifyListeners();
-    } on EMError catch (e) {}
+      conversationsList = StorageUtils.loadList(Constant.conversationsList)
+          as List<ConversationBean>;
+    }
+
+    notifyListeners();
   }
 
   addMessageToMap(String conversationId, EMMessage message) {
     var messageList = messageMap[conversationId] ?? [];
     messageList.insert(0, message);
     messageMap[conversationId] = messageList;
+    EMClient.getInstance.chatManager.importMessages([message]);
   }
 
   addContacts(String userId) async {
@@ -88,20 +90,6 @@ class ImNotifier extends ChangeNotifier {
     return AssetsImages.getRandomAvatar();
   }
 
-  Future<EMGroup?> createGroup() async {
-    EMGroupOptions groupOptions = EMGroupOptions(
-      style: EMGroupStyle.PrivateMemberCanInvite,
-      inviteNeedConfirm: true,
-      maxCount: 10,
-    );
-
-    try {
-      return await EMClient.getInstance.groupManager.createGroup(
-        options: groupOptions,
-      );
-    } on EMError catch (e) {}
-    return null;
-  }
 
   void addImListener() {
     EMClient.getInstance.groupManager.addEventHandler(
@@ -170,10 +158,14 @@ class ImNotifier extends ChangeNotifier {
       if (data.type == NotifyType.group) {
         await EMClient.getInstance.groupManager
             .acceptInvitation(data.groupId!, data.inviter);
+        await groupToConversation(conversationsList);
       } else {
         await EMClient.getInstance.contactManager
             .acceptInvitation(data.inviter);
+        contacts = await EMClient.getInstance.contactManager
+            .getAllContactsFromServer();
       }
+      notifyListeners();
     } on EMError catch (e) {}
   }
 
@@ -189,10 +181,9 @@ class ImNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
-  Future<EMGroup?> getGroupWithId(String roomId) async {
-    try {
-      return await EMClient.getInstance.groupManager.getGroupWithId(roomId);
-    } on EMError catch (e) {}
+  Future<EMGroup> fetchGroupInfoFromServer(String groupId) async {
+    return await EMClient.getInstance.groupManager
+        .fetchGroupInfoFromServer(groupId, fetchMembers: true);
   }
 
   addMembers(String groupId, List<String> members) async {
@@ -201,11 +192,10 @@ class ImNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
-  sendTextMessage(String targetId, String messageContent) async {
+  sendTextMessage(
+      ChatType chatType, String targetId, String messageContent) async {
     var msg = EMMessage.createTxtSendMessage(
-      targetId: targetId,
-      content: messageContent,
-    );
+        targetId: targetId, content: messageContent, chatType: chatType);
     addMessageToMap(targetId, msg);
     notifyListeners();
     await EMClient.getInstance.chatManager.sendMessage(msg);
@@ -216,7 +206,7 @@ class ImNotifier extends ChangeNotifier {
       EMCursorResult<EMMessage?> cursor =
           await EMClient.getInstance.chatManager.fetchHistoryMessages(
         conversationId: conversationBean.id,
-        type: conversationBean.type,
+        type: conversationBean.getConversationType(),
       );
       List<EMMessage> messageList = [];
       for (var element in cursor.data) {
@@ -225,6 +215,8 @@ class ImNotifier extends ChangeNotifier {
         }
       }
       messageMap[conversationBean.id] = messageList;
+
+      EMClient.getInstance.chatManager.importMessages(messageList);
       notifyListeners();
     } on EMError catch (e) {}
   }
@@ -253,8 +245,9 @@ class ImNotifier extends ChangeNotifier {
           roomUserMap.forEach((key, value) {
             allUsers[key] = value;
           });
-          conversationsList.add(ConversationBean.createByConversation(
-              value,
+          conversationsList.add(ConversationBean(
+              0,
+              value.id,
               "${lastMessage.localTime}",
               roomUserMap[lastMessage.from]?.nickName ?? "匿名",
               getMessageText(lastMessage), [
@@ -262,19 +255,23 @@ class ImNotifier extends ChangeNotifier {
                 AssetsImages.getDefaultAvatar()
           ]));
         } else if (lastMessage.chatType == ChatType.GroupChat) {
-          var group = await getGroupWithId(value.id);
+          var group = await fetchGroupInfoFromServer(value.id);
 
+          var roomUser = [group.owner ?? ""];
+          roomUser.addAll(group.memberList ?? []);
+          roomUser.addAll(group.adminList ?? []);
           var roomUserMap = await EMClient.getInstance.userInfoManager
-              .fetchUserInfoById(group?.memberList ?? []);
+              .fetchUserInfoById(roomUser);
 
           roomUserMap.forEach((key, value) {
             allUsers[key] = value;
           });
 
-          conversationsList.add(ConversationBean.createByConversation(
-              value,
+          conversationsList.add(ConversationBean(
+              1,
+              value.id,
               "${lastMessage.serverTime}",
-              group?.name ?? "群聊（${group?.memberList}）",
+              isEmpty(group.name) ? group.name! : "群聊（${(roomUserMap.length)})",
               getMessageText(lastMessage),
               roomUserMap.values
                   .map((e) => e.avatarUrl ?? AssetsImages.getDefaultAvatar())
@@ -283,29 +280,47 @@ class ImNotifier extends ChangeNotifier {
       }
     }
 
+    await groupToConversation(conversationsList);
+
+    return conversationsList;
+  }
+
+  Future<void> groupToConversation(
+      List<ConversationBean> conversationsList) async {
     var groupList =
         await EMClient.getInstance.groupManager.fetchJoinedGroupsFromServer();
     for (var group in groupList) {
-      if (conversationsList.any((element) => element.id != group.groupId)) {
+      if (!conversationsList.any((element) => element.id == group.groupId)) {
+        var groupInfo = await fetchGroupInfoFromServer(group.groupId);
+        var roomUser = [group.owner ?? ""];
+        roomUser.addAll(groupInfo.memberList ?? []);
+        roomUser.addAll(groupInfo.adminList ?? []);
         var roomUserMap = await EMClient.getInstance.userInfoManager
-            .fetchUserInfoById(group.memberList ?? []);
+            .fetchUserInfoById(roomUser);
 
         roomUserMap.forEach((key, value) {
           allUsers[key] = value;
         });
+        roomUserMap[ImDataManager.instance.me.userId] =
+            ImDataManager.instance.me;
 
         conversationsList.add(ConversationBean(
-            group.groupId,
+            1,
+            groupInfo.groupId,
             "${0}",
-            group.name ?? "群聊（${group.memberList}）",
+            isEmpty(groupInfo.name)
+                ? groupInfo.name!
+                : "群聊（${(roomUserMap.length)})",
             "马上发起群聊吧",
             roomUserMap.values
                 .map((e) => e.avatarUrl ?? AssetsImages.getDefaultAvatar())
                 .toList()));
       }
     }
+  }
 
-    return conversationsList;
+  bool isEmpty(String? text) {
+    return text?.isNotEmpty == true;
   }
 
   void removeImListener() {

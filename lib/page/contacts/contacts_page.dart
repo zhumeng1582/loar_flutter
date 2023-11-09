@@ -99,7 +99,7 @@ extension _Action on _ContactsPageState {
 
   _room(EMUserInfo data) {
     ConversationBean conversationBean =
-        ConversationBean(data.userId, "", data.nickName ?? "", "", []);
+        ConversationBean(0, data.userId, "", data.nickName ?? "", "", []);
     Navigator.pushNamed(
       context,
       RouteNames.roomPage,

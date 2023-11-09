@@ -74,7 +74,8 @@ extension _Action on _ChatPageState {
   }
 
   sendMessage(String message) {
-    ref.read(imProvider).sendTextMessage(widget.conversationBean.id, message);
+    ref.read(imProvider).sendTextMessage(widget.conversationBean.getChatType(),
+        widget.conversationBean.id, message);
   }
 }
 

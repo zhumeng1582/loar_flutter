@@ -38,7 +38,7 @@ class Loading {
 
   static void success([String? text]) {
     EasyLoading.instance.successWidget = Image.asset(
-      AssetsImages.microphone,
+      AssetsImages.iconSuccess,
       width: 25,
       height: 25,
     );
