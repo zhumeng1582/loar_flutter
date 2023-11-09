@@ -6,7 +6,7 @@ import 'package:loar_flutter/common/ex/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
-import '../home/bean/ConversationBean.dart';
+import '../home/bean/conversation_bean.dart';
 
 final roomProvider =
     ChangeNotifierProvider<RoomDetailNotifier>((ref) => RoomDetailNotifier());
@@ -82,15 +82,19 @@ extension _Action on _RoomDetailPageState {
   }
 
   selectUser() async {
-    List<EMUserInfo> data = [];
+    List<String> data = [];
     if (widget.conversationBean.type == EMConversationType.Chat) {
-      data = ref.read(imProvider).contacts.values.toList();
+      ref.read(imProvider).contacts.forEach((value) {
+        if (value != widget.conversationBean.id) {
+          data.add(value);
+        }
+      });
     } else {
       var group =
           await ref.read(imProvider).getGroupWithId(widget.conversationBean.id);
-      // group.memberList
-      ref.read(imProvider).contacts.forEach((key, value) {
-        if (group?.memberList?.contains(key) != true) {
+      //排除已经在群里的用户
+      ref.read(imProvider).contacts.forEach((value) {
+        if (group?.memberList?.contains(value) == false) {
           data.add(value);
         }
       });

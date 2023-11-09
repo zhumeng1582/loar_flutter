@@ -10,7 +10,7 @@ import 'package:loar_flutter/widget/commit_button.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
-import '../home/bean/ConversationBean.dart';
+import '../home/bean/conversation_bean.dart';
 
 final userInfoProvider =
     ChangeNotifierProvider<UserInfoNotifier>((ref) => UserInfoNotifier());
@@ -19,9 +19,8 @@ class UserInfoNotifier extends ChangeNotifier {}
 
 class UserInfoPage extends ConsumerStatefulWidget {
   EMUserInfo userInfo;
-  String message;
 
-  UserInfoPage({super.key, required this.userInfo, required this.message});
+  UserInfoPage({super.key, required this.userInfo});
 
   @override
   ConsumerState<UserInfoPage> createState() => _UserInfoPageState();
@@ -48,7 +47,6 @@ class _UserInfoPageState extends ConsumerState<UserInfoPage> {
         child: Column(
           children: [
             _topItem(),
-            Text(widget.message),
             CommitButton(
                 buttonState: ButtonState.normal,
                 text: getButtonText(),
@@ -67,17 +65,15 @@ class _UserInfoPageState extends ConsumerState<UserInfoPage> {
 
 extension _Action on _UserInfoPageState {
   String getButtonText() {
-    if (ref.read(imProvider).contacts.containsKey(widget.userInfo.userId)) {
+    if (ref.read(imProvider).contacts.contains(widget.userInfo.userId)) {
       return "聊天";
-    } else if (widget.message.isNotEmpty) {
-      return "同意";
-    } else {
+    }else {
       return "添加好友";
     }
   }
 
   void _tapAction() {
-    if (ref.read(imProvider).contacts.containsKey(widget.userInfo.userId)) {
+    if (ref.read(imProvider).contacts.contains(widget.userInfo.userId)) {
       ConversationBean conversationBean = ConversationBean(
           widget.userInfo.userId, "", widget.userInfo.nickName ?? "", "", []);
       Navigator.pushNamedAndRemoveUntil(
@@ -86,9 +82,7 @@ extension _Action on _UserInfoPageState {
         (route) => route.settings.name == RouteNames.main,
         arguments: conversationBean,
       );
-    } else if (widget.message.isNotEmpty) {
-      ref.read(imProvider).acceptInvitation(widget.userInfo.userId);
-    } else {
+    }else {
       ref.read(imProvider).addContact(widget.userInfo.userId, "请求添加好友");
     }
   }

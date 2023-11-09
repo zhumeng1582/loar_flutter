@@ -12,7 +12,7 @@ import 'package:loar_flutter/page/room/chat_detail_page.dart';
 
 import '../../page/blue/find_device_page.dart';
 import '../../page/contacts/contacts_select_page.dart';
-import '../../page/home/bean/ConversationBean.dart';
+import '../../page/home/bean/conversation_bean.dart';
 import '../../page/login/avatar_select_page.dart';
 import '../../page/room/chat_page.dart';
 import '../proto/qr_code_data.dart';
@@ -55,7 +55,7 @@ class RouteObservers {
           settings: settings,
           builder: (_) => ChatDetailPage(conversationBean: conversation));
     } else if (settings.name == RouteNames.selectContact) {
-      var userList = settings.arguments as List<EMUserInfo>;
+      var userList = settings.arguments as List<String>;
       return MaterialPageRoute(
           settings: settings,
           builder: (_) => ContactsSelectPage(userList: userList));
@@ -66,13 +66,9 @@ class RouteObservers {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const OfflineMapPage());
     } else if (settings.name == RouteNames.usesInfoPage) {
-      var arguments = settings.arguments as Map;
-      var userInfo = arguments["userInfo"] as EMUserInfo;
-      var message = arguments["message"] as String?;
+      var userInfo = settings.arguments as EMUserInfo;
       return MaterialPageRoute(
-          settings: settings,
-          builder: (_) =>
-              UserInfoPage(userInfo: userInfo, message: message ?? ""));
+          settings: settings, builder: (_) => UserInfoPage(userInfo: userInfo));
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(

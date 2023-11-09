@@ -11,13 +11,15 @@ import '../../../common/constant.dart';
 import '../../../common/im_data.dart';
 import '../../../common/util/images.dart';
 import '../../../main.dart';
-import '../bean/ConversationBean.dart';
+import '../bean/conversation_bean.dart';
+import '../bean/notify_bean.dart';
 
 final imProvider = ChangeNotifierProvider<ImNotifier>((ref) => ImNotifier());
 
 class ImNotifier extends ChangeNotifier {
   List<ConversationBean> conversationsList = [];
-  Map<String, EMUserInfo> contacts = {};
+  List<NotifyBean> notifyList = [];
+  List<String> contacts = [];
   Map<String, EMUserInfo> allUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
 
@@ -28,20 +30,20 @@ class ImNotifier extends ChangeNotifier {
 
         List<EMConversation> result =
             await EMClient.getInstance.chatManager.loadAllConversations();
-        List<String> contacts = await EMClient.getInstance.contactManager
+        contacts = await EMClient.getInstance.contactManager
             .getAllContactsFromServer();
-        this.contacts = await EMClient.getInstance.userInfoManager
+        var contactsMap = await EMClient.getInstance.userInfoManager
             .fetchUserInfoById(contacts);
-        this.contacts.forEach((key, value) {
+        contactsMap.forEach((key, value) {
           allUsers[key] = value;
         });
         conversationsList = await getConversationList(result);
-        StorageUtils.saveMap(Constant.contacts, this.contacts);
+
+        StorageUtils.saveList(Constant.contacts, contacts);
         StorageUtils.saveMap(Constant.allUsers, allUsers);
         StorageUtils.saveList(Constant.conversationsList, conversationsList);
       } else {
-        contacts =
-            StorageUtils.loadMap(Constant.contacts) as Map<String, EMUserInfo>;
+        contacts = StorageUtils.loadList(Constant.contacts) as List<String>;
         allUsers =
             StorageUtils.loadMap(Constant.allUsers) as Map<String, EMUserInfo>;
 
@@ -59,14 +61,26 @@ class ImNotifier extends ChangeNotifier {
     messageMap[conversationId] = messageList;
   }
 
+  addContacts(String userId) async {
+    contacts =
+        await EMClient.getInstance.contactManager.getAllContactsFromServer();
+    notifyListeners();
+  }
+
+  EMUserInfo? getUserInfo(String? userId) {
+    if (allUsers.containsKey(userId)) {
+      return allUsers[userId];
+    }
+    if (ImDataManager.instance.me.userId == userId) {
+      return ImDataManager.instance.me;
+    }
+    return null;
+  }
+
   String getAvatarUrl(String? userId) {
     if (allUsers.containsKey(userId)) {
       return allUsers[userId]?.avatarUrl ?? AssetsImages.getRandomAvatar();
     }
-    if (contacts.containsKey(userId)) {
-      return contacts[userId]?.avatarUrl ?? AssetsImages.getRandomAvatar();
-    }
-
     if (ImDataManager.instance.me.userId == userId) {
       return ImDataManager.instance.me.avatarUrl ??
           AssetsImages.getRandomAvatar();
@@ -90,11 +104,33 @@ class ImNotifier extends ChangeNotifier {
   }
 
   void addImListener() {
+    EMClient.getInstance.groupManager.addEventHandler(
+        "UNIQUE_HANDLER_ID_1",
+        EMGroupEventHandler(
+          onInvitationAcceptedFromGroup: (groupId, userId, reason) {},
+          onInvitationReceivedFromGroup: (
+            groupId,
+            groupName,
+            inviter,
+            reason,
+          ) {
+            notifyList.add(NotifyBean(NotifyType.group, inviter,
+                "${DateTime.now().millisecondsSinceEpoch}",
+                groupId: groupId, name: groupName, reason: reason));
+            // EMClient.getInstance.groupManager.acceptInvitation(groupId, inviter);
+          },
+        ));
     EMClient.getInstance.contactManager.addEventHandler(
       "UNIQUE_HANDLER_ID_1",
       EMContactEventHandler(
-        onFriendRequestAccepted: (userId) {},
-        onContactInvited: (userId, reason) {},
+        onFriendRequestAccepted: (userId) {
+          addContacts(userId);
+        },
+        onContactInvited: (userId, reason) {
+          notifyList.add(NotifyBean(NotifyType.friend, userId,
+              "${DateTime.now().millisecondsSinceEpoch}",
+              reason: reason));
+        },
         onFriendRequestDeclined: (userId) {},
       ),
     );
@@ -129,9 +165,27 @@ class ImNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
-  acceptInvitation(String userId) async {
+  acceptInvitation(NotifyBean data) async {
     try {
-      await EMClient.getInstance.contactManager.acceptInvitation(userId);
+      if (data.type == NotifyType.group) {
+        await EMClient.getInstance.groupManager
+            .acceptInvitation(data.groupId!, data.inviter);
+      } else {
+        await EMClient.getInstance.contactManager
+            .acceptInvitation(data.inviter);
+      }
+    } on EMError catch (e) {}
+  }
+
+  rejectInvitation(NotifyBean data) async {
+    try {
+      if (data.type == NotifyType.group) {
+        await EMClient.getInstance.groupManager
+            .declineInvitation(groupId: data.groupId!, inviter: data.inviter);
+      } else {
+        await EMClient.getInstance.contactManager
+            .declineInvitation(data.inviter);
+      }
     } on EMError catch (e) {}
   }
 
@@ -228,6 +282,29 @@ class ImNotifier extends ChangeNotifier {
         }
       }
     }
+
+    var groupList =
+        await EMClient.getInstance.groupManager.fetchJoinedGroupsFromServer();
+    for (var group in groupList) {
+      if (conversationsList.any((element) => element.id != group.groupId)) {
+        var roomUserMap = await EMClient.getInstance.userInfoManager
+            .fetchUserInfoById(group.memberList ?? []);
+
+        roomUserMap.forEach((key, value) {
+          allUsers[key] = value;
+        });
+
+        conversationsList.add(ConversationBean(
+            group.groupId,
+            "${0}",
+            group.name ?? "群聊（${group.memberList}）",
+            "马上发起群聊吧",
+            roomUserMap.values
+                .map((e) => e.avatarUrl ?? AssetsImages.getDefaultAvatar())
+                .toList()));
+      }
+    }
+
     return conversationsList;
   }
 

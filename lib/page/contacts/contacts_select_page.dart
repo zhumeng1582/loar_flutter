@@ -18,7 +18,7 @@ class ContactsSelectNotifier extends ChangeNotifier {
 }
 
 class ContactsSelectPage extends ConsumerStatefulWidget {
-  List<EMUserInfo> userList;
+  List<String> userList;
 
   ContactsSelectPage({super.key, required this.userList});
 
@@ -34,7 +34,7 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<EMUserInfo> data = widget.userList;
+    List<String> data = widget.userList;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,9 +44,14 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildCellItem(data[index]).onTap(() {
-            _selectUser(data[index]);
-          });
+          var userInfo = ref.read(imProvider).getUserInfo(data[index]);
+          if (userInfo != null) {
+            return _buildCellItem(userInfo).onTap(() {
+              _selectUser(userInfo);
+            });
+          } else {
+            Container();
+          }
         },
       ),
     );

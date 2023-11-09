@@ -42,10 +42,8 @@ tryConnection() {
     try {
       final response = await InternetAddress.lookup('baidu.com');
       isConnectionSuccessful = response.isNotEmpty;
-      debugPrint("---------->$isConnectionSuccessful");
     } on SocketException catch (e) {
       isConnectionSuccessful = false;
-      debugPrint("---------->$isConnectionSuccessful");
     }
   });
 }

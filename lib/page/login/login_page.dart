@@ -37,10 +37,10 @@ class LoginNotifier extends ChangeNotifier {
       Loading.toast("请输入正确的手机号");
       return false;
     }
-    if (!Reg.isLoginPassword(password)) {
-      Loading.toast("请输入6-16为数字或字母组合密码");
-      return false;
-    }
+    // if (!Reg.isLoginPassword(password)) {
+    //   Loading.toast("请输入6-16为数字或字母组合密码");
+    //   return false;
+    // }
     if (!isConnectionSuccessful) {
       var psw = await StorageUtils.getString(Constant.password + account);
       if (psw == password) {

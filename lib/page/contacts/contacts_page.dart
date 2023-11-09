@@ -10,7 +10,7 @@ import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
-import '../home/bean/ConversationBean.dart';
+import '../home/bean/conversation_bean.dart';
 import '../home/provider/home_provider.dart';
 
 class ContactsPage extends ConsumerStatefulWidget {
@@ -28,7 +28,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<EMUserInfo> data = ref.watch(imProvider).contacts.values.toList();
+    List<String> data = ref.watch(imProvider).contacts;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
@@ -40,15 +40,20 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
             width: 46.w,
             height: 46.h,
             type: ImageWidgetType.asset,
-          ).paddingRight(30.w)
+          ).paddingRight(30.w).onTap(scan)
         ],
       ),
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildRoomItem(data[index]).onTap(() {
-            _room(data[index]);
-          });
+          var userInfo = ref.read(imProvider).getUserInfo(data[index]);
+          if (userInfo != null) {
+            return _buildRoomItem(userInfo).onTap(() {
+              _room(userInfo);
+            });
+          } else {
+            Container();
+          }
         },
       ),
     );
@@ -89,7 +94,6 @@ extension _Action on _ContactsPageState {
   scan() async {
     var qrCodeData = await ref.read(homeProvider).scan();
     if (qrCodeData.userInfo != null) {
-
     } else if (qrCodeData.room != null) {}
   }
 

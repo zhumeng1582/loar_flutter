@@ -12,7 +12,8 @@ import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
-import 'bean/ConversationBean.dart';
+import 'bean/conversation_bean.dart';
+import 'bean/notify_bean.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -29,7 +30,12 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<ConversationBean> data = ref.watch(imProvider).conversationsList;
+    List<dynamic> data = [];
+    List<NotifyBean> notifyList = ref.watch(imProvider).notifyList;
+    List<ConversationBean> conversations =
+        ref.watch(imProvider).conversationsList;
+    data.addAll(notifyList);
+    data.addAll(conversations);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
@@ -47,9 +53,16 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildRoomItem(data[index]).onTap(() {
-            _room(data[index]);
-          });
+          var item = data[index];
+          if (item is ConversationBean) {
+            return _buildRoomItem(item).onTap(() {
+              _room(item);
+            });
+          }else{
+            return _buildNotifyItem(item).onTap(() {
+              _invite(item);
+            });
+          }
         },
       ),
     );
@@ -68,7 +81,7 @@ extension _Action on _HomePageState {
       Navigator.pushNamed(
         context,
         RouteNames.usesInfoPage,
-        arguments: {"userInfo": qrCodeData.userInfo},
+        arguments: qrCodeData.userInfo,
       );
     } else if (qrCodeData.room != null) {
       Navigator.pushNamed(
@@ -86,9 +99,71 @@ extension _Action on _HomePageState {
       arguments: data,
     );
   }
+
+  _invite(NotifyBean data) {
+    Navigator.pushNamed(
+      context,
+      RouteNames.roomPage,
+      arguments: data,
+    );
+  }
 }
 
 extension _UI on _HomePageState {
+  Widget _buildNotifyItem(NotifyBean data) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            ImageWidget(
+              width: 80.w,
+              height: 80.h,
+              url: AssetsImages.iconInvite,
+              type: ImageWidgetType.asset,
+            ).paddingHorizontal(30.w),
+            Expanded(
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data.type== NotifyType.group?"您收到一个加群消息":"您收到一个好友邀请",
+                              style: TextStyle(
+                                fontSize: 24.sp,
+                                color: AppColors.title,
+                              ),
+                            ),
+                            Text(
+                              data.reason??"请尽快处理",
+                              style: TextStyle(
+                                fontSize: 22.sp,
+                                color: AppColors.title.withOpacity(0.6),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Text(data.time.formatChatTime,
+                          style: TextStyle(
+                            fontSize: 22.sp,
+                            color: AppColors.title.withOpacity(0.6),
+                          )).paddingHorizontal(30.h),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ).paddingTop(5.h),
+        Gaps.line.paddingLeft(140.w).paddingVertical(15.h)
+      ],
+    );
+  }
   Widget _buildRoomItem(ConversationBean data) {
     return Column(
       children: [
