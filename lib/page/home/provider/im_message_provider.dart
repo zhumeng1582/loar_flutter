@@ -30,8 +30,6 @@ class ImNotifier extends ChangeNotifier {
       // EMCursorResult<EMConversation> result =
       // await EMClient.getInstance.chatManager.fetchConversation();
 
-      List<EMConversation> result =
-          await EMClient.getInstance.chatManager.loadAllConversations();
       contacts =
           await EMClient.getInstance.contactManager.getAllContactsFromServer();
       var contactsMap = await EMClient.getInstance.userInfoManager
@@ -39,7 +37,8 @@ class ImNotifier extends ChangeNotifier {
       contactsMap.forEach((key, value) {
         allUsers[key] = value;
       });
-      conversationsList = await getConversationList(result);
+
+      conversationsList = await getConversationList();
 
       // StorageUtils.saveList(Constant.contacts, contacts);
       // StorageUtils.saveMap(Constant.allUsers, allUsers);
@@ -56,11 +55,13 @@ class ImNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  addMessageToMap(String conversationId, EMMessage message) {
+  addMessageToMap(String conversationId, EMMessage message) async {
     var messageList = messageMap[conversationId] ?? [];
     messageList.insert(0, message);
     messageMap[conversationId] = messageList;
     EMClient.getInstance.chatManager.importMessages([message]);
+    conversationsList = await getConversationList();
+    notifyListeners();
   }
 
   addContacts(String userId) async {
@@ -89,7 +90,6 @@ class ImNotifier extends ChangeNotifier {
     }
     return AssetsImages.getRandomAvatar();
   }
-
 
   void addImListener() {
     EMClient.getInstance.groupManager.addEventHandler(
@@ -192,6 +192,18 @@ class ImNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
+  leaveGroup(String groupId) async {
+    try {
+      await EMClient.getInstance.groupManager.leaveGroup(groupId);
+    } on EMError catch (e) {}
+  }
+
+  destroyGroup(String groupId) async {
+    try {
+      await EMClient.getInstance.groupManager.destroyGroup(groupId);
+    } on EMError catch (e) {}
+  }
+
   sendTextMessage(
       ChatType chatType, String targetId, String messageContent) async {
     var msg = EMMessage.createTxtSendMessage(
@@ -233,8 +245,10 @@ class ImNotifier extends ChangeNotifier {
     }
   }
 
-  Future<List<ConversationBean>> getConversationList(
-      List<EMConversation> message) async {
+  Future<List<ConversationBean>> getConversationList() async {
+    List<EMConversation> message =
+        await EMClient.getInstance.chatManager.loadAllConversations();
+
     List<ConversationBean> conversationsList = [];
     for (var value in message) {
       var lastMessage = await value.lastReceivedMessage();

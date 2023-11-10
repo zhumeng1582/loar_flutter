@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/im_data.dart';
+import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/home_provider.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
@@ -47,10 +49,12 @@ class _UserInfoPageState extends ConsumerState<UserInfoPage> {
         child: Column(
           children: [
             _topItem(),
-            CommitButton(
-                buttonState: ButtonState.normal,
-                text: getButtonText(),
-                tapAction: _tapAction)
+            isMe()
+                ? Container()
+                : CommitButton(
+                    buttonState: ButtonState.normal,
+                    text: getButtonText(),
+                    tapAction: _tapAction)
           ],
         ).paddingHorizontal(30.w),
       ),
@@ -64,6 +68,10 @@ class _UserInfoPageState extends ConsumerState<UserInfoPage> {
 }
 
 extension _Action on _UserInfoPageState {
+  bool isMe() {
+    return widget.userInfo.userId == ImDataManager.instance.me.userId;
+  }
+
   String getButtonText() {
     if (ref.read(imProvider).contacts.contains(widget.userInfo.userId)) {
       return "聊天";
@@ -84,6 +92,7 @@ extension _Action on _UserInfoPageState {
       );
     } else {
       ref.read(imProvider).addContact(widget.userInfo.userId, "请求添加好友");
+      Loading.toast("已发送消息，等候对方回复");
     }
   }
 }
@@ -100,6 +109,7 @@ extension _UI on _UserInfoPageState {
             type: ImageWidgetType.asset,
           ),
         ).paddingTop(80.h),
+        Text(widget.userInfo.userId),
         Text(widget.userInfo.nickName ?? "--"),
       ],
     );

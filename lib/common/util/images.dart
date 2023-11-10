@@ -1,7 +1,6 @@
 import 'dart:math';
 
 class AssetsImages {
-
   static final microphone = _loadFromPath(named: 'microphone');
   static final voiceVolume1 = _loadFromPath(named: 'voice_volume_1');
   static final voiceVolume2 = _loadFromPath(named: 'voice_volume_2');
@@ -17,15 +16,18 @@ class AssetsImages {
   static final iconScan = _loadFromPath(named: 'iconScan');
   static final iconInvite = _loadFromPath(named: 'iconInvite');
   static final iconSuccess = _loadFromPath(named: 'iconSuccess');
+  static final iconSearch = _loadFromPath(named: 'iconSearch');
 
-  static String getRandomAvatar(){
-    return getAvatar(Random().nextInt(100)+1);
+  static String getRandomAvatar() {
+    return getAvatar(Random().nextInt(100) + 1);
   }
-  static String getDefaultAvatar(){
+
+  static String getDefaultAvatar() {
     return getAvatar(1);
   }
-  static String getAvatar(int number){
-    return _loadFromPath(named:"avatar$number");
+
+  static String getAvatar(int number) {
+    return _loadFromPath(named: "avatar$number");
   }
 
   static String _loadFromPath({required String named}) =>

@@ -56,7 +56,7 @@ class SignUpNotifier extends ChangeNotifier {
     await EMClient.getInstance
         .createAccount(account, password)
         .catchError((value) => error(value));
-    EMClient.getInstance.userInfoManager
+    await EMClient.getInstance.userInfoManager
         .updateUserInfo(nickname: userName, phone: account, avatarUrl: avatar);
     return true;
   }

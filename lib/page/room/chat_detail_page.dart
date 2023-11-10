@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_widget.dart';
+import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
+import 'package:loar_flutter/widget/commit_button.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/edit_remark_sheet.dart';
+import '../../widget/warning_alert.dart';
 import '../home/bean/conversation_bean.dart';
 
 final roomProvider =
@@ -124,6 +127,38 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
 }
 
 extension _Action on _RoomDetailPageState {
+  bool isOwner() {
+    var group = ref.read(roomProvider).group;
+    if (group != null) {
+      return group.owner == ImDataManager.instance.me.userId;
+    }
+    return false;
+  }
+
+  exitGroup() {
+    WarningActionSheetAlert.show(
+        context: context,
+        title: "提醒",
+        content: isOwner() ? "您确定要解散群聊吗？" : "您确定要退出群聊吗？",
+        textAlign: TextAlign.start,
+        barrierDismissible: false,
+        confirmActionText: "确定",
+        cancelActionText: "取消",
+        confirmAction: () => {confirmAction()},
+        cancelAction: () => {});
+  }
+
+  confirmAction() async {
+    var group = ref.read(roomProvider).group;
+    if (group != null) {
+      if (isOwner()) {
+        await ref.read(imProvider).destroyGroup(group.groupId);
+      } else {
+        await ref.read(imProvider).leaveGroup(group.groupId);
+      }
+    }
+  }
+
   invite(List<EMUserInfo>? data) async {
     if (data == null) {
       return;
@@ -234,6 +269,11 @@ extension _UI on _RoomDetailPageState {
         Navigator.pushNamed(context, RouteNames.qrGenerate,
             arguments: qrCodeData);
       }));
+      list.add(CommitButton(
+              buttonState: ButtonState.normal,
+              text: isOwner() ? "解散群聊" : "退出群聊",
+              tapAction: exitGroup)
+          .paddingTop(60.h));
     }
     return list;
   }

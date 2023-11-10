@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/page/home/notify_page.dart';
+import 'package:loar_flutter/page/home/search_page.dart';
 import 'package:loar_flutter/page/login/login_page.dart';
 import 'package:loar_flutter/page/login/sign_up_page.dart';
 import 'package:loar_flutter/page/main_page.dart';
@@ -74,6 +75,9 @@ class RouteObservers {
       var data = settings.arguments as NotifyBean;
       return MaterialPageRoute(
           settings: settings, builder: (_) => NotifyPage(data: data));
+    }   else if (settings.name == RouteNames.searchPage) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const SearchPage());
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(

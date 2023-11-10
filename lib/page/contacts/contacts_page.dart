@@ -81,12 +81,13 @@ extension _UI on _ContactsPageState {
         Row(
           children: [
             _getIcon(data).paddingHorizontal(30.w),
-            Text(data.nickName ?? ""),
+            Text(data.userId).expanded(),
+            Text(data.nickName ?? "").paddingHorizontal(30.w),
           ],
         ),
         Gaps.line.paddingLeft(140.w).paddingVertical(15.h)
       ],
-    );
+    ).paddingTop(3.h);
   }
 }
 

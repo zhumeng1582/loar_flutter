@@ -13,5 +13,6 @@ class RouteNames{
   static const selectAvatar = 'selectAvatar';
   static const offlineMap = 'offlineMap';
   static const notifyPage = 'notifyPage';
+  static const searchPage = 'searchPage';
 
 }

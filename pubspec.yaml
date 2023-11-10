@@ -77,6 +77,9 @@ dependencies:
   # 底部弹出层
   modal_bottom_sheet: ^3.0.0-Pre
 
+  # 自适应字体大小的Text
+  auto_size_text: ^3.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

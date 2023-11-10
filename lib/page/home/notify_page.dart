@@ -6,6 +6,7 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 
 import '../../common/colors.dart';
+import '../../common/loading.dart';
 import '../../widget/commit_button.dart';
 import 'bean/notify_bean.dart';
 
@@ -43,7 +44,7 @@ class _NotifyPageState extends ConsumerState<NotifyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("登陆"),
+        title: Text("通知"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -86,6 +87,8 @@ class _NotifyPageState extends ConsumerState<NotifyPage> {
 extension _Action on _NotifyPageState {
   _agree() {
     ref.read(imProvider).acceptInvitation(widget.data);
+    Loading.toast("添加成功");
+
   }
 
   _reject() {

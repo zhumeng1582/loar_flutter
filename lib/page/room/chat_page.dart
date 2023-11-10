@@ -11,7 +11,9 @@ import '../home/provider/im_message_provider.dart';
 final roomProvider =
     ChangeNotifierProvider<RoomNotifier>((ref) => RoomNotifier());
 
-class RoomNotifier extends ChangeNotifier {}
+class RoomNotifier extends ChangeNotifier {
+
+}
 
 class ChatPage extends ConsumerStatefulWidget {
   ConversationBean conversationBean;

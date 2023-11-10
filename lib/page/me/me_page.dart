@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/im_data.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
+import '../../common/loading.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
 
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
 
-class MeNotifier extends ChangeNotifier {}
+class MeNotifier extends ChangeNotifier {
+  EMUserInfo me = ImDataManager.instance.me;
+  updateUserInfo(String avatarUrl) async {
+    Loading.show();
+    await EMClient.getInstance.userInfoManager
+        .updateUserInfo(avatarUrl: avatarUrl);
+    await ImDataManager.instance.getUserInfo();
+    me = ImDataManager.instance.me;
+    notifyListeners();
+    Loading.dismiss();
+  }
+}
 
 class MePage extends ConsumerStatefulWidget {
   const MePage({super.key});
@@ -29,6 +42,7 @@ class _MePageState extends ConsumerState<MePage> {
 
   @override
   Widget build(BuildContext context) {
+    EMUserInfo me = ref.watch(meProvider).me;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
@@ -38,11 +52,11 @@ class _MePageState extends ConsumerState<MePage> {
       body: SafeArea(
         child: Column(
           children: [
-            _topItem(),
-            _getMeItem("账号", ImDataManager.instance.me.userId, false),
+            _topItem(me),
+            _getMeItem("账号",me.userId, false),
             _getMeItem("二维码名片", "", true).onTap(() {
               QrCodeData qrCodeData =
-                  QrCodeData(userInfo: ImDataManager.instance.me);
+                  QrCodeData(userInfo:me);
               Navigator.pushNamed(context, RouteNames.qrGenerate,
                   arguments: qrCodeData);
             }),
@@ -64,24 +78,30 @@ class _MePageState extends ConsumerState<MePage> {
   }
 }
 
-extension _Action on _MePageState {}
+extension _Action on _MePageState {
+  selectAvatar() async {
+    Navigator.pushNamed(context, RouteNames.selectAvatar).then((value) => {
+      ref.read(meProvider).updateUserInfo(value as String)
+    });
+  }
+}
 
 extension _UI on _MePageState {
-  Widget _topItem() {
+  Widget _topItem(EMUserInfo me) {
     return Column(
       children: [
         ClipOval(
           child: ImageWidget(
-            url: ImDataManager.instance.me.avatarUrl ??
+            url: me.avatarUrl ??
                 AssetsImages.getDefaultAvatar(),
             width: 100.w,
             height: 100.h,
             type: ImageWidgetType.asset,
           ),
-        ).paddingTop(80.h),
-        Text(ImDataManager.instance.me.nickName ?? ""),
+        ).onTap(selectAvatar).paddingTop(80.h),
+        Text(me.nickName ?? ""),
         Text(
-          ImDataManager.instance.me.userId,
+          me.userId,
         )
       ],
     );

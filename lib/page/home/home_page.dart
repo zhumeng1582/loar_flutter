@@ -43,6 +43,12 @@ class _HomePageState extends ConsumerState<HomePage> {
         centerTitle: true,
         actions: [
           ImageWidget(
+            url: AssetsImages.iconSearch,
+            width: 46.w,
+            height: 46.h,
+            type: ImageWidgetType.asset,
+          ).paddingRight(30.w).onTap(search),
+          ImageWidget(
             url: AssetsImages.iconScan,
             width: 46.w,
             height: 46.h,
@@ -58,7 +64,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             return _buildRoomItem(item).onTap(() {
               _room(item);
             });
-          }else{
+          } else {
             return _buildNotifyItem(item).onTap(() {
               _invite(item);
             });
@@ -75,6 +81,13 @@ class _HomePageState extends ConsumerState<HomePage> {
 }
 
 extension _Action on _HomePageState {
+  search() async {
+    Navigator.pushNamed(
+      context,
+      RouteNames.searchPage,
+    );
+  }
+
   scan() async {
     var qrCodeData = await ref.read(homeProvider).scan();
     if (qrCodeData.userInfo != null) {
@@ -132,14 +145,16 @@ extension _UI on _HomePageState {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              data.type== NotifyType.group?"您收到一个加群消息":"您收到一个好友邀请",
+                              data.type == NotifyType.group
+                                  ? "您收到一个加群消息"
+                                  : "您收到一个好友邀请",
                               style: TextStyle(
                                 fontSize: 24.sp,
                                 color: AppColors.title,
                               ),
                             ),
                             Text(
-                              data.reason??"请尽快处理",
+                              data.reason ?? "请尽快处理",
                               style: TextStyle(
                                 fontSize: 22.sp,
                                 color: AppColors.title.withOpacity(0.6),
@@ -164,6 +179,7 @@ extension _UI on _HomePageState {
       ],
     );
   }
+
   Widget _buildRoomItem(ConversationBean data) {
     return Column(
       children: [
