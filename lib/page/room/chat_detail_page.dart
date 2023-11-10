@@ -184,18 +184,17 @@ extension _Action on _RoomDetailPageState {
     List<String> data = [];
     if (widget.conversationBean.getConversationType() ==
         EMConversationType.Chat) {
+      data.add(widget.conversationBean.id);
       ref.read(imProvider).contacts.forEach((value) {
         if (value != widget.conversationBean.id) {
           data.add(value);
         }
       });
     } else {
-      EMGroup? group = ref.read(roomProvider).group;
+      EMGroup group = ref.read(roomProvider).group!;
       //排除已经在群里的用户
       ref.read(imProvider).contacts.forEach((value) {
-        if (group?.memberList?.contains(value) == true) {
-        } else if (group?.adminList?.contains(value) == true) {
-        } else {
+        if (!inGroup(value, group)) {
           data.add(value);
         }
       });
@@ -203,6 +202,19 @@ extension _Action on _RoomDetailPageState {
 
     Navigator.pushNamed(context, RouteNames.selectContact, arguments: data)
         .then((value) => {invite(value as List<EMUserInfo>?)});
+  }
+
+  bool inGroup(String userId, EMGroup group) {
+    if (group.owner == userId) {
+      return true;
+    }
+    if (group.memberList?.contains(userId) == true) {
+      return true;
+    }
+    if (group.adminList?.contains(userId) == true) {
+      return true;
+    }
+    return false;
   }
 
   changeName(String groupId, String? name) {

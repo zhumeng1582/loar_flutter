@@ -87,11 +87,13 @@ class _NotifyPageState extends ConsumerState<NotifyPage> {
 extension _Action on _NotifyPageState {
   _agree() {
     ref.read(imProvider).acceptInvitation(widget.data);
+    Navigator.pop(context);
     Loading.toast("接受成功");
   }
 
   _reject() {
     ref.read(imProvider).rejectInvitation(widget.data);
+    Navigator.pop(context);
     Loading.toast("拒绝成功");
   }
 }
