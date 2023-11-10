@@ -165,6 +165,7 @@ class ImNotifier extends ChangeNotifier {
         contacts = await EMClient.getInstance.contactManager
             .getAllContactsFromServer();
       }
+      notifyList.remove(data);
       notifyListeners();
     } on EMError catch (e) {}
   }
@@ -178,6 +179,8 @@ class ImNotifier extends ChangeNotifier {
         await EMClient.getInstance.contactManager
             .declineInvitation(data.inviter);
       }
+      notifyList.remove(data);
+      notifyListeners();
     } on EMError catch (e) {}
   }
 
