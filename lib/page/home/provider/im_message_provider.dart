@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/material.dart';
@@ -61,13 +62,68 @@ class ImNotifier extends ChangeNotifier {
     messageList.insert(0, message);
     messageMap[conversationId] = messageList;
     EMClient.getInstance.chatManager.importMessages([message]);
-    conversationsList = await getConversationList();
+    ConversationBean conversationBean =
+        await messageToConversation(message, conversationId);
+
+    int index =
+        conversationsList.indexWhere((element) => element.id == conversationId);
+
+    if (index == -1) {
+      conversationsList.insert(0, conversationBean);
+    } else {
+      conversationsList.removeAt(index);
+      conversationsList.insert(index, conversationBean);
+    }
+
     notifyListeners();
   }
 
+  Future<ConversationBean> messageToConversation(
+      EMMessage message, String conversationId) async {
+    ConversationBean conversationBean;
+    if (message.chatType == ChatType.Chat) {
+      conversationBean = ConversationBean(
+          0,
+          conversationId,
+          "${DateTime.now().millisecondsSinceEpoch}",
+          allUsers[conversationId].name,
+          getMessageText(message),
+          [allUsers[conversationId].avatarName]);
+    } else {
+      var group = await fetchGroupInfoFromServer(conversationId);
+
+      var roomUser = [group.owner ?? ""];
+      roomUser.addAll(group.memberList ?? []);
+      roomUser.addAll(group.adminList ?? []);
+      var roomUserMap = await EMClient.getInstance.userInfoManager
+          .fetchUserInfoById(roomUser);
+
+      roomUserMap.forEach((key, value) {
+        allUsers[key] = value;
+      });
+
+      conversationBean = ConversationBean(
+          1,
+          conversationId,
+          "${DateTime.now().millisecondsSinceEpoch}",
+          isEmpty(group.name) ? group.name! : "群聊（${(roomUserMap.length)})",
+          getMessageText(message),
+          roomUserMap.values.map((e) => e.avatarName).toList());
+    }
+    return conversationBean;
+  }
+
   addContacts(String userId) async {
-    contacts =
-        await EMClient.getInstance.contactManager.getAllContactsFromServer();
+    var contactsMap =
+        await EMClient.getInstance.userInfoManager.fetchUserInfoById([userId]);
+    if (!contacts.contains(userId)) {
+      contacts.add(userId);
+    }
+
+    if (contactsMap[userId] != null) {
+      allUsers[userId] = contactsMap[userId]!;
+    }
+
     notifyListeners();
   }
 
@@ -112,6 +168,9 @@ class ImNotifier extends ChangeNotifier {
     EMClient.getInstance.contactManager.addEventHandler(
       "UNIQUE_HANDLER_ID_1",
       EMContactEventHandler(
+        onContactAdded: (userId) {
+          addContacts(userId);
+        },
         onFriendRequestAccepted: (userId) {
           addContacts(userId);
         },
@@ -291,9 +350,7 @@ class ImNotifier extends ChangeNotifier {
               "${lastMessage.serverTime}",
               isEmpty(group.name) ? group.name! : "群聊（${(roomUserMap.length)})",
               getMessageText(lastMessage),
-              roomUserMap.values
-                  .map((e) => e.avatarName)
-                  .toList()));
+              roomUserMap.values.map((e) => e.avatarName).toList()));
         }
       }
     }
@@ -330,9 +387,7 @@ class ImNotifier extends ChangeNotifier {
                 ? groupInfo.name!
                 : "群聊（${(roomUserMap.length)})",
             "马上发起群聊吧",
-            roomUserMap.values
-                .map((e) => e.avatarName)
-                .toList()));
+            roomUserMap.values.map((e) => e.avatarName).toList()));
       }
     }
   }

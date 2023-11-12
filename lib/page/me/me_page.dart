@@ -28,8 +28,8 @@ class MeNotifier extends ChangeNotifier {
       await ImDataManager.instance.getUserInfo();
       me = ImDataManager.instance.me;
       notifyListeners();
-      Loading.show("修改头像成功");
       Loading.dismiss();
+      Loading.show("修改头像成功");
     } on EMError catch (e) {
       Loading.dismiss();
     }
@@ -39,10 +39,10 @@ class MeNotifier extends ChangeNotifier {
     try {
       Loading.show();
       await EMClient.getInstance.userInfoManager.updateUserInfo(nickname: name);
-      ImDataManager.instance.getUserInfo();
+      await ImDataManager.instance.getUserInfo();
       me = ImDataManager.instance.me;
-      Loading.show("修改名称成功");
       Loading.dismiss();
+      Loading.show("修改名称成功");
       notifyListeners();
     } on EMError catch (e) {
       Loading.dismiss();

@@ -94,6 +94,7 @@ extension _Action on _UserInfoPageState {
     } else {
       ref.read(imProvider).addContact(widget.userInfo.userId, "请求添加好友");
       Loading.toast("已发送消息，等候对方回复");
+      Navigator.pop(context);
     }
   }
 }

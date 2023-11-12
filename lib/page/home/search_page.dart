@@ -31,7 +31,6 @@ class SearchNotifier extends ChangeNotifier {
     userInfo = await EMClient.getInstance.userInfoManager
         .fetchUserInfoById(contacts)
         .catchError((value) => Loading.dismiss());
-    debugPrint(jsonEncode(userInfo));
     Loading.dismiss();
     notifyListeners();
   }
