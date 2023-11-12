@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/page/sos/sos_page.dart';
 
 import '../common/blue_tooth.dart';
@@ -64,6 +65,7 @@ class _MainPageState extends ConsumerState<MainPage> {
       ref.read(imProvider).addImListener();
       ref.read(mainProvider).getLocation();
       ref.read(imProvider).init();
+
     });
 
     super.initState();

@@ -12,12 +12,14 @@ import 'package:loar_flutter/common/util/storage.dart';
 
 import '../../../common/constant.dart';
 import '../../../common/im_data.dart';
+import '../../../common/loading.dart';
 import '../../../common/util/images.dart';
 import '../../../main.dart';
 import '../bean/conversation_bean.dart';
 import '../bean/notify_bean.dart';
 
 final imProvider = ChangeNotifierProvider<ImNotifier>((ref) => ImNotifier());
+var isConnectionSuccessful = false;
 
 class ImNotifier extends ChangeNotifier {
   List<EMConversation> conversationsList = [];
@@ -26,17 +28,30 @@ class ImNotifier extends ChangeNotifier {
   Map<String, EMGroup> groupMap = {};
   Map<String, EMUserInfo> allUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
-  changeGroup(EMGroup group){
+
+  changeGroup(EMGroup group) {
     groupMap[group.groupId] = group;
     notifyListeners();
   }
 
   init() async {
+    try {
+      Loading.show();
+      await loadData();
+      notifyListeners();
+      Loading.dismiss();
+    } catch (e) {
+      Loading.error("网络错误,清扫后再试");
+      Loading.dismiss();
+    }
+  }
+
+  Future<void> loadData() async {
     ImDataManager.instance.getUserInfo();
 
     contacts =
         await EMClient.getInstance.contactManager.getAllContactsFromServer();
-    await loadUerInfo(contacts);
+
     for (var element in contacts) {
       await getHistoryMessage(element, EMConversationType.Chat);
     }
@@ -51,17 +66,18 @@ class ImNotifier extends ChangeNotifier {
       await getHistoryMessage(element.groupId, EMConversationType.GroupChat);
     }
 
-    for (var element in groupList) {
-      await loadUerInfo([
-        element.owner!,
-        ...element.adminList ?? [],
-        ...element.memberList ?? []
+    var userList = [...contacts];
+    groupMap.forEach((key, value) {
+      userList.addAll([
+        value.owner!,
+        ...value.adminList ?? [],
+        ...value.memberList ?? []
       ]);
-    }
+    });
+    await loadUerInfo(userList);
 
     conversationsList =
         await EMClient.getInstance.chatManager.loadAllConversations();
-    notifyListeners();
   }
 
   String getConversationTitle(EMConversation data) {
@@ -94,16 +110,7 @@ class ImNotifier extends ChangeNotifier {
   Future<void> loadUerInfo(List<String> contacts) async {
     var contactsMap =
         await EMClient.getInstance.userInfoManager.fetchUserInfoById(contacts);
-    contactsMap.forEach((key, value) {
-      allUsers[key] = value;
-    });
-  }
-
-  List<dynamic> getHomeList() {
-    List<dynamic> data = [];
-    data.addAll(notifyList);
-    data.addAll(conversationsList);
-    return data;
+    allUsers.addAll(contactsMap);
   }
 
   addMessageToMap(String conversationId, EMMessage message) async {
@@ -139,10 +146,7 @@ class ImNotifier extends ChangeNotifier {
     if (!contacts.contains(userId)) {
       contacts.add(userId);
     }
-
-    if (contactsMap[userId] != null) {
-      allUsers[userId] = contactsMap[userId]!;
-    }
+    allUsers.addAll(contactsMap);
 
     notifyListeners();
   }
@@ -219,7 +223,8 @@ class ImNotifier extends ChangeNotifier {
             attributes,
             operatorId,
           ) {
-            debugPrint("-------->onAttributesChangedOfGroupMember:"+jsonEncode(attributes));
+            debugPrint("-------->onAttributesChangedOfGroupMember:" +
+                jsonEncode(attributes));
           },
           onAutoAcceptInvitationFromGroup: (groupId, userId, reason) async {
             groupMap[groupId] = await fetchGroupInfoFromServer(groupId);
@@ -229,6 +234,15 @@ class ImNotifier extends ChangeNotifier {
           onInvitationAcceptedFromGroup: (groupId, userId, reason) async {
             groupMap[groupId] = await fetchGroupInfoFromServer(groupId);
             updateConversation(groupId, ChatType.GroupChat);
+            notifyListeners();
+          },
+          onRequestToJoinAcceptedFromGroup: (groupId, userId, reason) async {
+            // groupMap[groupId] = await fetchGroupInfoFromServer(groupId);
+            // updateConversation(groupId, ChatType.GroupChat);
+            // notifyListeners();
+          },
+          onSpecificationDidUpdate: (group) async {
+            groupMap[group.groupId] = group;
             notifyListeners();
           },
           onInvitationReceivedFromGroup: (
@@ -243,6 +257,35 @@ class ImNotifier extends ChangeNotifier {
             notifyListeners();
           },
         ));
+
+    // 注册连接状态监听
+    EMClient.getInstance.addConnectionEventHandler(
+      "UNIQUE_HANDLER_ID_5",
+      EMConnectionEventHandler(
+        // sdk 连接成功;
+        onConnected: () => {},
+        // 由于网络问题导致的断开，sdk会尝试自动重连，连接成功后会回调 "onConnected";
+        onDisconnected: () => {},
+        // 用户 token 鉴权失败;
+        onUserAuthenticationFailed: () => {},
+        // 由于密码变更被踢下线;
+        onUserDidChangePassword: () => {},
+        // 用户被连接被服务器禁止;
+        onUserDidForbidByServer: () => {},
+        // 用户登录设备超出数量限制;
+        onUserDidLoginTooManyDevice: () => {},
+        // 用户从服务器删除;
+        onUserDidRemoveFromServer: () => {},
+        // 调用 `kickDevice` 方法将设备踢下线，被踢设备会收到该回调；
+        onUserKickedByOtherDevice: () => {},
+        // 登录新设备时因达到了登录设备数量限制而导致当前设备被踢下线，被踢设备收到该回调；
+        onUserDidLoginFromOtherDevice: (String deviceName) => {},
+        // Token 过期;
+        onTokenDidExpire: () => {},
+        // Token 即将过期，需要调用 renewToken;
+        onTokenWillExpire: () => {},
+      ),
+    );
   }
 
   addContact(String userId, String reason) async {
@@ -320,13 +363,13 @@ class ImNotifier extends ChangeNotifier {
         type: type,
       );
       List<EMMessage> messageList = [];
-      for (var element in cursor.data) {
-        if (element != null) {
-          messageList.insert(0, element);
+      for (int i = cursor.data.length - 1; i >= 0; i--) {
+        var data = cursor.data[i];
+        if (data != null) {
+          messageList.add(data);
         }
       }
       messageMap[id] = messageList;
-
       EMClient.getInstance.chatManager.importMessages(messageList);
       notifyListeners();
     } on EMError catch (e) {}
@@ -334,7 +377,7 @@ class ImNotifier extends ChangeNotifier {
 
   String getMessageText(EMMessage? message) {
     if (message == null) {
-      return "收到一个新消息";
+      return "去发送一个消息吧";
     }
     switch (message.body.type) {
       case MessageType.TXT:
@@ -358,5 +401,9 @@ class ImNotifier extends ChangeNotifier {
     EMClient.getInstance.chatManager.removeMessageEvent("UNIQUE_HANDLER_ID_2");
     EMClient.getInstance.chatManager.removeEventHandler("UNIQUE_HANDLER_ID_3");
     EMClient.getInstance.groupManager.removeEventHandler("UNIQUE_HANDLER_ID_4");
+    // 解注册连接状态监听
+    EMClient.getInstance.removeConnectionEventHandler(
+      "UNIQUE_HANDLER_ID_5",
+    );
   }
 }

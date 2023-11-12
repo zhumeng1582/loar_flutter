@@ -20,7 +20,6 @@ final roomProvider =
     ChangeNotifierProvider<RoomDetailNotifier>((ref) => RoomDetailNotifier());
 
 class RoomDetailNotifier extends ChangeNotifier {
-  roomDetail() {}
   EMGroup? group;
   EMUserInfo? userInfo;
   List<EMUserInfo> userInfoList = [];
@@ -67,11 +66,7 @@ class RoomDetailNotifier extends ChangeNotifier {
     if (conversationBean.type == EMConversationType.GroupChat) {
       group = await fetchGroupInfoFromServer(conversationBean.id);
 
-      var userInfoMap = await fetchUserInfoById([
-        group?.owner ?? "",
-        ...group?.adminList ?? [],
-        ...group?.memberList ?? []
-      ]);
+      var userInfoMap = await fetchUserInfoById(group?.allUsers??[]);
       userInfoList = userInfoMap.values.toList();
       userInfo = userInfoMap[group?.owner ?? ""];
     } else {

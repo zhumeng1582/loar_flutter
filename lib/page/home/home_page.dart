@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,7 +33,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> data = ref.watch(imProvider).getHomeList();
+    List<NotifyBean> notifyList = ref.watch(imProvider).notifyList;
+    List<EMConversation> conversationsList =
+        ref.watch(imProvider).conversationsList;
+    List<dynamic> data = [...notifyList, ...conversationsList];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,

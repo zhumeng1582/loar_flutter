@@ -52,6 +52,7 @@ class LoginNotifier extends ChangeNotifier {
     } else {
       buttonState = ButtonState.loading;
       notifyListeners();
+      await EMClient.getInstance.logout();
 
       await EMClient.getInstance
           .login(account, password)
