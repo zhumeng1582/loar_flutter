@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_widget.dart';
 import 'package:loar_flutter/common/im_data.dart';
+import 'package:loar_flutter/common/loading.dart';
+import 'package:loar_flutter/common/util/ex_im.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import 'package:loar_flutter/widget/commit_button.dart';
 import '../../common/image.dart';
@@ -231,7 +233,7 @@ extension _Action on _RoomDetailPageState {
   changeName(String groupId, String? name) {
     EditRemarkBottomSheet.show(
       context: context,
-      maxLength: 12,
+      maxLength: 18,
       data: name ?? "",
       onConfirm: (value) =>
           {ref.read(roomProvider).changeGroupName(groupId, value)},
@@ -241,7 +243,7 @@ extension _Action on _RoomDetailPageState {
   changeDescription(String groupId, String? name) {
     EditRemarkBottomSheet.show(
       context: context,
-      maxLength: 12,
+      maxLength: 200,
       data: name ?? "",
       onConfirm: (value) =>
           {ref.read(roomProvider).changeGroupDescription(groupId, value)},
@@ -260,7 +262,7 @@ extension _UI on _RoomDetailPageState {
             ),
         children: <Widget>[
           ...userInfo.map((user) => ImageWidget(
-                url: user.avatarUrl ?? AssetsImages.getDefaultAvatar(),
+                url: user.avatarName,
                 width: 30.w,
                 height: 30.h,
                 type: ImageWidgetType.asset,

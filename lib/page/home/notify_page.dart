@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/util/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 
@@ -57,9 +58,9 @@ class _NotifyPageState extends ConsumerState<NotifyPage> {
           children: [
             widget.data.type == NotifyType.group
                 ? Text(
-                    "${ref.watch(notifyProvider).userInfo?.nickName}邀请你加入群聊:${widget.data.name}")
+                    "${ref.watch(notifyProvider).userInfo?.name}邀请你加入群聊:${widget.data.name}")
                 : Text(
-                    "${ref.watch(notifyProvider).userInfo?.nickName}希望成为您的好友"),
+                    "${ref.watch(notifyProvider).userInfo?.name}希望成为您的好友"),
             Text("${widget.data.reason}"),
             CommitButton(
                     buttonState: ButtonState.normal,

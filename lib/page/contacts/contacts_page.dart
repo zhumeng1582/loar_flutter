@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/util/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 
@@ -68,7 +69,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
 extension _UI on _ContactsPageState {
   Widget _getIcon(EMUserInfo data) {
     return ImageWidget(
-      url: data.avatarUrl ?? AssetsImages.getDefaultAvatar(),
+      url: data.avatarName,
       width: 80.w,
       height: 80.h,
       type: ImageWidgetType.asset,
@@ -82,7 +83,7 @@ extension _UI on _ContactsPageState {
           children: [
             _getIcon(data).paddingHorizontal(30.w),
             Text(data.userId).expanded(),
-            Text(data.nickName ?? "").paddingHorizontal(30.w),
+            Text(data.name).paddingHorizontal(30.w),
           ],
         ),
         Gaps.line.paddingLeft(140.w).paddingVertical(15.h)
@@ -100,7 +101,7 @@ extension _Action on _ContactsPageState {
 
   _room(EMUserInfo data) {
     ConversationBean conversationBean =
-        ConversationBean(0, data.userId, "", data.nickName ?? "", "", []);
+        ConversationBean(0, data.userId, "", data.name, "", []);
     Navigator.pushNamed(
       context,
       RouteNames.roomPage,

@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loar_flutter/common/util/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
+import 'package:loar_flutter/common/util/images.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../common/image.dart';
@@ -56,7 +58,7 @@ class _QRGeneratePageState extends ConsumerState<QRGeneratePage> {
 extension _Action on _QRGeneratePageState {
   String getTitle() {
     return widget.qrCodeData.room?.name ??
-        widget.qrCodeData.userInfo?.nickName ??
+        widget.qrCodeData.userInfo?.name ??
         "";
   }
 
@@ -84,14 +86,12 @@ extension _Action on _QRGeneratePageState {
               borderRadius: BorderRadius.circular(5),
               color: Colors.white,
             ),
-            child: widget.qrCodeData.userInfo?.avatarUrl != null
-                ? ImageWidget(
-                    url: widget.qrCodeData.userInfo!.avatarUrl!,
-                    width: 80.w,
-                    height: 80.h,
-                    type: ImageWidgetType.asset,
-                  )
-                : Container(),
+            child: ImageWidget(
+              url: widget.qrCodeData.userInfo?.avatarName??AssetsImages.iconLauncher,
+              width: 80.w,
+              height: 80.h,
+              type: ImageWidgetType.asset,
+            ),
           ),
         ));
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/util/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/im_data.dart';
@@ -11,19 +12,41 @@ import '../../common/loading.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
+import '../../widget/edit_remark_sheet.dart';
+import '../room/chat_detail_page.dart';
 
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
 
 class MeNotifier extends ChangeNotifier {
   EMUserInfo me = ImDataManager.instance.me;
-  updateUserInfo(String avatarUrl) async {
-    Loading.show();
-    await EMClient.getInstance.userInfoManager
-        .updateUserInfo(avatarUrl: avatarUrl);
-    await ImDataManager.instance.getUserInfo();
-    me = ImDataManager.instance.me;
-    notifyListeners();
-    Loading.dismiss();
+
+  updateUserAvatar(String avatarUrl) async {
+    try {
+      Loading.show();
+      await EMClient.getInstance.userInfoManager
+          .updateUserInfo(avatarUrl: avatarUrl);
+      await ImDataManager.instance.getUserInfo();
+      me = ImDataManager.instance.me;
+      notifyListeners();
+      Loading.show("修改头像成功");
+      Loading.dismiss();
+    } on EMError catch (e) {
+      Loading.dismiss();
+    }
+  }
+
+  changeUserName(String name) async {
+    try {
+      Loading.show();
+      await EMClient.getInstance.userInfoManager.updateUserInfo(nickname: name);
+      ImDataManager.instance.getUserInfo();
+      me = ImDataManager.instance.me;
+      Loading.show("修改名称成功");
+      Loading.dismiss();
+      notifyListeners();
+    } on EMError catch (e) {
+      Loading.dismiss();
+    }
   }
 }
 
@@ -53,10 +76,12 @@ class _MePageState extends ConsumerState<MePage> {
         child: Column(
           children: [
             _topItem(me),
-            _getMeItem("账号",me.userId, false),
+            _getMeItem("账号", me.userId, false),
+            _getMeItem("名称", me.name, true).onTap(() {
+              changeName(me.name);
+            }),
             _getMeItem("二维码名片", "", true).onTap(() {
-              QrCodeData qrCodeData =
-                  QrCodeData(userInfo:me);
+              QrCodeData qrCodeData = QrCodeData(userInfo: me);
               Navigator.pushNamed(context, RouteNames.qrGenerate,
                   arguments: qrCodeData);
             }),
@@ -80,9 +105,17 @@ class _MePageState extends ConsumerState<MePage> {
 
 extension _Action on _MePageState {
   selectAvatar() async {
-    Navigator.pushNamed(context, RouteNames.selectAvatar).then((value) => {
-      ref.read(meProvider).updateUserInfo(value as String)
-    });
+    Navigator.pushNamed(context, RouteNames.selectAvatar).then(
+        (value) => {ref.read(meProvider).updateUserAvatar(value as String)});
+  }
+
+  changeName(String name) {
+    EditRemarkBottomSheet.show(
+      context: context,
+      maxLength: 18,
+      data: name,
+      onConfirm: (value) => {ref.read(meProvider).changeUserName(value)},
+    );
   }
 }
 
@@ -92,17 +125,12 @@ extension _UI on _MePageState {
       children: [
         ClipOval(
           child: ImageWidget(
-            url: me.avatarUrl ??
-                AssetsImages.getDefaultAvatar(),
+            url: me.avatarName,
             width: 100.w,
             height: 100.h,
             type: ImageWidgetType.asset,
           ),
         ).onTap(selectAvatar).paddingTop(80.h),
-        Text(me.nickName ?? ""),
-        Text(
-          me.userId,
-        )
       ],
     );
   }

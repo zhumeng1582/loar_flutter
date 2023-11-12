@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/loading.dart';
+import 'package:loar_flutter/common/util/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/home_provider.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
@@ -48,7 +49,7 @@ class _UserInfoPageState extends ConsumerState<UserInfoPage> {
       body: SafeArea(
         child: Column(
           children: [
-            _topItem(),
+            _topItem().paddingBottom(30.h),
             isMe()
                 ? Container()
                 : CommitButton(
@@ -82,8 +83,8 @@ extension _Action on _UserInfoPageState {
 
   void _tapAction() {
     if (ref.read(imProvider).contacts.contains(widget.userInfo.userId)) {
-      ConversationBean conversationBean = ConversationBean(0,
-          widget.userInfo.userId, "", widget.userInfo.nickName ?? "", "", []);
+      ConversationBean conversationBean = ConversationBean(
+          0, widget.userInfo.userId, "", widget.userInfo.name, "", []);
       Navigator.pushNamedAndRemoveUntil(
         context,
         RouteNames.roomPage,
@@ -99,18 +100,19 @@ extension _Action on _UserInfoPageState {
 
 extension _UI on _UserInfoPageState {
   Widget _topItem() {
-    return Row(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ClipOval(
           child: ImageWidget(
-            url: widget.userInfo.avatarUrl ?? AssetsImages.getDefaultAvatar(),
+            url: widget.userInfo.avatarName,
             width: 100.w,
             height: 100.h,
             type: ImageWidgetType.asset,
           ),
         ).paddingTop(80.h),
-        Text(widget.userInfo.userId),
-        Text(widget.userInfo.nickName ?? "--"),
+        Text(widget.userInfo.userId).paddingTop(20.h),
+        Text(widget.userInfo.name).paddingTop(20.h),
       ],
     );
   }

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/util/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 
@@ -28,6 +31,7 @@ class SearchNotifier extends ChangeNotifier {
     userInfo = await EMClient.getInstance.userInfoManager
         .fetchUserInfoById(contacts)
         .catchError((value) => Loading.dismiss());
+    debugPrint(jsonEncode(userInfo));
     Loading.dismiss();
     notifyListeners();
   }
@@ -113,7 +117,7 @@ extension _UI on _SearchPageState {
 
   Widget _getIcon(EMUserInfo data) {
     return ImageWidget(
-      url: data.avatarUrl ?? AssetsImages.getDefaultAvatar(),
+      url: data.avatarName,
       width: 80.w,
       height: 80.h,
       type: ImageWidgetType.asset,
@@ -125,7 +129,7 @@ extension _UI on _SearchPageState {
       children: [
         _getIcon(data).paddingHorizontal(30.w),
         Text(data.userId),
-        Text(data.nickName??""),
+        Text(data.name),
 
       ],
     ).onTap(() {

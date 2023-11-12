@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/util/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/image.dart';
@@ -66,7 +67,7 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
 extension _UI on _ContactsSelectPageState {
   Widget _getIcon(EMUserInfo data) {
     return ImageWidget(
-      url: data.avatarUrl ?? AssetsImages.getDefaultAvatar(),
+      url: data.avatarName,
       width: 40.w,
       height: 40.h,
       type: ImageWidgetType.asset,
@@ -79,7 +80,7 @@ extension _UI on _ContactsSelectPageState {
         Row(
           children: [
             _getIcon(data).paddingHorizontal(30.w),
-            Text(data.nickName ?? ""),
+            Text(data.name),
           ],
         ),
         Gaps.line.paddingLeft(140.w).paddingVertical(15.h)

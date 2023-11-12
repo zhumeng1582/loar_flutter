@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/material.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/util/ex_im.dart';
 import 'package:loar_flutter/common/util/storage.dart';
 
 import '../../../common/constant.dart';
@@ -266,7 +267,7 @@ class ImNotifier extends ChangeNotifier {
               0,
               value.id,
               "${lastMessage.localTime}",
-              roomUserMap[lastMessage.from]?.nickName ?? "匿名",
+              roomUserMap[lastMessage.from]!.name,
               getMessageText(lastMessage), [
             roomUserMap[lastMessage.from]?.avatarUrl ??
                 AssetsImages.getDefaultAvatar()
@@ -291,7 +292,7 @@ class ImNotifier extends ChangeNotifier {
               isEmpty(group.name) ? group.name! : "群聊（${(roomUserMap.length)})",
               getMessageText(lastMessage),
               roomUserMap.values
-                  .map((e) => e.avatarUrl ?? AssetsImages.getDefaultAvatar())
+                  .map((e) => e.avatarName)
                   .toList()));
         }
       }
@@ -330,7 +331,7 @@ class ImNotifier extends ChangeNotifier {
                 : "群聊（${(roomUserMap.length)})",
             "马上发起群聊吧",
             roomUserMap.values
-                .map((e) => e.avatarUrl ?? AssetsImages.getDefaultAvatar())
+                .map((e) => e.avatarName)
                 .toList()));
       }
     }
