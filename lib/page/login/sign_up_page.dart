@@ -38,8 +38,13 @@ class SignUpNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> saveUser(
-      String account, String userName, String password) async {
+  updateUser(String name, String phone) async {
+    await EMClient.getInstance.userInfoManager
+        .updateUserInfo(nickname: name, phone: phone, avatarUrl: avatar)
+        .catchError((value) => error(value));
+  }
+
+  Future<bool> saveUser(String account, String password) async {
     if (!isConnectionSuccessful) {
       Loading.toast("请先连接网络");
       return false;
@@ -56,8 +61,7 @@ class SignUpNotifier extends ChangeNotifier {
     await EMClient.getInstance
         .createAccount(account, password)
         .catchError((value) => error(value));
-    await EMClient.getInstance.userInfoManager
-        .updateUserInfo(nickname: userName, phone: account, avatarUrl: avatar);
+
     return true;
   }
 
@@ -193,15 +197,23 @@ extension _Action on _SignUpPageState {
       Loading.toast("两次密码不一致，请重新输入");
       return;
     }
+    try {
+      Loading.show();
+      bool isSuccess =
+          await ref.read(signUpProvider).saveUser(account, password);
+      if (isSuccess) {
+        await ref.read(signUpProvider).login(account, password);
+        await ref.read(signUpProvider).updateUser(userName, account);
 
-    bool isSuccess =
-        await ref.read(signUpProvider).saveUser(account, userName, password);
-    if (isSuccess) {
-      isSuccess = await ref.read(signUpProvider).login(account, password);
-      Navigator.popAndPushNamed(
-        context,
-        RouteNames.main,
-      );
+        Loading.dismiss();
+        Navigator.popAndPushNamed(
+          context,
+          RouteNames.main,
+        );
+      }
+    } catch (e) {
+      Loading.dismiss();
+      Loading.error(e.toString());
     }
   }
 }

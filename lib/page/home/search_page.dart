@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/util/ex_im.dart';
+import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 
@@ -127,9 +127,8 @@ extension _UI on _SearchPageState {
     return Row(
       children: [
         _getIcon(data).paddingHorizontal(30.w),
-        Text(data.userId),
+        Text(data.userId).expanded(),
         Text(data.name),
-
       ],
     ).onTap(() {
       Navigator.pushNamed(

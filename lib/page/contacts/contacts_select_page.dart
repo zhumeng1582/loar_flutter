@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/util/ex_im.dart';
+import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/image.dart';
@@ -80,7 +80,8 @@ extension _UI on _ContactsSelectPageState {
         Row(
           children: [
             _getIcon(data).paddingHorizontal(30.w),
-            Text(data.name),
+            Text(data.userId).expanded(),
+            Text(data.name).paddingHorizontal(30.w),
           ],
         ),
         Gaps.line.paddingLeft(140.w).paddingVertical(15.h)

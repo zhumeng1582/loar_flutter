@@ -5,7 +5,7 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_widget.dart';
 import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/loading.dart';
-import 'package:loar_flutter/common/util/ex_im.dart';
+import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import 'package:loar_flutter/widget/commit_button.dart';
 import '../../common/image.dart';
@@ -36,7 +36,7 @@ class RoomDetailNotifier extends ChangeNotifier {
         .fetchUserInfoById(userIds);
   }
 
-  Future<EMGroup> createGroup() async {
+  Future<EMGroup> _createGroup() async {
     EMGroupOptions groupOptions = EMGroupOptions(
       style: EMGroupStyle.PrivateMemberCanInvite,
       inviteNeedConfirm: true,
@@ -46,6 +46,18 @@ class RoomDetailNotifier extends ChangeNotifier {
     return await EMClient.getInstance.groupManager.createGroup(
       options: groupOptions,
     );
+  }
+
+  Future<EMGroup?> addMembers(List<String> members) async {
+    try {
+      group ??= await _createGroup();
+
+      await EMClient.getInstance.groupManager
+          .addMembers(group!.groupId, members);
+      group = await EMClient.getInstance.groupManager
+          .fetchGroupInfoFromServer(group!.groupId, fetchMembers: true);
+      return group;
+    } on EMError catch (e) {}
   }
 
   getChatInfo(ConversationBean conversationBean) async {
@@ -176,15 +188,13 @@ extension _Action on _RoomDetailPageState {
     if (data == null) {
       return;
     }
-    EMGroup? group = ref.read(roomProvider).group;
-    group ??= await ref.read(roomProvider).createGroup();
 
-    await ref
-        .read(imProvider)
-        .addMembers(group.groupId, data.map((e) => e.userId).toList());
+    var group = await ref
+        .read(roomProvider)
+        .addMembers(data.map((e) => e.userId).toList());
 
     ConversationBean conversationBean =
-        ConversationBean(1, group.groupId, "", group.name ?? "", "", []);
+        ConversationBean(1, group?.groupId ?? "", "", group.showName, "", []);
     Navigator.pushNamedAndRemoveUntil(
       context,
       RouteNames.roomPage,
@@ -307,8 +317,8 @@ extension _UI on _RoomDetailPageState {
     List<Widget> list = [];
     var group = ref.watch(roomProvider).group;
     if (group != null) {
-      list.add(_getMeItem("群名称", group.name, true)
-          .onTap(() => changeName(group.groupId, group.name)));
+      list.add(_getMeItem("群名称", group.showName, true)
+          .onTap(() => changeName(group.groupId, group.showName)));
       list.add(_getMeItem("群说明", group.description, true)
           .onTap(() => changeDescription(group.groupId, group.description)));
       list.add(_getMeItem("群二维码名片", "", true).onTap(() {

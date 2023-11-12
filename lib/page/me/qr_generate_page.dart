@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loar_flutter/common/util/ex_im.dart';
+import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/images.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -57,7 +57,7 @@ class _QRGeneratePageState extends ConsumerState<QRGeneratePage> {
 
 extension _Action on _QRGeneratePageState {
   String getTitle() {
-    return widget.qrCodeData.room?.name ??
+    return widget.qrCodeData.room?.showName ??
         widget.qrCodeData.userInfo?.name ??
         "";
   }

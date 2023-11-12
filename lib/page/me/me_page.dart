@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/util/ex_im.dart';
+import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/im_data.dart';

@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/material.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/util/ex_im.dart';
+import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/storage.dart';
 
 import '../../../common/constant.dart';
@@ -106,7 +106,7 @@ class ImNotifier extends ChangeNotifier {
           1,
           conversationId,
           "${DateTime.now().millisecondsSinceEpoch}",
-          isEmpty(group.name) ? group.name! : "群聊（${(roomUserMap.length)})",
+          group.showName,
           getMessageText(message),
           roomUserMap.values.map((e) => e.avatarName).toList());
     }
@@ -149,22 +149,6 @@ class ImNotifier extends ChangeNotifier {
   }
 
   void addImListener() {
-    EMClient.getInstance.groupManager.addEventHandler(
-        "UNIQUE_HANDLER_ID_1",
-        EMGroupEventHandler(
-          onInvitationAcceptedFromGroup: (groupId, userId, reason) {},
-          onInvitationReceivedFromGroup: (
-            groupId,
-            groupName,
-            inviter,
-            reason,
-          ) {
-            notifyList.add(NotifyBean(NotifyType.group, inviter,
-                "${DateTime.now().millisecondsSinceEpoch}",
-                groupId: groupId, name: groupName, reason: reason));
-            // EMClient.getInstance.groupManager.acceptInvitation(groupId, inviter);
-          },
-        ));
     EMClient.getInstance.contactManager.addEventHandler(
       "UNIQUE_HANDLER_ID_1",
       EMContactEventHandler(
@@ -178,6 +162,7 @@ class ImNotifier extends ChangeNotifier {
           notifyList.add(NotifyBean(NotifyType.friend, userId,
               "${DateTime.now().millisecondsSinceEpoch}",
               reason: reason));
+          notifyListeners();
         },
         onFriendRequestDeclined: (userId) {},
       ),
@@ -204,6 +189,29 @@ class ImNotifier extends ChangeNotifier {
         },
       ),
     );
+    EMClient.getInstance.groupManager.addEventHandler(
+        "UNIQUE_HANDLER_ID_4",
+        EMGroupEventHandler(
+          onAutoAcceptInvitationFromGroup: (groupId, userId, reason) {
+            debugPrint("--------->0");
+          },
+          onInvitationAcceptedFromGroup: (groupId, userId, reason) {
+            debugPrint("--------->1");
+          },
+          onInvitationReceivedFromGroup: (
+            groupId,
+            groupName,
+            inviter,
+            reason,
+          ) {
+            debugPrint("--------->2");
+            notifyList.add(NotifyBean(NotifyType.group, inviter,
+                "${DateTime.now().millisecondsSinceEpoch}",
+                groupId: groupId, name: groupName, reason: reason));
+            notifyListeners();
+            // EMClient.getInstance.groupManager.acceptInvitation(groupId, inviter);
+          },
+        ));
   }
 
   addContact(String userId, String reason) async {
@@ -249,11 +257,7 @@ class ImNotifier extends ChangeNotifier {
         .fetchGroupInfoFromServer(groupId, fetchMembers: true);
   }
 
-  addMembers(String groupId, List<String> members) async {
-    try {
-      await EMClient.getInstance.groupManager.addMembers(groupId, members);
-    } on EMError catch (e) {}
-  }
+
 
   leaveGroup(String groupId) async {
     try {
@@ -296,7 +300,10 @@ class ImNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
-  String getMessageText(EMMessage message) {
+  String getMessageText(EMMessage? message) {
+    if (message == null) {
+      return "收到一个新消息";
+    }
     switch (message.body.type) {
       case MessageType.TXT:
         {
@@ -348,7 +355,7 @@ class ImNotifier extends ChangeNotifier {
               1,
               value.id,
               "${lastMessage.serverTime}",
-              isEmpty(group.name) ? group.name! : "群聊（${(roomUserMap.length)})",
+              group.showName,
               getMessageText(lastMessage),
               roomUserMap.values.map((e) => e.avatarName).toList()));
         }
@@ -383,10 +390,8 @@ class ImNotifier extends ChangeNotifier {
             1,
             groupInfo.groupId,
             "${0}",
-            isEmpty(groupInfo.name)
-                ? groupInfo.name!
-                : "群聊（${(roomUserMap.length)})",
-            "马上发起群聊吧",
+            groupInfo.showName,
+            getMessageText(messageMap[group.groupId]?.first),
             roomUserMap.values.map((e) => e.avatarName).toList()));
       }
     }
@@ -399,7 +404,9 @@ class ImNotifier extends ChangeNotifier {
   void removeImListener() {
     EMClient.getInstance.contactManager
         .removeEventHandler("UNIQUE_HANDLER_ID_1");
+
     EMClient.getInstance.chatManager.removeMessageEvent("UNIQUE_HANDLER_ID_2");
     EMClient.getInstance.chatManager.removeEventHandler("UNIQUE_HANDLER_ID_3");
+    EMClient.getInstance.groupManager.removeEventHandler("UNIQUE_HANDLER_ID_4");
   }
 }
