@@ -6,8 +6,10 @@ import 'package:loar_flutter/common/ex/ex_widget.dart';
 import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import 'package:loar_flutter/widget/commit_button.dart';
+import '../../common/image.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/images.dart';
 import '../../widget/edit_remark_sheet.dart';
 import '../../widget/warning_alert.dart';
 import '../home/bean/conversation_bean.dart';
@@ -19,15 +21,17 @@ class RoomDetailNotifier extends ChangeNotifier {
   roomDetail() {}
   EMGroup? group;
   EMUserInfo? userInfo;
+  List<EMUserInfo> userInfoList = [];
 
   Future<EMGroup> fetchGroupInfoFromServer(String groupId) async {
     return await EMClient.getInstance.groupManager
         .fetchGroupInfoFromServer(groupId, fetchMembers: true);
   }
 
-  Future<Map<String, EMUserInfo>> fetchUserInfoById(String groupId) async {
+  Future<Map<String, EMUserInfo>> fetchUserInfoById(
+      List<String> userIds) async {
     return await EMClient.getInstance.userInfoManager
-        .fetchUserInfoById([groupId]);
+        .fetchUserInfoById(userIds);
   }
 
   Future<EMGroup> createGroup() async {
@@ -48,10 +52,17 @@ class RoomDetailNotifier extends ChangeNotifier {
 
     if (conversationBean.getChatType() == ChatType.GroupChat) {
       group = await fetchGroupInfoFromServer(conversationBean.id);
-      var userInfoMap = await fetchUserInfoById(group?.owner ?? "");
+
+      var userInfoMap = await fetchUserInfoById([
+        group?.owner ?? "",
+        ...group?.adminList ?? [],
+        ...group?.memberList ?? []
+      ]);
+      userInfoList = userInfoMap.values.toList();
       userInfo = userInfoMap[group?.owner ?? ""];
     } else {
-      var userInfoMap = await fetchUserInfoById(conversationBean.id);
+      var userInfoMap = await fetchUserInfoById([conversationBean.id]);
+      userInfoList = userInfoMap.values.toList();
       userInfo = userInfoMap[conversationBean.id];
     }
 
@@ -111,7 +122,7 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
       body: SafeArea(
         child: Column(
           children: [
-            _getMeItem("邀请好友", "", true).onTap(selectUser),
+            _userInfoList(ref.watch(roomProvider).userInfoList),
             ...getGroup(),
           ],
         ).paddingHorizontal(30.h),
@@ -180,7 +191,7 @@ extension _Action on _RoomDetailPageState {
     );
   }
 
-  selectUser() async {
+  selectUser(List<EMUserInfo> userInfo) async {
     List<String> data = [];
     if (widget.conversationBean.getConversationType() ==
         EMConversationType.Chat) {
@@ -239,6 +250,30 @@ extension _Action on _RoomDetailPageState {
 }
 
 extension _UI on _RoomDetailPageState {
+  Widget _userInfoList(List<EMUserInfo> userInfo) {
+    return GridView(
+        shrinkWrap: true,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5, //横轴三个子widget
+            crossAxisSpacing: 10, //横轴三个子widget
+            childAspectRatio: 1.0 //宽高比为1时，子widget
+            ),
+        children: <Widget>[
+          ...userInfo.map((user) => ImageWidget(
+                url: user.avatarUrl ?? AssetsImages.getDefaultAvatar(),
+                width: 30.w,
+                height: 30.h,
+                type: ImageWidgetType.asset,
+              )),
+          ImageWidget(
+            url: AssetsImages.iconAdd,
+            width: 30.w,
+            height: 30.h,
+            type: ImageWidgetType.asset,
+          ).onTap(() => selectUser(userInfo))
+        ]);
+  }
+
   Widget _getMeItem(String title, String? value, bool isNewPage) {
     return Column(
       children: [

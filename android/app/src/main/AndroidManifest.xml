@@ -32,7 +32,7 @@
     <application
         android:name=".MyApplication"
         android:icon="@mipmap/ic_launcher"
-        android:label="loar_flutter">
+        android:label="微蜂">
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="GgPTsWVhcdwLFHO6aeGcib3zcCOadR23" />
