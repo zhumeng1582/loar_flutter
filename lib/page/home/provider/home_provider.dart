@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/material.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 
 import '../../../common/proto/qr_code_data.dart';
 
@@ -14,6 +15,7 @@ final homeProvider =
     ChangeNotifierProvider<HomeNotifier>((ref) => HomeNotifier());
 
 class HomeNotifier extends ChangeNotifier {
+
   Future<QrCodeData> scan() async {
     var options = const ScanOptions(
         android: AndroidOptions(aspectTolerance: 0.5, useAutoFocus: true),

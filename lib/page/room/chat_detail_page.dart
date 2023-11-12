@@ -60,11 +60,11 @@ class RoomDetailNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
-  getChatInfo(ConversationBean conversationBean) async {
+  getChatInfo(EMConversation conversationBean) async {
     group = null;
     userInfo = null;
 
-    if (conversationBean.getChatType() == ChatType.GroupChat) {
+    if (conversationBean.type == EMConversationType.GroupChat) {
       group = await fetchGroupInfoFromServer(conversationBean.id);
 
       var userInfoMap = await fetchUserInfoById([
@@ -83,7 +83,7 @@ class RoomDetailNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  changeGroupName(String groupId, String name) async {
+  Future<EMGroup?> changeGroupName(String groupId, String name) async {
     try {
       await EMClient.getInstance.groupManager.changeGroupName(
         groupId,
@@ -91,6 +91,7 @@ class RoomDetailNotifier extends ChangeNotifier {
       );
       group = await fetchGroupInfoFromServer(groupId);
       notifyListeners();
+      return group;
     } on EMError catch (e) {}
     return null;
   }
@@ -109,9 +110,9 @@ class RoomDetailNotifier extends ChangeNotifier {
 }
 
 class ChatDetailPage extends ConsumerStatefulWidget {
-  ConversationBean conversationBean;
+  EMConversation conversation;
 
-  ChatDetailPage({super.key, required this.conversationBean});
+  ChatDetailPage({super.key, required this.conversation});
 
   @override
   ConsumerState<ChatDetailPage> createState() => _RoomDetailPageState();
@@ -122,7 +123,7 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
 
   @override
   void initState() {
-    ref.read(roomProvider).getChatInfo(widget.conversationBean);
+    ref.read(roomProvider).getChatInfo(widget.conversation);
     super.initState();
   }
 
@@ -136,7 +137,8 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
       body: SafeArea(
         child: Column(
           children: [
-            _userInfoList(ref.watch(roomProvider).userInfoList),
+            _userInfoList(ref.watch(roomProvider).userInfoList)
+                .paddingBottom(10.h),
             ...getGroup(),
           ],
         ).paddingHorizontal(30.h),
@@ -193,23 +195,23 @@ extension _Action on _RoomDetailPageState {
         .read(roomProvider)
         .addMembers(data.map((e) => e.userId).toList());
 
-    ConversationBean conversationBean =
-        ConversationBean(1, group?.groupId ?? "", "", group.showName, "", []);
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      RouteNames.roomPage,
-      (route) => route.settings.name == RouteNames.main,
-      arguments: conversationBean,
-    );
+    if (group != null) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        RouteNames.roomPage,
+        (route) => route.settings.name == RouteNames.main,
+        arguments:
+            EMConversation.fromJson({"convId": group.groupId, "type": 1}),
+      );
+    }
   }
 
   selectUser(List<EMUserInfo> userInfo) async {
     List<String> data = [];
-    if (widget.conversationBean.getConversationType() ==
-        EMConversationType.Chat) {
-      data.add(widget.conversationBean.id);
+    if (widget.conversation.type == EMConversationType.Chat) {
+      data.add(widget.conversation.id);
       ref.read(imProvider).contacts.forEach((value) {
-        if (value != widget.conversationBean.id) {
+        if (value != widget.conversation.id) {
           data.add(value);
         }
       });
@@ -240,24 +242,36 @@ extension _Action on _RoomDetailPageState {
     return false;
   }
 
-  changeName(String groupId, String? name) {
-    EditRemarkBottomSheet.show(
-      context: context,
-      maxLength: 18,
-      data: name ?? "",
-      onConfirm: (value) =>
-          {ref.read(roomProvider).changeGroupName(groupId, value)},
-    );
+  changeName(EMGroup group, String? name) {
+    if (group.owner == ImDataManager.instance.me.userId) {
+      EditRemarkBottomSheet.show(
+        context: context,
+        maxLength: 18,
+        data: name ?? "",
+        onConfirm: (value) => {changeGroupName(group, value)},
+      );
+    }
   }
 
-  changeDescription(String groupId, String? name) {
-    EditRemarkBottomSheet.show(
-      context: context,
-      maxLength: 200,
-      data: name ?? "",
-      onConfirm: (value) =>
-          {ref.read(roomProvider).changeGroupDescription(groupId, value)},
-    );
+  changeGroupName(EMGroup group, String name) async {
+    var groupNew =
+        await ref.read(roomProvider).changeGroupName(group.groupId, name);
+    if (groupNew != null) {
+      ref.read(imProvider).changeGroup(groupNew);
+    }
+  }
+
+  changeDescription(EMGroup group, String? name) {
+    if (group.owner == ImDataManager.instance.me.userId) {
+      EditRemarkBottomSheet.show(
+        context: context,
+        maxLength: 200,
+        data: name ?? "",
+        onConfirm: (value) => {
+          ref.read(roomProvider).changeGroupDescription(group.groupId, value)
+        },
+      );
+    }
   }
 }
 
@@ -279,10 +293,10 @@ extension _UI on _RoomDetailPageState {
               )),
           ImageWidget(
             url: AssetsImages.iconAdd,
-            width: 30.w,
-            height: 30.h,
+            width: 10.w,
+            height: 10.h,
             type: ImageWidgetType.asset,
-          ).onTap(() => selectUser(userInfo))
+          ).padding(all: 20.w).roundedBorder().onTap(() => selectUser(userInfo))
         ]);
   }
 
@@ -317,10 +331,12 @@ extension _UI on _RoomDetailPageState {
     List<Widget> list = [];
     var group = ref.watch(roomProvider).group;
     if (group != null) {
-      list.add(_getMeItem("群名称", group.showName, true)
-          .onTap(() => changeName(group.groupId, group.showName)));
-      list.add(_getMeItem("群说明", group.description, true)
-          .onTap(() => changeDescription(group.groupId, group.description)));
+      list.add(_getMeItem("群名称", group.showName,
+              group.owner == ImDataManager.instance.me.userId)
+          .onTap(() => changeName(group, group.showName)));
+      list.add(_getMeItem("群说明", group.description,
+              group.owner == ImDataManager.instance.me.userId)
+          .onTap(() => changeDescription(group, group.description)));
       list.add(_getMeItem("群二维码名片", "", true).onTap(() {
         QrCodeData qrCodeData = QrCodeData(
             userInfo: ref.read(roomProvider).userInfo,

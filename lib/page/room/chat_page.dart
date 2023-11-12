@@ -11,14 +11,12 @@ import '../home/provider/im_message_provider.dart';
 final roomProvider =
     ChangeNotifierProvider<RoomNotifier>((ref) => RoomNotifier());
 
-class RoomNotifier extends ChangeNotifier {
-
-}
+class RoomNotifier extends ChangeNotifier {}
 
 class ChatPage extends ConsumerStatefulWidget {
-  ConversationBean conversationBean;
+  EMConversation conversation;
 
-  ChatPage({super.key, required this.conversationBean});
+  ChatPage({super.key, required this.conversation});
 
   @override
   ConsumerState<ChatPage> createState() => _ChatPageState();
@@ -29,7 +27,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   @override
   void initState() {
-    ref.read(imProvider).getHistoryMessage(widget.conversationBean);
+    ref
+        .read(imProvider)
+        .getHistoryMessage(widget.conversation.id, widget.conversation.type);
 
     super.initState();
   }
@@ -40,7 +40,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       appBar: AppBar(
           centerTitle: true,
           backgroundColor: AppColors.bottomBackground,
-          title: Text(widget.conversationBean.title),
+          title: Text(
+              ref.read(imProvider).getConversationTitle(widget.conversation)),
           actions: [
             IconButton(
               icon: const Icon(Icons.more_horiz),
@@ -51,7 +52,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       body: SafeArea(
         child: Column(
           children: [
-            ChatMessagePage(conversationId: widget.conversationBean.id),
+            ChatMessagePage(conversationId: widget.conversation.id),
             _buildBottomItem()
           ],
         ),
@@ -71,13 +72,17 @@ extension _Action on _ChatPageState {
     Navigator.pushNamed(
       context,
       RouteNames.roomDetail,
-      arguments: widget.conversationBean,
+      arguments: widget.conversation,
     );
   }
 
   sendMessage(String message) {
-    ref.read(imProvider).sendTextMessage(widget.conversationBean.getChatType(),
-        widget.conversationBean.id, message);
+    ref.read(imProvider).sendTextMessage(
+        widget.conversation.type == EMConversationType.Chat
+            ? ChatType.Chat
+            : ChatType.GroupChat,
+        widget.conversation.id,
+        message);
   }
 }
 

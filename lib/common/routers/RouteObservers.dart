@@ -45,17 +45,17 @@ class RouteObservers {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const FindDevicesScreen());
     } else if (settings.name == RouteNames.roomPage) {
-      var conversation = settings.arguments as ConversationBean;
+      var conversation = settings.arguments as EMConversation;
       return MaterialPageRoute(
           settings: settings,
           builder: (_) => ChatPage(
-                conversationBean: conversation,
+                conversation: conversation,
               ));
     } else if (settings.name == RouteNames.roomDetail) {
-      var conversation = settings.arguments as ConversationBean;
+      var conversation = settings.arguments as EMConversation;
       return MaterialPageRoute(
           settings: settings,
-          builder: (_) => ChatDetailPage(conversationBean: conversation));
+          builder: (_) => ChatDetailPage(conversation: conversation));
     } else if (settings.name == RouteNames.selectContact) {
       var userList = settings.arguments as List<String>;
       return MaterialPageRoute(
@@ -71,11 +71,11 @@ class RouteObservers {
       var userInfo = settings.arguments as EMUserInfo;
       return MaterialPageRoute(
           settings: settings, builder: (_) => UserInfoPage(userInfo: userInfo));
-    }  else if (settings.name == RouteNames.notifyPage) {
+    } else if (settings.name == RouteNames.notifyPage) {
       var data = settings.arguments as NotifyBean;
       return MaterialPageRoute(
           settings: settings, builder: (_) => NotifyPage(data: data));
-    }   else if (settings.name == RouteNames.searchPage) {
+    } else if (settings.name == RouteNames.searchPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const SearchPage());
     } else if (settings.name == RouteNames.deviceScreen) {

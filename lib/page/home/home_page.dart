@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_string.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/home_provider.dart';
@@ -30,12 +31,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> data = [];
-    List<NotifyBean> notifyList = ref.watch(imProvider).notifyList;
-    List<ConversationBean> conversations =
-        ref.watch(imProvider).conversationsList;
-    data.addAll(notifyList);
-    data.addAll(conversations);
+    List<dynamic> data = ref.watch(imProvider).getHomeList();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
@@ -60,7 +56,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
           var item = data[index];
-          if (item is ConversationBean) {
+          if (item is EMConversation) {
             return _buildRoomItem(item).onTap(() {
               _room(item);
             });
@@ -105,7 +101,7 @@ extension _Action on _HomePageState {
     }
   }
 
-  _room(ConversationBean data) {
+  _room(EMConversation data) {
     Navigator.pushNamed(
       context,
       RouteNames.roomPage,
@@ -180,7 +176,7 @@ extension _UI on _HomePageState {
     );
   }
 
-  Widget _buildRoomItem(ConversationBean data) {
+  Widget _buildRoomItem(EMConversation data) {
     return Column(
       children: [
         Row(
@@ -197,14 +193,16 @@ extension _UI on _HomePageState {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              data.title,
+                              ref.read(imProvider).getConversationTitle(data),
                               style: TextStyle(
                                 fontSize: 24.sp,
                                 color: AppColors.title,
                               ),
                             ),
                             Text(
-                              data.message,
+                              ref
+                                  .read(imProvider)
+                                  .getConversationLastMessage(data),
                               style: TextStyle(
                                 fontSize: 22.sp,
                                 color: AppColors.title.withOpacity(0.6),
@@ -213,7 +211,7 @@ extension _UI on _HomePageState {
                           ],
                         ),
                       ),
-                      Text(data.time.formatChatTime,
+                      Text(ref.read(imProvider).getConversationLastTime(data),
                           style: TextStyle(
                             fontSize: 22.sp,
                             color: AppColors.title.withOpacity(0.6),
@@ -230,15 +228,16 @@ extension _UI on _HomePageState {
     );
   }
 
-  Widget _getIcon(ConversationBean data) {
+  Widget _getIcon(EMConversation data) {
+    var avatarUrls = ref.watch(imProvider).getConversationAvatars(data);
     return NineGridView(
       width: 80.w,
       height: 80.h,
       type: NineGridType.weChatGp,
-      itemCount: data.avatarUrls.length,
+      itemCount: avatarUrls.length,
       itemBuilder: (BuildContext context, int index) {
         return ImageWidget(
-          url: data.avatarUrls[index],
+          url: avatarUrls[index],
           type: ImageWidgetType.asset,
         );
       },

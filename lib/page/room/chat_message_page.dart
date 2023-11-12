@@ -121,7 +121,7 @@ extension _UI on _RoomMessagePageState {
       Navigator.pushNamed(
         context,
         RouteNames.usesInfoPage,
-        arguments: {"userInfo": userInfo},
+        arguments: userInfo,
       );
     });
   }

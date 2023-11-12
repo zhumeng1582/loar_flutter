@@ -100,12 +100,10 @@ extension _Action on _ContactsPageState {
   }
 
   _room(EMUserInfo data) {
-    ConversationBean conversationBean =
-        ConversationBean(0, data.userId, "", data.name, "", []);
     Navigator.pushNamed(
       context,
       RouteNames.roomPage,
-      arguments: conversationBean,
+      arguments: EMConversation.fromJson({"convId": data.userId, "type": 0}),
     );
   }
 }

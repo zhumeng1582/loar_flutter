@@ -83,13 +83,11 @@ extension _Action on _UserInfoPageState {
 
   void _tapAction() {
     if (ref.read(imProvider).contacts.contains(widget.userInfo.userId)) {
-      ConversationBean conversationBean = ConversationBean(
-          0, widget.userInfo.userId, "", widget.userInfo.name, "", []);
       Navigator.pushNamedAndRemoveUntil(
         context,
         RouteNames.roomPage,
         (route) => route.settings.name == RouteNames.main,
-        arguments: conversationBean,
+        arguments: EMConversation.fromJson({"convId":widget.userInfo.userId}),
       );
     } else {
       ref.read(imProvider).addContact(widget.userInfo.userId, "请求添加好友");

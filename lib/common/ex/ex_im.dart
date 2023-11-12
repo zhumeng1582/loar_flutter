@@ -23,4 +23,12 @@ extension ExGroup on EMGroup? {
     }
     return "群聊（${(userCount)})";
   }
+
+  List<String> get allUsers {
+    return [
+      this?.owner ?? "",
+      ...this?.adminList ?? [],
+      ...this?.memberList ?? []
+    ];
+  }
 }
