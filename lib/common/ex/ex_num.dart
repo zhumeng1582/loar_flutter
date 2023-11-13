@@ -36,29 +36,29 @@ extension ExInt on int {
   }
 
   String get formatChatTime {
-    try {
-      DateTime messageTime = DateTime.fromMillisecondsSinceEpoch(this);
-      final currentTime = DateTime.now();
-      final difference = currentTime.difference(messageTime);
-
-      if (difference.inDays < 1) {
-        String hourMinute = DateFormat('HH:mm').format(messageTime);
-        String hour = hourMinute.split(':')[0];
-        String minute = hourMinute.split(':')[1];
-
-        if (int.parse(hour) < 12) {
-          return '上午$hour:$minute';
+    var date = DateTime.fromMillisecondsSinceEpoch(this);
+    var now = DateTime.now();
+    var formatter = DateFormat('HH:mm');
+    if (date.year == now.year && date.month == now.month) {
+      if (date.day == now.day) {
+        if (date.hour < 6) {
+          return '凌晨 ${formatter.format(date)}';
+        } else if (date.hour < 12) {
+          return '上午 ${formatter.format(date)}';
+        } else if (date.hour < 18) {
+          return '下午 ${formatter.format(date)}';
         } else {
-          int pmHour = int.parse(hour) - 12;
-          return '下午$pmHour:$minute';
+          return '晚上 ${formatter.format(date)}';
         }
-      } else if (difference.inDays < 2) {
-        return '昨天';
+      } else if (date.day == now.day - 1) {
+        return '昨天 ${formatter.format(date)}';
       } else {
-        return DateFormat.yMMMd('zh_CN').format(messageTime);
+        formatter = DateFormat('MM:dd HH:mm');
+        return formatter.format(date);
       }
-    } catch (e) {
-      return "";
+    } else {
+      formatter = DateFormat('YYYY:MM:dd HH:mm');
+      return formatter.format(date);
     }
   }
 
