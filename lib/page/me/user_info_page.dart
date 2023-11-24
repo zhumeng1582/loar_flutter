@@ -70,7 +70,7 @@ class _UserInfoPageState extends ConsumerState<UserInfoPage> {
 
 extension _Action on _UserInfoPageState {
   bool isMe() {
-    return widget.userInfo.userId == ImDataManager.instance.me.userId;
+    return widget.userInfo.userId == ImDataManager.instance.me?.userId;
   }
 
   String getButtonText() {

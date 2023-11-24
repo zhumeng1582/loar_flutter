@@ -10,12 +10,12 @@ import 'package:loar_flutter/page/home/provider/home_provider.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
 
+import '../../common/blue_tooth.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
-import 'bean/conversation_bean.dart';
 import 'bean/notify_bean.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -42,6 +42,14 @@ class _HomePageState extends ConsumerState<HomePage> {
         backgroundColor: AppColors.bottomBackground,
         title: Text("聊天"),
         centerTitle: true,
+        leading: ImageWidget(
+          url: BlueToothConnect.instance.isConnect()
+              ? AssetsImages.iconBlueToothOpen
+              : AssetsImages.iconBlueTooth,
+          width: 46.w,
+          height: 46.h,
+          type: ImageWidgetType.asset,
+        ).paddingRight(30.w).onTap(blueTooth),
         actions: [
           ImageWidget(
             url: AssetsImages.iconSearch,
@@ -82,6 +90,16 @@ class _HomePageState extends ConsumerState<HomePage> {
 }
 
 extension _Action on _HomePageState {
+  blueTooth() async {
+    if (BlueToothConnect.instance.isConnect()) {
+      await BlueToothConnect.instance.disconnect();
+      setState(() {});
+    } else {
+      Navigator.pushNamed(context, RouteNames.blueSearchList)
+          .then((value) => setState(() {}));
+    }
+  }
+
   search() async {
     Navigator.pushNamed(
       context,

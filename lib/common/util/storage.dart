@@ -21,8 +21,11 @@ class StorageUtils {
     if (value is bool) return prefs!.setBool(key, value);
     if (value is int) return prefs!.setInt(key, value);
     if (value is double) return prefs!.setDouble(key, value);
-    if (value is List<String>) return prefs!.setStringList(key, value);
-    throw UnimplementedError('Type ${value.runtimeType} not implemented');
+    if (value is List<String>) {
+      return prefs!.setStringList(key, value);
+    } else {
+      prefs!.setString(key, json.encode(value));
+    }
   }
 
   static void saveList(String key, List<dynamic> value) async {
@@ -48,6 +51,10 @@ class StorageUtils {
   static Future<String?> getString(String key) async {
     final prefs = await getPreferences();
     return prefs!.getString(key);
+  }
+  static Future<List<String>?> getListString(String key) async {
+    final prefs = await getPreferences();
+    return prefs!.getStringList(key);
   }
 
 

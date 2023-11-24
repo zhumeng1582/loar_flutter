@@ -18,7 +18,7 @@ import '../room/chat_detail_page.dart';
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
 
 class MeNotifier extends ChangeNotifier {
-  EMUserInfo me = ImDataManager.instance.me;
+  EMUserInfo me = ImDataManager.instance.me!;
 
   updateUserAvatar(String avatarUrl) async {
     try {
@@ -26,7 +26,7 @@ class MeNotifier extends ChangeNotifier {
       await EMClient.getInstance.userInfoManager
           .updateUserInfo(avatarUrl: avatarUrl);
       await ImDataManager.instance.getUserInfo();
-      me = ImDataManager.instance.me;
+      me = ImDataManager.instance.me!;
       notifyListeners();
       Loading.dismiss();
       Loading.show("修改头像成功");
@@ -40,7 +40,7 @@ class MeNotifier extends ChangeNotifier {
       Loading.show();
       await EMClient.getInstance.userInfoManager.updateUserInfo(nickname: name);
       await ImDataManager.instance.getUserInfo();
-      me = ImDataManager.instance.me;
+      me = ImDataManager.instance.me!;
       Loading.dismiss();
       Loading.show("修改名称成功");
       notifyListeners();
@@ -90,6 +90,9 @@ class _MePageState extends ConsumerState<MePage> {
             }),
             _getMeItem("离线地址管理", "", true).onTap(() {
               Navigator.pushNamed(context, RouteNames.offlineMap);
+            }),
+            _getMeItem("卫星图", "", true).onTap(() {
+              Navigator.pushNamed(context, RouteNames.satelliteMapPage);
             }),
           ],
         ).paddingHorizontal(30.w),

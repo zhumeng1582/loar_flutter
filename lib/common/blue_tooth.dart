@@ -1,5 +1,7 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
 import 'package:loar_flutter/common/proto/index.dart';
+
 class BlueToothConnect {
   BlueToothConnect._();
 
@@ -14,7 +16,7 @@ class BlueToothConnect {
 
   static BlueToothConnect get instance => _getInstance();
   static BlueToothConnect? _instance;
-  BluetoothDevice? device;
+  BluetoothDevice? _device;
   BluetoothCharacteristic? gpsChar;
   BluetoothCharacteristic? loarChar;
   BluetoothCharacteristic? setChar;
@@ -24,32 +26,40 @@ class BlueToothConnect {
     return _instance!;
   }
 
+  bool isConnect() {
+    return BlueToothConnect.instance._device?.isConnected == true;
+  }
+
+  disconnect() async{
+    await BlueToothConnect.instance._device?.disconnect();
+  }
+
   connect(ScanResult value, Function success, Function fail) async {
     await value.device
         .connect(timeout: const Duration(seconds: 35))
         .catchError((e) {
       fail(e);
     }).then((v) {
-      device = value.device;
+      _device = value.device;
     });
 
-    var servicesList = await device?.discoverServices();
+    var servicesList = await _device?.discoverServices();
     var service = servicesList?.firstWhere((element) =>
         element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
     loarChar = service?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
 
-    var serviceGps = device?.servicesList?.firstWhere((element) =>
+    var serviceGps = _device?.servicesList?.firstWhere((element) =>
         element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
     gpsChar = serviceGps?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
 
-    var serviceSet = device?.servicesList?.firstWhere((element) =>
+    var serviceSet = _device?.servicesList?.firstWhere((element) =>
         element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
     setChar = serviceSet?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
-    value.device.connectionState.listen((BluetoothConnectionState state) {
+    _device?.connectionState.listen((BluetoothConnectionState state) {
       if (state == BluetoothConnectionState.connected) {
         enableCommunication();
         success();
@@ -69,7 +79,7 @@ class BlueToothConnect {
 
   enableCommunication() async {
     if (setChar != null) {
-      List<int>  value= [0xC2,0x00,0x06,0x12,0x34,0x01,0x62,0x00,0x18];
+      List<int> value = [0xC2, 0x00, 0x06, 0x12, 0x34, 0x01, 0x62, 0x00, 0x18];
       setLoraMode(2);
       await Future.delayed(const Duration(milliseconds: 150));
       _write(loarChar!, value);
@@ -78,11 +88,11 @@ class BlueToothConnect {
     }
   }
 
-  // writeLoraMessage(LoarMessage value) {
-  //   if (loarChar != null) {
-  //     _write(loarChar!, value.writeToBuffer());
-  //   }
-  // }
+  writeLoraMessage(ChatMessage value) {
+    if (loarChar != null) {
+      _write(loarChar!, value.writeToBuffer());
+    }
+  }
 
   _writeLoraString(List<int> value) {
     if (loarChar != null) {

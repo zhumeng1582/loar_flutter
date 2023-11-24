@@ -152,7 +152,7 @@ extension _Action on _RoomDetailPageState {
   bool isOwner() {
     var group = ref.read(roomProvider).group;
     if (group != null) {
-      return group.owner == ImDataManager.instance.me.userId;
+      return group.owner == ImDataManager.instance.me?.userId;
     }
     return false;
   }
@@ -238,7 +238,7 @@ extension _Action on _RoomDetailPageState {
   }
 
   changeName(EMGroup group, String? name) {
-    if (group.owner == ImDataManager.instance.me.userId) {
+    if (group.owner == ImDataManager.instance.me?.userId) {
       EditRemarkBottomSheet.show(
         context: context,
         maxLength: 18,
@@ -257,7 +257,7 @@ extension _Action on _RoomDetailPageState {
   }
 
   changeDescription(EMGroup group, String? name) {
-    if (group.owner == ImDataManager.instance.me.userId) {
+    if (group.owner == ImDataManager.instance.me?.userId) {
       EditRemarkBottomSheet.show(
         context: context,
         maxLength: 200,
@@ -327,10 +327,10 @@ extension _UI on _RoomDetailPageState {
     var group = ref.watch(roomProvider).group;
     if (group != null) {
       list.add(_getMeItem("群名称", group.showName,
-              group.owner == ImDataManager.instance.me.userId)
+              group.owner == ImDataManager.instance.me?.userId)
           .onTap(() => changeName(group, group.showName)));
       list.add(_getMeItem("群说明", group.description,
-              group.owner == ImDataManager.instance.me.userId)
+              group.owner == ImDataManager.instance.me?.userId)
           .onTap(() => changeDescription(group, group.description)));
       list.add(_getMeItem("群二维码名片", "", true).onTap(() {
         QrCodeData qrCodeData = QrCodeData(

@@ -6,22 +6,22 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/im_data.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'common/routers/RouteObservers.dart';
-import 'dart:io' show InternetAddress, Platform, SocketException;
+import 'dart:io';
 
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
     show BMFMapSDK, BMF_COORD_TYPE;
 
 var appKey = "1106231108210776#demo";
-var isConnectionSuccessful = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initMap();
   await initIm();
-  tryConnection();
+  ImDataManager.instance.tryConnection();
   if (Platform.isAndroid) {
     [
       Permission.location,
@@ -35,17 +35,6 @@ void main() async {
   } else {
     runApp(ProviderScope(child: MyApp(entryPoint: "")));
   }
-}
-
-tryConnection() {
-  Timer.periodic(const Duration(seconds: 2), (timer) async {
-    try {
-      final response = await InternetAddress.lookup('baidu.com');
-      isConnectionSuccessful = response.isNotEmpty;
-    } on SocketException catch (e) {
-      isConnectionSuccessful = false;
-    }
-  });
 }
 
 Future<void> initIm() async {

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/ex/ex_num.dart';
+import 'package:loar_flutter/common/util/im_cache.dart';
 import 'package:loar_flutter/common/util/storage.dart';
 
 import '../../../common/constant.dart';
@@ -29,55 +30,67 @@ class ImNotifier extends ChangeNotifier {
   Map<String, EMUserInfo> allUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
 
+
+
+  init() async {
+    Loading.show();
+    await loadData();
+    notifyListeners();
+    Loading.dismiss();
+  }
+
+  //修改群组信息
   changeGroup(EMGroup group) {
     groupMap[group.groupId] = group;
     notifyListeners();
-  }
-
-  init() async {
-    try {
-      Loading.show();
-      await loadData();
-      notifyListeners();
-      Loading.dismiss();
-    } catch (e) {
-      Loading.error("网络错误,清扫后再试");
-      Loading.dismiss();
-    }
+    ImCache.saveGroup(groupMap);
   }
 
   Future<void> loadData() async {
     ImDataManager.instance.getUserInfo();
 
-    contacts =
-        await EMClient.getInstance.contactManager.getAllContactsFromServer();
+    if (ImDataManager.instance.isConnectionSuccessful) {
 
-    for (var element in contacts) {
-      await getHistoryMessage(element, EMConversationType.Chat);
+      contacts =
+          await EMClient.getInstance.contactManager.getAllContactsFromServer();
+
+      for (var element in contacts) {
+        await getHistoryMessage(element, EMConversationType.Chat);
+      }
+
+      var groupList =
+          await EMClient.getInstance.groupManager.fetchJoinedGroupsFromServer();
+      groupList.forEach((element) async {
+        groupMap[element.groupId] =
+            await fetchGroupInfoFromServer(element.groupId);
+      });
+      for (var element in groupList) {
+        await getHistoryMessage(element.groupId, EMConversationType.GroupChat);
+      }
+
+      var userList = [...contacts];
+      groupMap.forEach((key, value) {
+        userList.addAll([
+          value.owner!,
+          ...value.adminList ?? [],
+          ...value.memberList ?? []
+        ]);
+      });
+      await loadUerInfo(userList);
+
+      conversationsList =
+          await EMClient.getInstance.chatManager.loadAllConversations();
+
+      ImCache.saveConversationsList(conversationsList);
+      ImCache.saveGroup(groupMap);
+      ImCache.saveAllUser(allUsers);
+      ImCache.saveContacts(contacts);
+    } else {
+      conversationsList = await ImCache.getConversationsList();
+      groupMap = await ImCache.getGroup();
+      allUsers = await ImCache.getAllUser();
+      contacts = (await ImCache.getContacts()) ?? [];
     }
-
-    var groupList =
-        await EMClient.getInstance.groupManager.fetchJoinedGroupsFromServer();
-    groupList.forEach((element) async {
-      groupMap[element.groupId] =
-          await fetchGroupInfoFromServer(element.groupId);
-    });
-    for (var element in groupList) {
-      await getHistoryMessage(element.groupId, EMConversationType.GroupChat);
-    }
-
-    var userList = [...contacts];
-    groupMap.forEach((key, value) {
-      userList.addAll([
-        value.owner!,
-        ...value.adminList ?? [],
-        ...value.memberList ?? []
-      ]);
-    });
-    await loadUerInfo(userList);
-
-    conversationsList =
-        await EMClient.getInstance.chatManager.loadAllConversations();
   }
 
   String getConversationTitle(EMConversation data) {
@@ -93,7 +106,7 @@ class ImNotifier extends ChangeNotifier {
   }
 
   String getConversationLastTime(EMConversation data) {
-    return "${messageMap[data.id]?.first.serverTime.formatChatTime}";
+    return messageMap[data.id]?.first.serverTime.formatChatTime ?? "";
   }
 
   List<String> getConversationAvatars(EMConversation data) {
@@ -138,6 +151,7 @@ class ImNotifier extends ChangeNotifier {
       });
     }
     conversationsList.insert(0, conversation);
+    ImCache.saveConversationsList(conversationsList);
   }
 
   addContacts(String userId) async {
@@ -147,7 +161,7 @@ class ImNotifier extends ChangeNotifier {
       contacts.add(userId);
     }
     allUsers.addAll(contactsMap);
-
+    ImCache.saveAllUser(allUsers);
     notifyListeners();
   }
 
@@ -155,7 +169,7 @@ class ImNotifier extends ChangeNotifier {
     if (allUsers.containsKey(userId)) {
       return allUsers[userId];
     }
-    if (ImDataManager.instance.me.userId == userId) {
+    if (ImDataManager.instance.me?.userId == userId) {
       return ImDataManager.instance.me;
     }
     return null;
@@ -165,8 +179,8 @@ class ImNotifier extends ChangeNotifier {
     if (allUsers.containsKey(userId)) {
       return allUsers[userId]?.avatarUrl ?? AssetsImages.getRandomAvatar();
     }
-    if (ImDataManager.instance.me.userId == userId) {
-      return ImDataManager.instance.me.avatarUrl ??
+    if (ImDataManager.instance.me?.userId == userId) {
+      return ImDataManager.instance.me?.avatarUrl ??
           AssetsImages.getRandomAvatar();
     }
     return AssetsImages.getRandomAvatar();

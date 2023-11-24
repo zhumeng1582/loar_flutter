@@ -84,7 +84,7 @@ class _FindDevicesScreenState extends ConsumerState<FindDevicesScreen> {
       key: snackBarKeyB,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Find Devices'),
+          title: const Text('查找蓝牙设备'),
         ),
         body: RefreshIndicator(
           onRefresh: () {

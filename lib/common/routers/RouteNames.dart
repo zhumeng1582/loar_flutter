@@ -14,5 +14,6 @@ class RouteNames{
   static const offlineMap = 'offlineMap';
   static const notifyPage = 'notifyPage';
   static const searchPage = 'searchPage';
+  static const satelliteMapPage = 'SatelliteMapPage';
 
 }

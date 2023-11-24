@@ -8,9 +8,11 @@ import 'package:loar_flutter/common/util/storage.dart';
 
 import '../../common/colors.dart';
 import '../../common/constant.dart';
+import '../../common/im_data.dart';
 import '../../common/image.dart';
 import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/im_cache.dart';
 import '../../common/util/reg.dart';
 import '../../main.dart';
 import '../../widget/baseTextField.dart';
@@ -45,7 +47,7 @@ class SignUpNotifier extends ChangeNotifier {
   }
 
   Future<bool> saveUser(String account, String password) async {
-    if (!isConnectionSuccessful) {
+    if (!ImDataManager.instance.isConnectionSuccessful) {
       Loading.toast("请先连接网络");
       return false;
     }
@@ -75,7 +77,7 @@ class SignUpNotifier extends ChangeNotifier {
           .catchError((value) => error(value));
       buttonState = ButtonState.normal;
       notifyListeners();
-      StorageUtils.save(Constant.password + account, password);
+      ImCache.savePassword(password);
       return true;
     }
     buttonState = ButtonState.normal;

@@ -5,6 +5,7 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
+import 'package:nine_grid_view/nine_grid_view.dart';
 
 import '../../common/colors.dart';
 import '../../common/image.dart';
@@ -29,7 +30,10 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> data = ref.watch(imProvider).contacts;
+    Map<String, EMGroup> groupMap = ref.watch(imProvider).groupMap;
+    List<String> contacts = ref.watch(imProvider).contacts;
+    List<dynamic> data = [...contacts, ...groupMap.values];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
@@ -47,13 +51,21 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
-          var userInfo = ref.read(imProvider).getUserInfo(data[index]);
-          if (userInfo != null) {
-            return _buildRoomItem(userInfo).onTap(() {
-              _room(userInfo);
-            });
+          if (data[index] is String) {
+            var userInfo =
+                ref.read(imProvider).getUserInfo(data[index] as String);
+            if (userInfo != null) {
+              return _buildRoomItem(userInfo).onTap(() {
+                _userRoom(userInfo);
+              });
+            } else {
+              Container();
+            }
           } else {
-            Container();
+            var group = data[index] as EMGroup;
+            return _buildRoomGroupItem(group).onTap(() {
+              _groupRoom(group);
+            });
           }
         },
       ),
@@ -76,6 +88,22 @@ extension _UI on _ContactsPageState {
     );
   }
 
+  Widget _getGroupIcon(EMGroup data) {
+    var avatarUrls = data.allUsers;
+    return NineGridView(
+      width: 80.w,
+      height: 80.h,
+      type: NineGridType.weChatGp,
+      itemCount: avatarUrls.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ImageWidget(
+          url: avatarUrls[index],
+          type: ImageWidgetType.asset,
+        );
+      },
+    );
+  }
+
   Widget _buildRoomItem(EMUserInfo data) {
     return Column(
       children: [
@@ -84,6 +112,21 @@ extension _UI on _ContactsPageState {
             _getIcon(data).paddingHorizontal(30.w),
             Text(data.userId).expanded(),
             Text(data.name).paddingHorizontal(30.w),
+          ],
+        ),
+        Gaps.line.paddingLeft(140.w).paddingVertical(15.h)
+      ],
+    ).paddingTop(3.h);
+  }
+
+  Widget _buildRoomGroupItem(EMGroup data) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            _getGroupIcon(data).paddingHorizontal(30.w),
+            Text(data.showName).expanded(),
+            Text("${data.allUsers.length}人").paddingHorizontal(30.w),
           ],
         ),
         Gaps.line.paddingLeft(140.w).paddingVertical(15.h)
@@ -99,11 +142,19 @@ extension _Action on _ContactsPageState {
     } else if (qrCodeData.room != null) {}
   }
 
-  _room(EMUserInfo data) {
+  _userRoom(EMUserInfo data) {
     Navigator.pushNamed(
       context,
       RouteNames.roomPage,
       arguments: EMConversation.fromJson({"convId": data.userId, "type": 0}),
+    );
+  }
+
+  _groupRoom(EMGroup data) {
+    Navigator.pushNamed(
+      context,
+      RouteNames.roomPage,
+      arguments: EMConversation.fromJson({"convId": data.groupId, "type": 1}),
     );
   }
 }

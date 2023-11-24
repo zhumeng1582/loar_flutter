@@ -5,12 +5,11 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/colors.dart';
-import '../../common/constant.dart';
+import '../../common/im_data.dart';
 import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/im_cache.dart';
 import '../../common/util/reg.dart';
-import '../../common/util/storage.dart';
-import '../../main.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
 
@@ -41,8 +40,8 @@ class LoginNotifier extends ChangeNotifier {
       Loading.toast("请输入6-16为数字或字母组合密码");
       return false;
     }
-    if (!isConnectionSuccessful) {
-      var psw = await StorageUtils.getString(Constant.password + account);
+    if (!ImDataManager.instance.isConnectionSuccessful) {
+      var psw = await ImCache.getPassword();
       if (psw == password) {
         return true;
       } else {
@@ -57,7 +56,7 @@ class LoginNotifier extends ChangeNotifier {
       await EMClient.getInstance
           .login(account, password)
           .catchError((value) => error(value));
-      StorageUtils.save(Constant.password + account, password);
+      ImCache.savePassword(password);
 
       buttonState = ButtonState.normal;
       notifyListeners();
@@ -87,11 +86,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _userAccountController.text = "13265468736";
-    _userPasswordController.text = "Z123456";
+
     ref.read(loginProvider).buttonState = ButtonState.normal;
 
-    Future(() {
+    Future(() async {
+      _userAccountController.text = ImDataManager.instance.me?.userId ?? "";
+      _userPasswordController.text = await ImCache.getPassword();
+
       _userAccountController.addListener(() {
         ref.read(loginProvider).setButtonState(
             _userAccountController.text, _userPasswordController.text);
@@ -143,10 +144,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     }).paddingTop(70.h),
             Row(
               children: [
-                Text("忘记密码",
-                    style: TextStyle(
-                      color: AppColors.disabledTextColor,
-                    )).onTap(() => forgetPassword()),
+                // Text("忘记密码",
+                //     style: TextStyle(
+                //       color: AppColors.disabledTextColor,
+                //     )).onTap(() => forgetPassword()),
                 Expanded(child: Container()),
                 Text("注册账户",
                     style: TextStyle(

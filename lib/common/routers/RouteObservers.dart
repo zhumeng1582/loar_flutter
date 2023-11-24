@@ -17,6 +17,7 @@ import '../../page/home/bean/conversation_bean.dart';
 import '../../page/home/bean/notify_bean.dart';
 import '../../page/login/avatar_select_page.dart';
 import '../../page/room/chat_page.dart';
+import '../../page/statellite_map.dart';
 import '../proto/qr_code_data.dart';
 import 'RouteNames.dart';
 
@@ -78,6 +79,9 @@ class RouteObservers {
     } else if (settings.name == RouteNames.searchPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const SearchPage());
+    }  else if (settings.name == RouteNames.satelliteMapPage) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const SatelliteMapPage());
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(

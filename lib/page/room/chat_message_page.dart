@@ -71,7 +71,7 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildRoomMessageItem(EMMessage data) {
-    if (data.from == ImDataManager.instance.me.userId) {
+    if (data.from == ImDataManager.instance.me?.userId) {
       return _buildChatRightItem(data, _buildChatContent(data));
     } else {
       return _buildChatLeftItem(data, _buildChatContent(data));
@@ -79,7 +79,7 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildChatContent(EMMessage data) {
-    var isSender = data.from == ImDataManager.instance.me.userId;
+    var isSender = data.from == ImDataManager.instance.me?.userId;
     EMTextMessageBody body = data.body as EMTextMessageBody;
     return BubbleSpecialOne(
       text: body.content,
