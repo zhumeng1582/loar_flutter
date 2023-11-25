@@ -45,7 +45,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
-        title: Text("聊天"),
+        title: Text("蜂信"),
         centerTitle: true,
         leadingWidth: 76.w,
         leading: ImageWidget(

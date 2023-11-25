@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
+import 'package:loar_flutter/common/util/gaps.dart';
 
 import '../../common/colors.dart';
 import '../../common/im_data.dart';
 import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/im_cache.dart';
+import '../../common/util/images.dart';
 import '../../common/util/reg.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
@@ -29,9 +32,7 @@ class LoginNotifier extends ChangeNotifier {
   }
 
   Future<bool> login(String account, String password) async {
-    if (account.isEmpty || password.isEmpty) {
-      return false;
-    }
+
     if (!Reg.isPhone(account)) {
       Loading.toast("请输入正确的手机号");
       return false;
@@ -90,8 +91,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     ref.read(loginProvider).buttonState = ButtonState.normal;
 
     Future(() async {
-      _userAccountController.text = GlobeDataManager.instance.me?.userId ?? "";
-      _userPasswordController.text = await ImCache.getPassword();
+      // _userAccountController.text = GlobeDataManager.instance.me?.userId ?? "";
+      // _userPasswordController.text = await ImCache.getPassword();
 
       _userAccountController.addListener(() {
         ref.read(loginProvider).setButtonState(
@@ -108,56 +109,73 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("登陆"),
-        // actions: [
-        //   Text("跳过").onTap(() {
-        //     Navigator.popAndPushNamed(
-        //       context,
-        //       // RouteNames.blueSearchList,
-        //       RouteNames.main,
-        //     );
-        //   }),
-        // ],
+
+        actions: [
+          Text("试用").paddingHorizontal(30.w).onTap(() {
+            login("13265468736", "Z123456");
+          }),
+        ],
       ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(flex: 1, child: Container()),
-            BaseTextField(
-              controller: _userAccountController,
-              hintText: "请输入账号",
-              style: TextStyle(color: AppColors.title),
-            ),
-            BaseTextField(
-              controller: _userPasswordController,
-              hintText: "请输入密码",
-              isInputPwd: true,
-              style: TextStyle(color: AppColors.title),
-            ).paddingTop(30.h),
-            CommitButton(
-                buttonState: ref.watch(loginProvider).buttonState,
-                margin: EdgeInsets.zero,
-                text: "登陆",
-                tapAction: () => {
-                      login(_userAccountController.text,
-                          _userPasswordController.text)
-                    }).paddingTop(70.h),
+            Expanded(flex: 10, child: Container()),
+            Text("欢迎使用", style: TextStyle(fontSize: 26.sp)),
+            Text("微蜂",
+                    style:
+                        TextStyle(fontSize: 80.sp, fontWeight: FontWeight.w400)),
             Row(
               children: [
-                // Text("忘记密码",
-                //     style: TextStyle(
-                //       color: AppColors.disabledTextColor,
-                //     )).onTap(() => forgetPassword()),
+                Row(
+                  children: [
+                    Text("+86"),
+                    ImageWidget(
+                      url: AssetsImages.iconDown,
+                      width: 30.w,
+                      height: 30.h,
+                      type: ImageWidgetType.asset,
+                    ),
+                  ],
+                ).padding(horizontal:10.h,vertical: 2.w).roundedBorder(
+                    radius: 8.r, color: AppColors.title.withOpacity(0.4)),
+                BaseTextField(
+                  fillColor: Colors.transparent,
+                  controller: _userAccountController,
+                  hintText: "请输入手机号",
+                  style: TextStyle(color: AppColors.title),
+                ).expanded(),
+              ],
+            ).paddingTop(20.h),
+            Gaps.line,
+            Row(children: [
+              Text("密码").paddingHorizontal(25.h),
+              BaseTextField(
+                fillColor: Colors.transparent,
+                controller: _userPasswordController,
+                hintText: "请输入密码",
+                isInputPwd: true,
+                style: TextStyle(color: AppColors.title),
+              ).expanded()
+            ],).paddingTop(30.h),
+            Gaps.line,
+            Row(mainAxisAlignment:MainAxisAlignment.center,children: [Text("登陆",style: TextStyle(fontSize: 34.sp),).padding(all: 20.w)],).roundedBorder(radius: 24.r).onTap(() {
+              login(_userAccountController.text, _userPasswordController.text);
+            }).paddingTop(70.h),
+            Row(
+              children: [
+                Text("忘记密码",
+                    style: TextStyle(
+                    )).onTap(() => forgetPassword()),
                 Expanded(child: Container()),
                 Text("注册账户",
                     style: TextStyle(
-                      color: AppColors.commonPrimary,
                     )).onTap(() => signUp())
               ],
-            ).paddingTop(20.h),
-            Expanded(flex: 2, child: Container()),
+            ).paddingTop(30.h),
+            Expanded(flex: 25, child: Container()),
           ],
-        ).paddingHorizontal(30.w),
+        ).paddingHorizontal(120.w),
       ),
     );
   }
@@ -172,10 +190,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
 extension _Action on _LoginPageState {
   forgetPassword() {
-    Navigator.popAndPushNamed(
-      context,
-      RouteNames.signUp,
-    );
+    // Navigator.popAndPushNamed(
+    //   context,
+    //   RouteNames.signUp,
+    // );
   }
 
   signUp() {

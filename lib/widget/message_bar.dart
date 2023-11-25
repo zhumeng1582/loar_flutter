@@ -124,7 +124,7 @@ class MessageBar extends StatelessWidget {
               ),
               child: Row(
                 children: <Widget>[
-                  ...actions,
+
                   Expanded(
                     child: Container(
                       child: TextField(
@@ -178,6 +178,7 @@ class MessageBar extends StatelessWidget {
                       },
                     ),
                   ),
+                  ...actions,
                 ],
               ),
             ),

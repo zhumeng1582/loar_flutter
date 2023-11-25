@@ -5,6 +5,7 @@ import 'package:loar_flutter/page/home/search_page.dart';
 import 'package:loar_flutter/page/login/login_page.dart';
 import 'package:loar_flutter/page/login/sign_up_page.dart';
 import 'package:loar_flutter/page/main_page.dart';
+import 'package:loar_flutter/page/map/baidu_map_page.dart';
 import 'package:loar_flutter/page/map/offline_map_page.dart';
 import 'package:loar_flutter/page/me/QR_generate_page.dart';
 import 'package:loar_flutter/page/me/scan_qr_page.dart';
@@ -16,6 +17,7 @@ import '../../page/contacts/contacts_select_page.dart';
 import '../../page/home/bean/conversation_bean.dart';
 import '../../page/home/bean/notify_bean.dart';
 import '../../page/login/avatar_select_page.dart';
+import '../../page/me/me_detail_page.dart';
 import '../../page/room/chat_page.dart';
 import '../../page/statellite_map.dart';
 import '../proto/qr_code_data.dart';
@@ -79,9 +81,15 @@ class RouteObservers {
     } else if (settings.name == RouteNames.searchPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const SearchPage());
-    }  else if (settings.name == RouteNames.satelliteMapPage) {
+    } else if (settings.name == RouteNames.satelliteMapPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const SatelliteMapPage());
+    } else if (settings.name == RouteNames.baiduMapPage) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const BaiduMapPage());
+    }  else if (settings.name == RouteNames.meDetailPage) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const MeDetailPage());
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(

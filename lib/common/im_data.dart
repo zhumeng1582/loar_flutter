@@ -60,19 +60,21 @@ class GlobeDataManager {
   }
 
   setLoarPosition(double latitude, double longitude) {
-    if (position == null) {
-      position = BMFCoordinate(latitude, longitude);
-    } else {
-      position?.latitude = latitude;
-      position?.longitude = longitude;
-    }
+    position = BMFCoordinate(latitude, longitude);
   }
+
   setPhonePosition(double latitude, double longitude) {
-    if (phonePosition == null) {
-      phonePosition = BMFCoordinate(latitude, longitude);
-    } else {
-      phonePosition?.latitude = latitude;
-      phonePosition?.longitude = longitude;
+    phonePosition = BMFCoordinate(latitude, longitude);
+
+  }
+
+  BMFCoordinate? getPosition() {
+    if (position != null) {
+      return position;
     }
+    if (phonePosition != null) {
+      return phonePosition;
+    }
+    return null;
   }
 }

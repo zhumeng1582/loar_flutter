@@ -15,5 +15,7 @@ class RouteNames{
   static const notifyPage = 'notifyPage';
   static const searchPage = 'searchPage';
   static const satelliteMapPage = 'SatelliteMapPage';
+  static const baiduMapPage = 'BaiduMapPage';
+  static const meDetailPage = 'MeDetailPage';
 
 }

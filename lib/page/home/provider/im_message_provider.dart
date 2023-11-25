@@ -434,8 +434,7 @@ class ImNotifier extends ChangeNotifier {
   }
 
   sendLocalMessage(ChatType chatType, String targetId) async {
-    BMFCoordinate? position = GlobeDataManager.instance.position;
-    position ??= GlobeDataManager.instance.phonePosition;
+    BMFCoordinate? position = GlobeDataManager.instance.getPosition();
     if (position == null) {
       Loading.toast("还未获取到定位数据");
       return;

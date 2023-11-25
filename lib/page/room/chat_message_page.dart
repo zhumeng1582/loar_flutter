@@ -8,6 +8,7 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../home/provider/im_message_provider.dart';
+import '../../common/colors.dart';
 
 final roomMessageProvider =
     ChangeNotifierProvider<RoomMessageNotifier>((ref) => RoomMessageNotifier());
@@ -85,7 +86,7 @@ extension _UI on _RoomMessagePageState {
       return BubbleSpecialOne(
         text: "定位消息：${body.latitude},${body.longitude}",
         isSender: isSender,
-        color: !isSender ? Colors.grey : const Color(0xFF1B97F3),
+        color: !isSender ? Colors.grey : AppColors.bubbleBgColor,
         textStyle: TextStyle(
           fontSize: 24.sp,
         ),
@@ -96,7 +97,7 @@ extension _UI on _RoomMessagePageState {
     return BubbleSpecialOne(
       text: body.content,
       isSender: isSender,
-      color: !isSender ? Colors.grey : const Color(0xFF1B97F3),
+      color: !isSender ? Colors.grey : AppColors.bubbleBgColor,
       textStyle: TextStyle(
         fontSize: 24.sp,
       ),

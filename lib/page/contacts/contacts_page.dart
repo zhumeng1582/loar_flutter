@@ -37,7 +37,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
-        title: Text("联系人"),
+        title: Text("通讯录"),
         centerTitle: true,
         actions: [
           ImageWidget(

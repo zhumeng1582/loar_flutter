@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loar_flutter/common/im_data.dart';
-import 'package:loar_flutter/common/loading.dart';
-import 'package:loar_flutter/page/sos/sos_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../common/blue_tooth.dart';
 import '../common/colors.dart';
@@ -10,6 +10,7 @@ import '../common/util/coord_convert.dart';
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
 import 'home/provider/im_message_provider.dart';
+import 'location/location_page.dart';
 import 'map/baidu_map_page.dart';
 import 'me/me_page.dart';
 
@@ -17,11 +18,13 @@ final mainProvider =
     ChangeNotifierProvider<MainNotifier>((ref) => MainNotifier());
 
 class MainNotifier extends ChangeNotifier {
+
+
   final List tabPages = [
     const HomePage(),
     const ContactsPage(),
-    BaiduMapPage(),
-    const SosPage(),
+    const LocationPage(),
+    // const SosPage(),
     const MePage(),
   ]; // 列举所有 Tab 控制切换将用到的页面
   int selectedIndex = 0;
@@ -57,6 +60,7 @@ class MainNotifier extends ChangeNotifier {
           .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
     }
   }
+
 }
 
 class MainPage extends ConsumerStatefulWidget {
@@ -67,16 +71,23 @@ class MainPage extends ConsumerStatefulWidget {
 }
 
 class _MainPageState extends ConsumerState<MainPage> {
+
+
   @override
   void initState() {
+
+
     Future(() {
+
       ref.read(imProvider).addImListener();
       ref.read(mainProvider).getLocation();
       ref.read(imProvider).init();
+
     });
 
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,10 +109,10 @@ class _MainPageState extends ConsumerState<MainPage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.message,
+              Icons.wechat,
               size: 24.0,
             ),
-            label: '聊天',
+            label: '蜂信',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
@@ -110,15 +121,15 @@ class _MainPageState extends ConsumerState<MainPage> {
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.map, size: 24.0),
-            label: '地图',
+            icon: Icon(Icons.place, size: 24.0),
+            label: '定位',
             backgroundColor: Colors.white,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sos, size: 24.0),
-            label: 'SOS',
-            backgroundColor: Colors.white,
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.sos, size: 24.0),
+          //   label: 'SOS',
+          //   backgroundColor: Colors.white,
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person, size: 24.0),
             label: '我的',

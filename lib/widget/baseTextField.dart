@@ -14,6 +14,7 @@ class BaseTextField extends StatefulWidget {
     Key? key,
     required this.controller,
     this.enabled = true,
+    this.fillColor,
     this.autoFocus = false,
     this.keyboardType = TextInputType.text,
     this.hintText = '',
@@ -63,6 +64,7 @@ class BaseTextField extends StatefulWidget {
 
   /// 内容样式
   final TextStyle? style;
+  final Color? fillColor;
 
   /// 前面功能按钮
   final List<Widget>? prefixIcons;
@@ -137,7 +139,7 @@ class _BaseTextFieldState extends State<BaseTextField> {
             ? null
             : _buildPrefixIcons(widget.prefixIcons!),
         filled: true,
-        fillColor: AppColors.inputBgColor,
+        fillColor: widget.fillColor ?? AppColors.inputBgColor,
       ),
     );
   }
