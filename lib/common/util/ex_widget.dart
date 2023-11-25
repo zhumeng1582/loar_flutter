@@ -20,7 +20,7 @@ extension ExWidget on Widget {
       );
 
   /// 对齐 中间
-  Widget alignCenter() => align(Alignment.center);
+  Widget alignCenter() => align(Alignment.topCenter);
 
   /// 对齐 左边
   Widget alignLeft() => align(Alignment.centerLeft);

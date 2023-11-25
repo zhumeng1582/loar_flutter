@@ -11,14 +11,14 @@ class LoginNotifier extends ChangeNotifier {
 
 }
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class TestPage extends ConsumerStatefulWidget {
+  const TestPage({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<TestPage> createState() => _TestPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _TestPageState extends ConsumerState<TestPage> {
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       body: SafeArea(
         child: Column(
           children: [],
-        ).paddingHorizontal(30.w),
+        ),
       ),
     );
   }
@@ -47,7 +47,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 }
 
-extension _Action on _LoginPageState {
+extension _Action on _TestPageState {
 }
 
-extension _UI on _LoginPageState {}
+extension _UI on _TestPageState {}

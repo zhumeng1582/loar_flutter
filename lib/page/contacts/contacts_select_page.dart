@@ -5,6 +5,7 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
+import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
@@ -39,6 +40,13 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: AppColors.bottomBackground,
         title: Text("选择联系人"),
         centerTitle: true,
       ),

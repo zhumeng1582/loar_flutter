@@ -8,6 +8,7 @@ import '../common/blue_tooth.dart';
 import '../common/colors.dart';
 import '../common/util/coord_convert.dart';
 import 'contacts/contacts_page.dart';
+import 'forum/forum_page.dart';
 import 'home/home_page.dart';
 import 'home/provider/im_message_provider.dart';
 import 'location/location_page.dart';
@@ -26,6 +27,7 @@ class MainNotifier extends ChangeNotifier {
     const LocationPage(),
     // const SosPage(),
     const MePage(),
+    const ForumPage(),
   ]; // 列举所有 Tab 控制切换将用到的页面
   int selectedIndex = 0;
 
@@ -133,6 +135,11 @@ class _MainPageState extends ConsumerState<MainPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person, size: 24.0),
             label: '我的',
+            backgroundColor: Colors.white,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.comment, size: 24.0),
+            label: '社区',
             backgroundColor: Colors.white,
           ),
         ],

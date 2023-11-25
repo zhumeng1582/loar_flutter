@@ -6,7 +6,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/im_data.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'common/routers/RouteObservers.dart';
@@ -19,9 +18,9 @@ var appKey = "1106231108210776#demo";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  initMap();
-  await initIm();
-  GlobeDataManager.instance.tryConnection();
+  // initMap();
+  // await initIm();
+  // GlobeDataManager.instance.tryConnection();
   if (Platform.isAndroid) {
     [
       Permission.location,
@@ -30,10 +29,10 @@ void main() async {
       Permission.bluetoothConnect,
       Permission.bluetoothScan
     ].request().then((status) {
-      runApp(ProviderScope(child: MyApp(entryPoint: "")));
+      runApp(ProviderScope(child: MyApp()));
     });
   } else {
-    runApp(ProviderScope(child: MyApp(entryPoint: "")));
+    runApp(ProviderScope(child: MyApp()));
   }
 }
 
@@ -45,8 +44,7 @@ Future<void> initIm() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key, required this.entryPoint}) : super(key: key) {}
-  final String entryPoint;
+  MyApp({Key? key}) : super(key: key) {}
 
   // This widget is the root of your application.
   @override
@@ -69,20 +67,18 @@ class MyApp extends StatelessWidget {
           //   const Locale('zh', 'CH'),
           // ],
           onGenerateRoute: (RouteSettings settings) =>
-              RouteObservers.didPush(entryPoint, settings),
+              RouteObservers.didPush(settings),
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          title: 'loar',
-          // home: EasyLoading.init()(context, const LoginPage()),
           builder: (context, child) {
             child = EasyLoading.init()(context, child); // EasyLoading 初始化
             return MediaQuery(
               data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
               child: child,
             );
-          },
+          }
         );
       },
     );

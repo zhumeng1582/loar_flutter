@@ -111,7 +111,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       appBar: AppBar(
 
         actions: [
-          Text("试用").paddingHorizontal(30.w).onTap(() {
+          Text("跳过").paddingHorizontal(30.w).onTap(() {
             login("13265468736", "Z123456");
           }),
         ],

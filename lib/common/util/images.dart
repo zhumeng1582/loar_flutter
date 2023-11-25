@@ -22,6 +22,8 @@ class AssetsImages {
   static final iconBlueTooth = _loadFromPath(named: 'iconBlueTooth');
   static final iconBlueToothOpen = _loadFromPath(named: 'iconBlueToothOpen');
   static final iconDown = _loadFromPath(named: 'iconDown');
+  static final iconShopping = _loadFromPath(named: 'iconShopping');
+  static final iconForum = _loadFromPath(named: 'iconForum');
 
   static String getRandomAvatar() {
     return getAvatar(Random().nextInt(100) + 1);

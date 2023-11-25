@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/page/home/notify_page.dart';
 import 'package:loar_flutter/page/home/search_page.dart';
 import 'package:loar_flutter/page/login/login_page.dart';
@@ -17,6 +18,7 @@ import '../../page/contacts/contacts_select_page.dart';
 import '../../page/home/bean/conversation_bean.dart';
 import '../../page/home/bean/notify_bean.dart';
 import '../../page/login/avatar_select_page.dart';
+import '../../page/me/about_page.dart';
 import '../../page/me/me_detail_page.dart';
 import '../../page/room/chat_page.dart';
 import '../../page/statellite_map.dart';
@@ -26,7 +28,7 @@ import 'RouteNames.dart';
 class RouteObservers {
   RouteObservers._();
 
-  static PageRoute? didPush(String entryPoint, RouteSettings settings) {
+  static PageRoute? didPush(RouteSettings settings) {
     if (settings.name == "/") {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const LoginPage());
@@ -90,6 +92,9 @@ class RouteObservers {
     }  else if (settings.name == RouteNames.meDetailPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const MeDetailPage());
+    }  else if (settings.name == RouteNames.aboutPage) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const AboutDetailPage());
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(
