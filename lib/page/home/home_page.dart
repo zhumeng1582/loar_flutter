@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_string.dart';
+import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/home_provider.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
@@ -99,6 +100,7 @@ extension _Action on _HomePageState {
   blueTooth() async {
     if (BlueToothConnect.instance.isConnect()) {
       await BlueToothConnect.instance.disconnect();
+      Loading.toast("蓝牙已关闭");
       setState(() {});
     } else {
       Navigator.pushNamed(context, RouteNames.blueSearchList)

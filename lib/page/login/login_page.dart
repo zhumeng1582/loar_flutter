@@ -109,15 +109,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("登陆"),
-        actions: [
-          Text("跳过").onTap(() {
-            Navigator.popAndPushNamed(
-              context,
-              // RouteNames.blueSearchList,
-              RouteNames.main,
-            );
-          }),
-        ],
+        // actions: [
+        //   Text("跳过").onTap(() {
+        //     Navigator.popAndPushNamed(
+        //       context,
+        //       // RouteNames.blueSearchList,
+        //       RouteNames.main,
+        //     );
+        //   }),
+        // ],
       ),
       body: SafeArea(
         child: Column(

@@ -437,7 +437,7 @@ class ImNotifier extends ChangeNotifier {
     BMFCoordinate? position = GlobeDataManager.instance.position;
     position ??= GlobeDataManager.instance.phonePosition;
     if (position == null) {
-      Loading.toast("请先开启定位");
+      Loading.toast("还未获取到定位数据");
       return;
     }
     var msg = EMMessage.createLocationSendMessage(

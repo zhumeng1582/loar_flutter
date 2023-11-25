@@ -60,7 +60,7 @@ class MessageBar extends StatelessWidget {
     this.replyCloseColor = Colors.black12,
     this.messageBarColor = const Color(0xffF4F4F5),
     this.sendButtonColor = Colors.blue,
-    this.messageBarHitText = "Type your message here",
+    this.messageBarHitText = "请输入消息",
     this.messageBarHintStyle = const TextStyle(fontSize: 16),
     this.onTextChanged,
     this.onSend,
