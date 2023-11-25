@@ -84,6 +84,14 @@ extension _Action on _ChatPageState {
         widget.conversation.id,
         message);
   }
+
+  sendLocalMessage() {
+    ref.read(imProvider).sendLocalMessage(
+        widget.conversation.type == EMConversationType.Chat
+            ? ChatType.Chat
+            : ChatType.GroupChat,
+        widget.conversation.id);
+  }
 }
 
 extension _UI on _ChatPageState {
@@ -93,12 +101,12 @@ extension _UI on _ChatPageState {
       onSend: (message) => sendMessage(message),
       actions: [
         InkWell(
+          onTap: sendLocalMessage,
           child: const Icon(
             Icons.place,
             color: Colors.black,
             size: 24,
           ),
-          onTap: () {},
         ),
       ],
     );

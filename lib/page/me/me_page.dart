@@ -18,15 +18,15 @@ import '../room/chat_detail_page.dart';
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
 
 class MeNotifier extends ChangeNotifier {
-  EMUserInfo me = ImDataManager.instance.me!;
+  EMUserInfo me = GlobeDataManager.instance.me!;
 
   updateUserAvatar(String avatarUrl) async {
     try {
       Loading.show();
       await EMClient.getInstance.userInfoManager
           .updateUserInfo(avatarUrl: avatarUrl);
-      await ImDataManager.instance.getUserInfo();
-      me = ImDataManager.instance.me!;
+      await GlobeDataManager.instance.getUserInfo();
+      me = GlobeDataManager.instance.me!;
       notifyListeners();
       Loading.dismiss();
       Loading.show("修改头像成功");
@@ -39,8 +39,8 @@ class MeNotifier extends ChangeNotifier {
     try {
       Loading.show();
       await EMClient.getInstance.userInfoManager.updateUserInfo(nickname: name);
-      await ImDataManager.instance.getUserInfo();
-      me = ImDataManager.instance.me!;
+      await GlobeDataManager.instance.getUserInfo();
+      me = GlobeDataManager.instance.me!;
       Loading.dismiss();
       Loading.show("修改名称成功");
       notifyListeners();

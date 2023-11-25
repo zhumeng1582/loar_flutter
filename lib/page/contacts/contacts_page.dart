@@ -89,15 +89,15 @@ extension _UI on _ContactsPageState {
   }
 
   Widget _getGroupIcon(EMGroup data) {
-    var avatarUrls = data.allUsers;
+    var users = data.allUsers;
     return NineGridView(
       width: 80.w,
       height: 80.h,
       type: NineGridType.weChatGp,
-      itemCount: avatarUrls.length,
+      itemCount: users.length,
       itemBuilder: (BuildContext context, int index) {
         return ImageWidget(
-          url: avatarUrls[index],
+          url: ref.watch(imProvider).getAvatarUrl(users[index]),
           type: ImageWidgetType.asset,
         );
       },

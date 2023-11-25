@@ -58,7 +58,7 @@ dependencies:
   qr_flutter: ^4.1.0
   # 二维码扫描
   barcode_scan2: ^4.2.4
-  flutter_blue_plus: ^1.16.2
+  flutter_blue_plus: ^1.29.6
   # 百度地图
   flutter_bmflocation: ^3.3.0
   flutter_baidu_mapapi_map: ^3.3.1
@@ -79,6 +79,7 @@ dependencies:
 
   # 自适应字体大小的Text
   auto_size_text: ^3.0.0
+
 
 dev_dependencies:
   flutter_test:

@@ -40,7 +40,7 @@ class LoginNotifier extends ChangeNotifier {
       Loading.toast("请输入6-16为数字或字母组合密码");
       return false;
     }
-    if (!ImDataManager.instance.isConnectionSuccessful) {
+    if (!GlobeDataManager.instance.isConnectionSuccessful) {
       var psw = await ImCache.getPassword();
       if (psw == password) {
         return true;
@@ -90,7 +90,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     ref.read(loginProvider).buttonState = ButtonState.normal;
 
     Future(() async {
-      _userAccountController.text = ImDataManager.instance.me?.userId ?? "";
+      _userAccountController.text = GlobeDataManager.instance.me?.userId ?? "";
       _userPasswordController.text = await ImCache.getPassword();
 
       _userAccountController.addListener(() {

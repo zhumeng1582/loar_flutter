@@ -11,26 +11,28 @@ import 'package:loar_flutter/common/ex/ex_num.dart';
 import 'package:loar_flutter/common/util/im_cache.dart';
 import 'package:loar_flutter/common/util/storage.dart';
 
+import '../../../common/blue_tooth.dart';
 import '../../../common/constant.dart';
 import '../../../common/im_data.dart';
 import '../../../common/loading.dart';
+import '../../../common/proto/LoarProto.pb.dart';
 import '../../../common/util/images.dart';
 import '../../../main.dart';
 import '../bean/conversation_bean.dart';
 import '../bean/notify_bean.dart';
+import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
 
 final imProvider = ChangeNotifierProvider<ImNotifier>((ref) => ImNotifier());
 var isConnectionSuccessful = false;
 
 class ImNotifier extends ChangeNotifier {
   List<EMConversation> conversationsList = [];
+  CommunicationStatue communicationStatue = CommunicationStatue(true);
   List<NotifyBean> notifyList = [];
   List<String> contacts = [];
   Map<String, EMGroup> groupMap = {};
   Map<String, EMUserInfo> allUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
-
-
 
   init() async {
     Loading.show();
@@ -47,10 +49,9 @@ class ImNotifier extends ChangeNotifier {
   }
 
   Future<void> loadData() async {
-    ImDataManager.instance.getUserInfo();
+    GlobeDataManager.instance.getUserInfo();
 
-    if (ImDataManager.instance.isConnectionSuccessful) {
-
+    if (GlobeDataManager.instance.isConnectionSuccessful) {
       contacts =
           await EMClient.getInstance.contactManager.getAllContactsFromServer();
 
@@ -169,8 +170,8 @@ class ImNotifier extends ChangeNotifier {
     if (allUsers.containsKey(userId)) {
       return allUsers[userId];
     }
-    if (ImDataManager.instance.me?.userId == userId) {
-      return ImDataManager.instance.me;
+    if (GlobeDataManager.instance.me?.userId == userId) {
+      return GlobeDataManager.instance.me;
     }
     return null;
   }
@@ -179,8 +180,8 @@ class ImNotifier extends ChangeNotifier {
     if (allUsers.containsKey(userId)) {
       return allUsers[userId]?.avatarUrl ?? AssetsImages.getRandomAvatar();
     }
-    if (ImDataManager.instance.me?.userId == userId) {
-      return ImDataManager.instance.me?.avatarUrl ??
+    if (GlobeDataManager.instance.me?.userId == userId) {
+      return GlobeDataManager.instance.me?.avatarUrl ??
           AssetsImages.getRandomAvatar();
     }
     return AssetsImages.getRandomAvatar();
@@ -197,7 +198,7 @@ class ImNotifier extends ChangeNotifier {
           addContacts(userId);
         },
         onContactInvited: (userId, reason) {
-          notifyList.add(NotifyBean(NotifyType.friend, userId,
+          notifyList.add(NotifyBean(NotifyType.friendInvite, userId,
               "${DateTime.now().millisecondsSinceEpoch}",
               reason: reason));
           notifyListeners();
@@ -265,7 +266,7 @@ class ImNotifier extends ChangeNotifier {
             inviter,
             reason,
           ) {
-            notifyList.add(NotifyBean(NotifyType.group, inviter,
+            notifyList.add(NotifyBean(NotifyType.groupInvite, inviter,
                 "${DateTime.now().millisecondsSinceEpoch}",
                 groupId: groupId, name: groupName, reason: reason));
             notifyListeners();
@@ -277,9 +278,13 @@ class ImNotifier extends ChangeNotifier {
       "UNIQUE_HANDLER_ID_5",
       EMConnectionEventHandler(
         // sdk 连接成功;
-        onConnected: () => {},
+        onConnected: () =>
+            {communicationStatue.available = true, notifyListeners()},
         // 由于网络问题导致的断开，sdk会尝试自动重连，连接成功后会回调 "onConnected";
-        onDisconnected: () => {},
+        onDisconnected: () => {
+          communicationStatue.available = BlueToothConnect.instance.isConnect(),
+          notifyListeners()
+        },
         // 用户 token 鉴权失败;
         onUserAuthenticationFailed: () => {},
         // 由于密码变更被踢下线;
@@ -300,6 +305,50 @@ class ImNotifier extends ChangeNotifier {
         onTokenWillExpire: () => {},
       ),
     );
+    BlueToothConnect.instance.listenLoar((text) => {getRemoteMessage(text)});
+  }
+
+  //loar消息分发处理
+  getRemoteMessage(dynamic message) {
+    try {
+      ChatMessage loarMessage = ChatMessage.fromBuffer(message);
+      if (loarMessage.conversationId == GlobeDataManager.instance.me?.userId ||
+          groupMap.containsKey(loarMessage.conversationId)) {
+        EMMessage message;
+        if (loarMessage.msgType == MsgType.TEXT) {
+          message = EMMessage.createReceiveMessage(
+              body: EMTextMessageBody(content: loarMessage.content),
+              chatType: loarMessage.conversationType == ConversationType.CHAT
+                  ? ChatType.Chat
+                  : ChatType.GroupChat);
+        } else {
+          message = EMMessage.createReceiveMessage(
+              body: EMLocationMessageBody(
+                  latitude: loarMessage.latitude,
+                  longitude: loarMessage.longitude),
+              chatType: loarMessage.conversationType == ConversationType.CHAT
+                  ? ChatType.Chat
+                  : ChatType.GroupChat);
+        }
+
+        message.from = loarMessage.sender;
+        message.to = loarMessage.conversationId;
+        var conversationId = "";
+
+        if (loarMessage.conversationType == ConversationType.CHAT) {
+          conversationId = loarMessage.sender;
+        } else {
+          conversationId = loarMessage.conversationId;
+        }
+        updateConversation(conversationId, message.chatType);
+        addMessageToMap(conversationId, message);
+        notifyListeners();
+      } else if (loarMessage.sendCount == 0) {
+        //不是我的消息，直接转发
+        loarMessage.sendCount++;
+        BlueToothConnect.instance.writeLoraMessage(loarMessage);
+      }
+    } on Exception {}
   }
 
   addContact(String userId, String reason) async {
@@ -311,7 +360,7 @@ class ImNotifier extends ChangeNotifier {
 
   acceptInvitation(NotifyBean data) async {
     try {
-      if (data.type == NotifyType.group) {
+      if (data.type == NotifyType.groupInvite) {
         await EMClient.getInstance.groupManager
             .acceptInvitation(data.groupId!, data.inviter);
         groupMap[data.groupId!] = await fetchGroupInfoFromServer(data.groupId!);
@@ -331,7 +380,7 @@ class ImNotifier extends ChangeNotifier {
 
   rejectInvitation(NotifyBean data) async {
     try {
-      if (data.type == NotifyType.group) {
+      if (data.type == NotifyType.groupInvite) {
         await EMClient.getInstance.groupManager
             .declineInvitation(groupId: data.groupId!, inviter: data.inviter);
       } else {
@@ -364,9 +413,57 @@ class ImNotifier extends ChangeNotifier {
       ChatType chatType, String targetId, String messageContent) async {
     var msg = EMMessage.createTxtSendMessage(
         targetId: targetId, content: messageContent, chatType: chatType);
+
     addMessageToMap(targetId, msg);
     notifyListeners();
-    await EMClient.getInstance.chatManager.sendMessage(msg);
+    if (GlobeDataManager.instance.isConnectionSuccessful) {
+      await EMClient.getInstance.chatManager.sendMessage(msg);
+    } else {
+      ChatMessage message = ChatMessage(
+        msgId: msg.msgId,
+        msgType: MsgType.TEXT,
+        sender: GlobeDataManager.instance.me?.userId,
+        conversationId: targetId,
+        conversationType: chatType == ChatType.Chat
+            ? ConversationType.CHAT
+            : ConversationType.GROUP,
+        content: messageContent,
+      );
+      BlueToothConnect.instance.writeLoraMessage(message);
+    }
+  }
+
+  sendLocalMessage(ChatType chatType, String targetId) async {
+    BMFCoordinate? position = GlobeDataManager.instance.position;
+    position ??= GlobeDataManager.instance.phonePosition;
+    if (position == null) {
+      Loading.toast("请先开启定位");
+      return;
+    }
+    var msg = EMMessage.createLocationSendMessage(
+        targetId: targetId,
+        latitude: position.latitude,
+        longitude: position.longitude,
+        chatType: chatType);
+
+    addMessageToMap(targetId, msg);
+    notifyListeners();
+    if (GlobeDataManager.instance.isConnectionSuccessful) {
+      await EMClient.getInstance.chatManager.sendMessage(msg);
+    } else {
+      ChatMessage message = ChatMessage(
+        msgId: msg.msgId,
+        msgType: MsgType.MAP,
+        sender: GlobeDataManager.instance.me?.userId,
+        conversationId: targetId,
+        conversationType: chatType == ChatType.Chat
+            ? ConversationType.CHAT
+            : ConversationType.GROUP,
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+      BlueToothConnect.instance.writeLoraMessage(message);
+    }
   }
 
   getHistoryMessage(String id, EMConversationType type) async {

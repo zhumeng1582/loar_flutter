@@ -36,13 +36,14 @@ class FindDevicesNotifier extends ChangeNotifier {
     });
   }
 
-  bool isLoar(List<String> serviceUuids) {
-    for (var value in serviceUuids) {
-      if (value.toUpperCase().contains("00805F9B34FB")) {
-        return true;
-      }
-    }
-    return false;
+  bool isLoar(List<Guid> serviceUuids) {
+    // for (var value in serviceUuids) {
+    //   if (value.str.contains("00805F9B34FB")) {
+    //     return true;
+    //   }
+    // }
+    return true;
+    // return false;
   }
 
   void scanDevice() {
@@ -139,7 +140,7 @@ extension _UI on _FindDevicesScreenState {
       );
     } else {
       return FloatingActionButton(
-          child: const Text("SCAN"),
+          child: const Text("扫描"),
           onPressed: () {
             ref.read(findDevicesProvider).scanDevice();
           });

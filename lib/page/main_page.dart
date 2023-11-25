@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/page/sos/sos_page.dart';
 
 import '../common/blue_tooth.dart';
 import '../common/colors.dart';
+import '../common/util/coord_convert.dart';
 import 'contacts/contacts_page.dart';
 import 'home/home_page.dart';
 import 'home/provider/im_message_provider.dart';
@@ -46,7 +48,13 @@ class MainNotifier extends ChangeNotifier {
     }
     text += value;
     if (value.contains("*") && text.contains("GNRMC")) {
-      debugPrint("定位数据------->" + text);
+      var split = value.split(",");
+      var latitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[3]);
+      var longitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
+      var bd09Coordinate =
+          CoordConvert.gcj02tobd09(Coords(latitude, longitude));
+      GlobeDataManager.instance
+          .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
     }
   }
 }
@@ -65,7 +73,6 @@ class _MainPageState extends ConsumerState<MainPage> {
       ref.read(imProvider).addImListener();
       ref.read(mainProvider).getLocation();
       ref.read(imProvider).init();
-
     });
 
     super.initState();

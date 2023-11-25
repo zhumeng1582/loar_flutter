@@ -28,5 +28,20 @@ class ConversationType extends $pb.ProtobufEnum {
   const ConversationType._($core.int v, $core.String n) : super(v, n);
 }
 
+class MsgType extends $pb.ProtobufEnum {
+  static const MsgType TEXT = MsgType._(0, _omitEnumNames ? '' : 'TEXT');
+  static const MsgType MAP = MsgType._(1, _omitEnumNames ? '' : 'MAP');
+
+  static const $core.List<MsgType> values = <MsgType> [
+    TEXT,
+    MAP,
+  ];
+
+  static final $core.Map<$core.int, MsgType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static MsgType? valueOf($core.int value) => _byValue[value];
+
+  const MsgType._($core.int v, $core.String n) : super(v, n);
+}
+
 
 const _omitEnumNames = $core.bool.fromEnvironment('protobuf.omit_enum_names');

@@ -71,7 +71,7 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildRoomMessageItem(EMMessage data) {
-    if (data.from == ImDataManager.instance.me?.userId) {
+    if (data.from == GlobeDataManager.instance.me?.userId) {
       return _buildChatRightItem(data, _buildChatContent(data));
     } else {
       return _buildChatLeftItem(data, _buildChatContent(data));
@@ -79,7 +79,19 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildChatContent(EMMessage data) {
-    var isSender = data.from == ImDataManager.instance.me?.userId;
+    var isSender = data.from == GlobeDataManager.instance.me?.userId;
+    if (data.body is EMLocationMessageBody) {
+      EMLocationMessageBody body = data.body as EMLocationMessageBody;
+      return BubbleSpecialOne(
+        text: "定位消息：${body.latitude},${body.longitude}",
+        isSender: isSender,
+        color: !isSender ? Colors.grey : const Color(0xFF1B97F3),
+        textStyle: TextStyle(
+          fontSize: 24.sp,
+        ),
+      );
+    }
+
     EMTextMessageBody body = data.body as EMTextMessageBody;
     return BubbleSpecialOne(
       text: body.content,

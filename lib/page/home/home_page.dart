@@ -36,20 +36,23 @@ class _HomePageState extends ConsumerState<HomePage> {
     List<NotifyBean> notifyList = ref.watch(imProvider).notifyList;
     List<EMConversation> conversationsList =
         ref.watch(imProvider).conversationsList;
-    List<dynamic> data = [...notifyList, ...conversationsList];
+    List<dynamic> data = [
+      ref.watch(imProvider).communicationStatue,
+      ...notifyList,
+      ...conversationsList
+    ];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
         title: Text("聊天"),
         centerTitle: true,
+        leadingWidth: 76.w,
         leading: ImageWidget(
           url: BlueToothConnect.instance.isConnect()
               ? AssetsImages.iconBlueToothOpen
               : AssetsImages.iconBlueTooth,
-          width: 46.w,
-          height: 46.h,
           type: ImageWidgetType.asset,
-        ).paddingRight(30.w).onTap(blueTooth),
+        ).paddingLeft(30.w).onTap(blueTooth),
         actions: [
           ImageWidget(
             url: AssetsImages.iconSearch,
@@ -69,6 +72,9 @@ class _HomePageState extends ConsumerState<HomePage> {
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
           var item = data[index];
+          if (item is CommunicationStatue?) {
+            return _buildCommunicationStatue(item);
+          }
           if (item is EMConversation) {
             return _buildRoomItem(item).onTap(() {
               _room(item);
@@ -164,7 +170,7 @@ extension _UI on _HomePageState {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              data.type == NotifyType.group
+                              data.type == NotifyType.groupInvite
                                   ? "您收到一个加群消息"
                                   : "您收到一个好友邀请",
                               style: TextStyle(
@@ -197,6 +203,21 @@ extension _UI on _HomePageState {
         Gaps.line.paddingLeft(140.w).paddingVertical(15.h)
       ],
     );
+  }
+
+  Widget _buildCommunicationStatue(CommunicationStatue? data) {
+    if (data?.available == true) {
+      return Container();
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "网络和Loar不可用",
+          style: TextStyle(fontSize: 26.sp),
+        ).paddingVertical(8.h)
+      ],
+    ).backgroundColor(AppColors.errorBgColor);
   }
 
   Widget _buildRoomItem(EMConversation data) {

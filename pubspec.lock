@@ -13,10 +13,10 @@ packages:
     dependency: transitive
     description:
       name: audio_session
-      sha256: "8a2bc5e30520e18f3fb0e366793d78057fb64cd5287862c76af0c8771f2a52ad"
+      sha256: "6fdf255ed3af86535c96452c33ecff1245990bb25a605bfb1958661ccc3d467f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.16"
+    version: "0.1.18"
   auto_size_text:
     dependency: "direct main"
     description:
@@ -101,10 +101,10 @@ packages:
     dependency: transitive
     description:
       name: device_info_plus
-      sha256: "7035152271ff67b072a211152846e9f1259cf1be41e34cd3e0b5463d2d6b8419"
+      sha256: "0042cb3b2a76413ea5f8a2b40cec2a33e01d0c937e91f0f7c211fde4f7739ba6"
       url: "https://pub.dev"
     source: hosted
-    version: "9.1.0"
+    version: "9.1.1"
   device_info_plus_platform_interface:
     dependency: transitive
     description:
@@ -170,42 +170,42 @@ packages:
     dependency: transitive
     description:
       name: flutter_baidu_mapapi_base
-      sha256: c02857549039411ae88c8f49e3fe624601a5d811c732d78451843d174edbd547
+      sha256: aa58778cf025e9aef26f992183872446ec0202f8a1e9e891a412ae12740787f9
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.1"
+    version: "3.5.0"
   flutter_baidu_mapapi_map:
     dependency: "direct main"
     description:
       name: flutter_baidu_mapapi_map
-      sha256: "25c7b72045aeb43050d9098d87752ed452b883737d693cc4801ea1dd007c37d8"
+      sha256: e111970cae40fb5b7241af3a165817b27acde2bd224824f067d1274dd4b07414
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.1+1"
+    version: "3.5.0"
   flutter_baidu_mapapi_search:
     dependency: "direct main"
     description:
       name: flutter_baidu_mapapi_search
-      sha256: "615403b3c06674aad4fdc4efcd288e7ba72a151d6459ab8c2a2dbafb56ced2c7"
+      sha256: "1da832bd06eea2bb2a0ea0d7ddeb9987b38be399d455656f58e683f14f3a1f98"
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.1"
+    version: "3.5.0"
   flutter_blue_plus:
     dependency: "direct main"
     description:
       name: flutter_blue_plus
-      sha256: fccf1a72e3022453719d17c91e3701a3781e1eb27a9411f6b9ec2bcc41e68dfa
+      sha256: "7d8aae5021ee353830697605775c34541af89fc3d90a0f3fbbb51db7fe319ba2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.20.3"
+    version: "1.29.6"
   flutter_bmflocation:
     dependency: "direct main"
     description:
       name: flutter_bmflocation
-      sha256: "3a905bf66d803ad402e7ef1fb6ea4a9a64e49b6c83e333fc365a6c47570c0fe3"
+      sha256: c6fd51a5009fbdb33f222954a22501d567dab1d0095a2fc45f555561d2c1a5b8
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.1+1"
+    version: "3.5.0"
   flutter_easyloading:
     dependency: "direct main"
     description:
@@ -239,10 +239,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
-      sha256: f185ac890306b5779ecbd611f52502d8d4d63d27703ef73161ca0407e815f02c
+      sha256: b068ffc46f82a55844acfa4fdbb61fad72fa2aef0905548419d97f0f95c456da
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.16"
+    version: "2.0.17"
   flutter_plugin_record_plus:
     dependency: "direct main"
     description:
@@ -255,10 +255,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_riverpod
-      sha256: bdba94be666ecb1beeb0f5a748d96cdd6a37215f27e6b48c7673b95cecb800c8
+      sha256: d261b0f2461e0595b96f92ed807841eb72cea84a6b12b8fd0c76e5ed803e7921
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.4"
+    version: "2.4.8"
   flutter_screenutil:
     dependency: "direct main"
     description:
@@ -369,18 +369,18 @@ packages:
     dependency: transitive
     description:
       name: just_audio_platform_interface
-      sha256: d8409da198bbc59426cd45d4c92fca522a2ec269b576ce29459d6d6fcaeb44df
+      sha256: c3dee0014248c97c91fe6299edb73dc4d6c6930a2f4f713579cd692d9e47f4a1
       url: "https://pub.dev"
     source: hosted
-    version: "4.2.1"
+    version: "4.2.2"
   just_audio_web:
     dependency: transitive
     description:
       name: just_audio_web
-      sha256: ff62f733f437b25a0ff590f0e295fa5441dcb465f1edbdb33b3dea264705bc13
+      sha256: "134356b0fe3d898293102b33b5fd618831ffdc72bb7a1b726140abdf22772b70"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.8"
+    version: "0.4.9"
   lints:
     dependency: transitive
     description:
@@ -457,10 +457,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
-      sha256: "6b8b19bd80da4f11ce91b2d1fb931f3006911477cec227cce23d3253d80df3f1"
+      sha256: e595b98692943b4881b219f0a9e3945118d3c16bd7e2813f98ec6e532d905f72
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.1"
   path_provider_foundation:
     dependency: transitive
     description:
@@ -545,10 +545,10 @@ packages:
     dependency: transitive
     description:
       name: plugin_platform_interface
-      sha256: da3fdfeccc4d4ff2da8f8c556704c08f912542c5fb3cf2233ed75372384a034d
+      sha256: f4f88d4a900933e7267e2b353594774fc0d07fb072b47eedcd5b54e1ea3269f8
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.6"
+    version: "2.1.7"
   protobuf:
     dependency: "direct main"
     description:
@@ -577,10 +577,10 @@ packages:
     dependency: transitive
     description:
       name: riverpod
-      sha256: "2af3d127a6e4e34b89b8f1f018086f5ded04b8e538174f0510bba3e4c0d878b1"
+      sha256: "08451ddbaad6eae73e2422d8109775885623340d721c6637b8719c9f4b478848"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.4"
+    version: "2.4.8"
   rxdart:
     dependency: transitive
     description:
@@ -601,10 +601,10 @@ packages:
     dependency: "direct main"
     description:
       name: scrollview_observer
-      sha256: "5b687ebee76a24f3670891d70256911df8d0f84d2654e198ddf74ad2d9347ab8"
+      sha256: f3b22470b4e0060566054b360eb2c04b4162b5990060cf5b2987a423a7e2f00f
       url: "https://pub.dev"
     source: hosted
-    version: "1.16.5"
+    version: "1.18.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -758,10 +758,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: "350a11abd2d1d97e0cc7a28a81b781c08002aa2864d9e3f192ca0ffa18b06ed3"
+      sha256: "7c99c0e1e2fa190b48d25c81ca5e42036d5cac81430ef249027d97b0935c553f"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.9"
+    version: "5.1.0"
   win32_registry:
     dependency: transitive
     description:

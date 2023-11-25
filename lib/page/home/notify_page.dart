@@ -56,7 +56,7 @@ class _NotifyPageState extends ConsumerState<NotifyPage> {
       body: SafeArea(
         child: Column(
           children: [
-            widget.data.type == NotifyType.group
+            widget.data.type == NotifyType.groupInvite
                 ? Text(
                     "${ref.watch(notifyProvider).userInfo?.name}邀请你加入群聊:${widget.data.name}")
                 : Text(

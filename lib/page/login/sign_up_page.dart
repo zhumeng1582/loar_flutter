@@ -47,7 +47,7 @@ class SignUpNotifier extends ChangeNotifier {
   }
 
   Future<bool> saveUser(String account, String password) async {
-    if (!ImDataManager.instance.isConnectionSuccessful) {
+    if (!GlobeDataManager.instance.isConnectionSuccessful) {
       Loading.toast("请先连接网络");
       return false;
     }

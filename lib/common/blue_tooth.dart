@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
 import 'package:loar_flutter/common/proto/index.dart';
@@ -5,14 +6,14 @@ import 'package:loar_flutter/common/proto/index.dart';
 class BlueToothConnect {
   BlueToothConnect._();
 
-  final String _SET_SERVICE_UUID = "000000F1-0000-1000-8000-00805F9B34FB";
-  final String _SET_CHAR_UUID = "0000AE01-0000-1000-8000-00805F9B34FB";
+  final String _SET_SERVICE_UUID = "00F1";
+  final String _SET_CHAR_UUID = "AE01";
 
-  final String _LORA_SERVICE_UUID = "000000F2-0000-1000-8000-00805F9B34FB";
-  final String _LORA_CHAR_UUID = "0000AE02-0000-1000-8000-00805F9B34FB";
+  final String _LORA_SERVICE_UUID = "00F2";
+  final String _LORA_CHAR_UUID = "AE02";
 
-  final String _GPS_SERVICE_UUID = "000000F3-0000-1000-8000-00805F9B34FB";
-  final String _GPS_CHAR_UUID = "0000AE03-0000-1000-8000-00805F9B34FB";
+  final String _GPS_SERVICE_UUID = "00F3";
+  final String _GPS_CHAR_UUID = "AE03";
 
   static BlueToothConnect get instance => _getInstance();
   static BlueToothConnect? _instance;
@@ -49,17 +50,18 @@ class BlueToothConnect {
     loarChar = service?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
 
-    var serviceGps = _device?.servicesList?.firstWhere((element) =>
+    var serviceGps = _device?.servicesList.firstWhere((element) =>
         element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
     gpsChar = serviceGps?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
 
-    var serviceSet = _device?.servicesList?.firstWhere((element) =>
+    var serviceSet = _device?.servicesList.firstWhere((element) =>
         element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
     setChar = serviceSet?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
     _device?.connectionState.listen((BluetoothConnectionState state) {
+      debugPrint("connectionState.listen----->"+state.name);
       if (state == BluetoothConnectionState.connected) {
         enableCommunication();
         success();
@@ -84,7 +86,7 @@ class BlueToothConnect {
       await Future.delayed(const Duration(milliseconds: 150));
       _write(loarChar!, value);
       await Future.delayed(const Duration(milliseconds: 150));
-      setLoraMode(1);
+      setLoraMode(0);
     }
   }
 
@@ -102,9 +104,12 @@ class BlueToothConnect {
 
   _write(BluetoothCharacteristic c, List<int> value) {
     if (c.properties.write) {
+      debugPrint("_write------->${value}");
+
       c.write(value);
     }
   }
+
 
   listenGps(Function message) {
     if (gpsChar != null) {
@@ -136,6 +141,16 @@ class BlueToothConnect {
 
   List<int> string2Int(String text) {
     return text.split('').map((char) => char.codeUnitAt(0)).toList();
+  }
+
+  double convertGPRMCToDegrees(String gprmc) {
+    var degreePart = gprmc.substring(0, gprmc.length - 8);
+    var minutesPart = gprmc.substring(gprmc.length - 8);
+
+    var degrees = double.parse(degreePart);
+    var minutes = double.parse(minutesPart);
+
+    return degrees + (minutes / 60);
   }
 }
 

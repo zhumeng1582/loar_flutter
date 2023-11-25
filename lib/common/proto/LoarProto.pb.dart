@@ -19,15 +19,19 @@ export 'LoarProto.pbenum.dart';
 
 class ChatMessage extends $pb.GeneratedMessage {
   factory ChatMessage({
-    $core.String? recipientId,
+    $core.String? conversationId,
     ConversationType? conversationType,
     $core.String? sender,
     $core.String? content,
-    $core.String? sendtime,
+    $core.String? msgId,
+    $core.int? sendCount,
+    MsgType? msgType,
+    $core.double? latitude,
+    $core.double? longitude,
   }) {
     final $result = create();
-    if (recipientId != null) {
-      $result.recipientId = recipientId;
+    if (conversationId != null) {
+      $result.conversationId = conversationId;
     }
     if (conversationType != null) {
       $result.conversationType = conversationType;
@@ -38,8 +42,20 @@ class ChatMessage extends $pb.GeneratedMessage {
     if (content != null) {
       $result.content = content;
     }
-    if (sendtime != null) {
-      $result.sendtime = sendtime;
+    if (msgId != null) {
+      $result.msgId = msgId;
+    }
+    if (sendCount != null) {
+      $result.sendCount = sendCount;
+    }
+    if (msgType != null) {
+      $result.msgType = msgType;
+    }
+    if (latitude != null) {
+      $result.latitude = latitude;
+    }
+    if (longitude != null) {
+      $result.longitude = longitude;
     }
     return $result;
   }
@@ -48,11 +64,15 @@ class ChatMessage extends $pb.GeneratedMessage {
   factory ChatMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatMessage', createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'recipientId', protoName: 'recipientId')
+    ..aOS(1, _omitFieldNames ? '' : 'conversationId', protoName: 'conversationId')
     ..e<ConversationType>(2, _omitFieldNames ? '' : 'conversationType', $pb.PbFieldType.OE, protoName: 'conversationType', defaultOrMaker: ConversationType.CHAT, valueOf: ConversationType.valueOf, enumValues: ConversationType.values)
     ..aOS(3, _omitFieldNames ? '' : 'sender')
     ..aOS(4, _omitFieldNames ? '' : 'content')
-    ..aOS(5, _omitFieldNames ? '' : 'sendtime')
+    ..aOS(5, _omitFieldNames ? '' : 'msgId', protoName: 'msgId')
+    ..a<$core.int>(6, _omitFieldNames ? '' : 'sendCount', $pb.PbFieldType.O3, protoName: 'sendCount')
+    ..e<MsgType>(7, _omitFieldNames ? '' : 'msgType', $pb.PbFieldType.OE, protoName: 'msgType', defaultOrMaker: MsgType.TEXT, valueOf: MsgType.valueOf, enumValues: MsgType.values)
+    ..a<$core.double>(8, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)
+    ..a<$core.double>(9, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -78,13 +98,13 @@ class ChatMessage extends $pb.GeneratedMessage {
   static ChatMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get recipientId => $_getSZ(0);
+  $core.String get conversationId => $_getSZ(0);
   @$pb.TagNumber(1)
-  set recipientId($core.String v) { $_setString(0, v); }
+  set conversationId($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasRecipientId() => $_has(0);
+  $core.bool hasConversationId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearRecipientId() => clearField(1);
+  void clearConversationId() => clearField(1);
 
   @$pb.TagNumber(2)
   ConversationType get conversationType => $_getN(1);
@@ -114,13 +134,49 @@ class ChatMessage extends $pb.GeneratedMessage {
   void clearContent() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.String get sendtime => $_getSZ(4);
+  $core.String get msgId => $_getSZ(4);
   @$pb.TagNumber(5)
-  set sendtime($core.String v) { $_setString(4, v); }
+  set msgId($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasSendtime() => $_has(4);
+  $core.bool hasMsgId() => $_has(4);
   @$pb.TagNumber(5)
-  void clearSendtime() => clearField(5);
+  void clearMsgId() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.int get sendCount => $_getIZ(5);
+  @$pb.TagNumber(6)
+  set sendCount($core.int v) { $_setSignedInt32(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasSendCount() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearSendCount() => clearField(6);
+
+  @$pb.TagNumber(7)
+  MsgType get msgType => $_getN(6);
+  @$pb.TagNumber(7)
+  set msgType(MsgType v) { setField(7, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasMsgType() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearMsgType() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.double get latitude => $_getN(7);
+  @$pb.TagNumber(8)
+  set latitude($core.double v) { $_setDouble(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasLatitude() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearLatitude() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.double get longitude => $_getN(8);
+  @$pb.TagNumber(9)
+  set longitude($core.double v) { $_setDouble(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasLongitude() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearLongitude() => clearField(9);
 }
 
 

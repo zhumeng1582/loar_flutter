@@ -1,8 +1,14 @@
 enum NotifyType {
-  friend,
-  group,
+  friendInvite,
+  groupInvite,
 }
 
+
+
+class CommunicationStatue{
+  bool available = false;
+  CommunicationStatue(this.available);
+}
 class NotifyBean {
   NotifyType type;
   String inviter;
