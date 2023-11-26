@@ -11,6 +11,7 @@ import 'contacts/contacts_page.dart';
 import 'forum/forum_page.dart';
 import 'home/home_page.dart';
 import 'home/provider/im_message_provider.dart';
+import 'home/provider/location_provider.dart';
 import 'location/location_page.dart';
 import 'map/baidu_map_page.dart';
 import 'me/me_page.dart';
@@ -19,8 +20,6 @@ final mainProvider =
     ChangeNotifierProvider<MainNotifier>((ref) => MainNotifier());
 
 class MainNotifier extends ChangeNotifier {
-
-
   final List tabPages = [
     const HomePage(),
     const ContactsPage(),
@@ -62,7 +61,6 @@ class MainNotifier extends ChangeNotifier {
           .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
     }
   }
-
 }
 
 class MainPage extends ConsumerStatefulWidget {
@@ -73,23 +71,17 @@ class MainPage extends ConsumerStatefulWidget {
 }
 
 class _MainPageState extends ConsumerState<MainPage> {
-
-
   @override
   void initState() {
-
-
     Future(() {
-
+      ref.read(locationMapProvider).location();
       ref.read(imProvider).addImListener();
       ref.read(mainProvider).getLocation();
       ref.read(imProvider).init();
-
     });
 
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {

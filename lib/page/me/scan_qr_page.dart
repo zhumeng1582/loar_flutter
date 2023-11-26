@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 
+import '../../widget/common.dart';
+
 class ScanQRPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -14,22 +16,14 @@ class _ScanQRState extends State<ScanQRPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('QR Code Scan'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: getAppBar(context, "扫码二维码"),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             TextButton(
-              child: Text("Scan Now"),
+              child: const Text("Scan Now"),
               onPressed: () async {
                 var options = const ScanOptions(
                     android: AndroidOptions(

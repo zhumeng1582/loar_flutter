@@ -13,6 +13,7 @@ import 'package:loar_flutter/widget/commit_button.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
+import '../../widget/common.dart';
 import '../home/bean/conversation_bean.dart';
 
 final userInfoProvider =
@@ -38,14 +39,7 @@ class _UserInfoPageState extends ConsumerState<UserInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: getAppBar(context, "用户信息"),
       body: SafeArea(
         child: Column(
           children: [

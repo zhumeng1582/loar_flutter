@@ -9,6 +9,7 @@ import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
+import '../../widget/common.dart';
 import '../home/provider/home_provider.dart';
 import '../home/provider/im_message_provider.dart';
 
@@ -39,17 +40,7 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
     List<String> data = widget.userList;
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: AppColors.bottomBackground,
-        title: Text("选择联系人"),
-        centerTitle: true,
-      ),
+      appBar: getAppBar(context, "选择联系人"),
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {

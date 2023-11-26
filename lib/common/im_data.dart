@@ -5,6 +5,8 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'dart:io' show InternetAddress, SocketException;
 
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
+import 'package:loar_flutter/common/blue_tooth.dart';
+import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
 import 'package:loar_flutter/common/util/im_cache.dart';
 
 class GlobeDataManager {
@@ -14,8 +16,8 @@ class GlobeDataManager {
   static GlobeDataManager? _instance;
 
   var isConnectionSuccessful = false;
-  BMFCoordinate? position;
-  BMFCoordinate? phonePosition;
+  BMFCoordinate? _position;
+  BMFCoordinate? _phonePosition;
 
   static GlobeDataManager _getInstance() {
     _instance ??= GlobeDataManager._();
@@ -49,7 +51,17 @@ class GlobeDataManager {
   }
 
   tryConnection() {
-    Timer.periodic(const Duration(seconds: 2), (timer) async {
+    Timer.periodic(const Duration(seconds: 3), (timer) async {
+      var position = getPosition();
+      if (position != null && me != null) {
+        LoarMessage value = LoarMessage(
+            sender: me?.userId,
+            longitude: position.longitude,
+            latitude: position.latitude,
+            conversationType: ConversationType.BROARDCAST);
+        BlueToothConnect.instance.writeLoraMessage(value);
+      }
+
       try {
         final response = await InternetAddress.lookup('baidu.com');
         isConnectionSuccessful = response.isNotEmpty;
@@ -60,20 +72,19 @@ class GlobeDataManager {
   }
 
   setLoarPosition(double latitude, double longitude) {
-    position = BMFCoordinate(latitude, longitude);
+    _position = BMFCoordinate(latitude, longitude);
   }
 
   setPhonePosition(double latitude, double longitude) {
-    phonePosition = BMFCoordinate(latitude, longitude);
-
+    _phonePosition = BMFCoordinate(latitude, longitude);
   }
 
   BMFCoordinate? getPosition() {
-    if (position != null) {
-      return position;
+    if (_position != null) {
+      return _position;
     }
-    if (phonePosition != null) {
-      return phonePosition;
+    if (_phonePosition != null) {
+      return _phonePosition;
     }
     return null;
   }

@@ -7,6 +7,7 @@ import 'package:loar_flutter/common/im_data.dart';
 
 import '../../common/blue_tooth.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../widget/common.dart';
 import 'widgets.dart';
 
 final snackBarKeyB = GlobalKey<ScaffoldMessengerState>();
@@ -84,9 +85,7 @@ class _FindDevicesScreenState extends ConsumerState<FindDevicesScreen> {
     return ScaffoldMessenger(
       key: snackBarKeyB,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('查找蓝牙设备'),
-        ),
+        appBar: getAppBar(context, "查找设备"),
         body: RefreshIndicator(
           onRefresh: () {
             ref.watch(findDevicesProvider).scanDevice();

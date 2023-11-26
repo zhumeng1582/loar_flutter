@@ -12,6 +12,7 @@ import '../../common/image.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
+import '../../widget/common.dart';
 import '../../widget/edit_remark_sheet.dart';
 import '../../widget/warning_alert.dart';
 import '../home/bean/conversation_bean.dart';
@@ -125,10 +126,7 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("聊天信息"),
-      ),
+      appBar: getAppBar(context, "聊天信息"),
       body: SafeArea(
         child: Column(
           children: [

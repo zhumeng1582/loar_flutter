@@ -24,6 +24,7 @@ class AssetsImages {
   static final iconDown = _loadFromPath(named: 'iconDown');
   static final iconShopping = _loadFromPath(named: 'iconShopping');
   static final iconForum = _loadFromPath(named: 'iconForum');
+  static final iconPeople = _loadFromPath(named: 'iconPeople');
 
   static String getRandomAvatar() {
     return getAvatar(Random().nextInt(100) + 1);

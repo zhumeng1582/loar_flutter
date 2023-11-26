@@ -14,15 +14,22 @@ import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class ConversationType extends $pb.ProtobufEnum {
-  static const ConversationType CHAT = ConversationType._(0, _omitEnumNames ? '' : 'CHAT');
-  static const ConversationType GROUP = ConversationType._(1, _omitEnumNames ? '' : 'GROUP');
+  static const ConversationType CHAT =
+      ConversationType._(0, _omitEnumNames ? '' : 'CHAT');
+  static const ConversationType GROUP =
+      ConversationType._(1, _omitEnumNames ? '' : 'GROUP');
+  static const ConversationType BROARDCAST =
+      ConversationType._(2, _omitEnumNames ? '' : 'BROARDCAST');
 
-  static const $core.List<ConversationType> values = <ConversationType> [
+  static const $core.List<ConversationType> values = <ConversationType>[
     CHAT,
     GROUP,
+    BROARDCAST,
   ];
 
-  static final $core.Map<$core.int, ConversationType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, ConversationType> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
+
   static ConversationType? valueOf($core.int value) => _byValue[value];
 
   const ConversationType._($core.int v, $core.String n) : super(v, n);
@@ -30,14 +37,17 @@ class ConversationType extends $pb.ProtobufEnum {
 
 class MsgType extends $pb.ProtobufEnum {
   static const MsgType TEXT = MsgType._(0, _omitEnumNames ? '' : 'TEXT');
-  static const MsgType MAP = MsgType._(1, _omitEnumNames ? '' : 'MAP');
+  static const MsgType LOCATION =
+      MsgType._(1, _omitEnumNames ? '' : 'LOCATION');
 
-  static const $core.List<MsgType> values = <MsgType> [
+  static const $core.List<MsgType> values = <MsgType>[
     TEXT,
-    MAP,
+    LOCATION,
   ];
 
-  static final $core.Map<$core.int, MsgType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, MsgType> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
+
   static MsgType? valueOf($core.int value) => _byValue[value];
 
   const MsgType._($core.int v, $core.String n) : super(v, n);

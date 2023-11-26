@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:loar_flutter/common/colors.dart';
 
-
 /// 手势 tap
 typedef GestureOnTapChangeCallback = void Function<T>(T val);
 
@@ -107,16 +106,17 @@ extension ExWidget on Widget {
       child: this,
     );
   }
+
   /// 圆角
   Widget borderRadius(
-      double r, {
-        Key? key,
-        double? all,
-        double? topLeft,
-        double? topRight,
-        double? bottomLeft,
-        double? bottomRight,
-      }) {
+    double r, {
+    Key? key,
+    double? all,
+    double? topLeft,
+    double? topRight,
+    double? bottomLeft,
+    double? bottomRight,
+  }) {
     BoxDecoration decoration = BoxDecoration(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(topLeft ?? all ?? 0.0),
@@ -131,7 +131,6 @@ extension ExWidget on Widget {
       child: this,
     );
   }
-
 
   /// 圆角
   Widget roundedBorder(
@@ -931,3 +930,4 @@ extension ExWidget on Widget {
   }) =>
       SliverToBoxAdapter(key: key, child: this);
 }
+

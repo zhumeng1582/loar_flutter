@@ -90,7 +90,7 @@ class RouteObservers {
           settings: settings, builder: (_) => const SatelliteMapPage());
     } else if (settings.name == RouteNames.baiduMapPage) {
       return MaterialPageRoute(
-          settings: settings, builder: (_) => const BaiduMapPage());
+          settings: settings, builder: (_) => BaiduMapPage());
     } else if (settings.name == RouteNames.meDetailPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const MeDetailPage());

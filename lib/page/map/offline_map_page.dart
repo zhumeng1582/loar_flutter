@@ -7,9 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/colors.dart';
 import 'package:loar_flutter/common/ex/ex_num.dart';
+import 'package:loar_flutter/common/ex/ex_widget.dart';
 import 'package:loar_flutter/common/loading.dart';
-import 'package:loar_flutter/common/util/ex_widget.dart';
 
+import '../../widget/common.dart';
 import 'model/city_model.dart';
 
 final offlineMapProvider =
@@ -139,9 +140,7 @@ class _OfflineMapPageState extends ConsumerState<OfflineMapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("离线地图"),
-      ),
+      appBar: getAppBar(context, "离线地图"),
       body: SafeArea(
         child: _buildCityList(ref.watch(offlineMapProvider).cityList),
       ),

@@ -4,6 +4,7 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/page/room/chat_message_page.dart';
 import '../../common/colors.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../widget/common.dart';
 import '../../widget/message_bar.dart';
 import '../home/bean/conversation_bean.dart';
 import '../home/provider/im_message_provider.dart';
@@ -37,11 +38,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: AppColors.bottomBackground,
-          title: Text(
-              ref.read(imProvider).getConversationTitle(widget.conversation)),
+      appBar: getAppBar(context,
+          ref.read(imProvider).getConversationTitle(widget.conversation),
           actions: [
             IconButton(
               icon: const Icon(Icons.more_horiz),

@@ -15,6 +15,7 @@ import '../../common/loading.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
+import '../../widget/common.dart';
 import '../../widget/edit_remark_sheet.dart';
 
 final meDetailProvider = ChangeNotifierProvider<MeDetailNotifier>((ref) => MeDetailNotifier());
@@ -69,25 +70,21 @@ class _MeDetailPageState extends ConsumerState<MeDetailPage> {
   Widget build(BuildContext context) {
     EMUserInfo me = ref.watch(meDetailProvider).me;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: AppColors.bottomBackground,
-        title: Text("蜂蜂号"),
-        centerTitle: true,
-      ),
+      appBar: getAppBar(context, "蜂蜂号"),
       body: SafeArea(
         child: Column(
           children: [
             _topItem(me),
-            Text(me.name,style: TextStyle(fontSize: 60.sp,fontWeight: FontWeight.w500),).paddingTop(20.h).onTap(() {
+            Text(
+              me.name,
+              style: TextStyle(fontSize: 60.sp, fontWeight: FontWeight.w500),
+            ).paddingTop(20.h).onTap(() {
               changeName(me.name);
             }),
-            Text("蜂蜂号：${me.userId}",style: TextStyle(fontSize: 40.sp,fontWeight: FontWeight.w400),).paddingTop(20.h),
+            Text(
+              "蜂蜂号：${me.userId}",
+              style: TextStyle(fontSize: 40.sp, fontWeight: FontWeight.w400),
+            ).paddingTop(20.h),
             Stack(
               children: [
                 QrImageView(

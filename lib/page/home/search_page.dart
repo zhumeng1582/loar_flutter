@@ -15,6 +15,7 @@ import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
 import '../../widget/baseTextField.dart';
+import '../../widget/common.dart';
 
 final searchProvider =
     ChangeNotifierProvider<SearchNotifier>((ref) => SearchNotifier());
@@ -55,15 +56,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("搜索"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: getAppBar(context, "搜索"),
       body: SafeArea(
         child: Column(
           children: [

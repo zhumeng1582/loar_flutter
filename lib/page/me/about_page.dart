@@ -15,6 +15,7 @@ import '../../common/loading.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
+import '../../widget/common.dart';
 import '../../widget/edit_remark_sheet.dart';
 
 final aboutProvider = ChangeNotifierProvider<AboutNotifier>((ref) => AboutNotifier());
@@ -39,17 +40,7 @@ class _AboutDetailPageState extends ConsumerState<AboutDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: AppColors.bottomBackground,
-        title: Text("关于"),
-        centerTitle: true,
-      ),
+      appBar: getAppBar(context, "关于"),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

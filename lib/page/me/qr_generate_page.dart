@@ -10,6 +10,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../common/image.dart';
 import '../../common/proto/qr_code_data.dart';
+import '../../widget/common.dart';
 
 class QRGeneratePage extends ConsumerStatefulWidget {
   QrCodeData qrCodeData;
@@ -24,15 +25,7 @@ class _QRGeneratePageState extends ConsumerState<QRGeneratePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(getTitle()),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: getAppBar(context, "二维码"),
       body: Center(
         child: Column(
           children: [

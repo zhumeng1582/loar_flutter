@@ -43,13 +43,15 @@ class _LocationPageState extends ConsumerState<LocationPage> {
             Divider(
               height: 0.1.h,
             ).paddingTop(200.h),
-            _getItem("蜂窝","我的位置",false).onTap(() {
+            _getItem("蜂窝", "我的位置", false).onTap(() {
               Navigator.pushNamed(context, RouteNames.baiduMapPage);
             }),
-            _getItem("蜂邻","周围都有谁",false),
-            _getItem("蜂距","两者距离",false),
-            _getItem("蜂行","导航",false),
-            _getItem("星图","卫星星图",false).onTap(() {
+            _getItem("蜂邻", "周围都有谁", false).onTap(() {
+              Navigator.pushNamed(context, RouteNames.baiduMapPage);
+            }),
+            _getItem("蜂距", "两者距离", false),
+            _getItem("蜂行", "导航", false),
+            _getItem("星图", "卫星星图", false).onTap(() {
               Navigator.pushNamed(context, RouteNames.satelliteMapPage);
             }),
           ],

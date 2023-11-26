@@ -13,6 +13,7 @@ import 'package:loar_flutter/common/util/storage.dart';
 
 import '../../../common/blue_tooth.dart';
 import '../../../common/constant.dart';
+import '../../../common/ex/ex_userInfo.dart';
 import '../../../common/im_data.dart';
 import '../../../common/loading.dart';
 import '../../../common/proto/LoarProto.pb.dart';
@@ -32,6 +33,7 @@ class ImNotifier extends ChangeNotifier {
   List<String> contacts = [];
   Map<String, EMGroup> groupMap = {};
   Map<String, EMUserInfo> allUsers = {};
+  Map<String, OnlineUser> allOnlineUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
 
   init() async {
@@ -311,8 +313,12 @@ class ImNotifier extends ChangeNotifier {
   //loar消息分发处理
   getRemoteMessage(dynamic message) {
     try {
-      ChatMessage loarMessage = ChatMessage.fromBuffer(message);
-      if (loarMessage.conversationId == GlobeDataManager.instance.me?.userId ||
+      LoarMessage loarMessage = LoarMessage.fromBuffer(message);
+      if (loarMessage.conversationType == ConversationType.BROARDCAST) {
+        allOnlineUsers[loarMessage.sender] =
+            OnlineUser(loarMessage.sender, loarMessage);
+      } else if (loarMessage.conversationId ==
+              GlobeDataManager.instance.me?.userId ||
           groupMap.containsKey(loarMessage.conversationId)) {
         EMMessage message;
         if (loarMessage.msgType == MsgType.TEXT) {
@@ -419,7 +425,7 @@ class ImNotifier extends ChangeNotifier {
     if (GlobeDataManager.instance.isConnectionSuccessful) {
       await EMClient.getInstance.chatManager.sendMessage(msg);
     } else {
-      ChatMessage message = ChatMessage(
+      LoarMessage message = LoarMessage(
         msgId: msg.msgId,
         msgType: MsgType.TEXT,
         sender: GlobeDataManager.instance.me?.userId,
@@ -450,9 +456,9 @@ class ImNotifier extends ChangeNotifier {
     if (GlobeDataManager.instance.isConnectionSuccessful) {
       await EMClient.getInstance.chatManager.sendMessage(msg);
     } else {
-      ChatMessage message = ChatMessage(
+      LoarMessage message = LoarMessage(
         msgId: msg.msgId,
-        msgType: MsgType.MAP,
+        msgType: MsgType.LOCATION,
         sender: GlobeDataManager.instance.me?.userId,
         conversationId: targetId,
         conversationType: chatType == ChatType.Chat

@@ -15,6 +15,7 @@ import '../../common/loading.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
+import '../../widget/common.dart';
 import '../../widget/edit_remark_sheet.dart';
 
 final meDetailProvider = ChangeNotifierProvider<MeInfoNotifier>((ref) => MeInfoNotifier());
@@ -69,26 +70,16 @@ class _MeInfoPageState extends ConsumerState<MeInfoPage> {
   Widget build(BuildContext context) {
     EMUserInfo me = ref.watch(meDetailProvider).me;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: AppColors.bottomBackground,
-        title: Text("蜂讯"),
-        centerTitle: true,
-      ),
+      appBar: getAppBar(context, "蜂讯"),
       body: SafeArea(
         child: Column(
           children: [
-            _getTopItem("头像",me),
-            _getMeItem("名字",me.name),
-            _getMeItem("蜂蜂号",me.userId),
-            _getQrItem("我的二维码",me),
-            _getMeItem("性别","男"),
-            _getMeItem("签名","人生，去去就来"),
+            _getTopItem("头像", me),
+            _getMeItem("名字", me.name),
+            _getMeItem("蜂蜂号", me.userId),
+            _getQrItem("我的二维码", me),
+            _getMeItem("性别", "男"),
+            _getMeItem("签名", "人生，去去就来"),
           ],
         ),
       ),

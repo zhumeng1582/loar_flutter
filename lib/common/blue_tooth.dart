@@ -90,7 +90,7 @@ class BlueToothConnect {
     }
   }
 
-  writeLoraMessage(ChatMessage value) {
+  writeLoraMessage(LoarMessage value) {
     if (loarChar != null) {
       _write(loarChar!, value.writeToBuffer());
     }

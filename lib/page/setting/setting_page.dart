@@ -5,6 +5,7 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/gaps.dart';
 
 import '../../common/colors.dart';
+import '../../widget/common.dart';
 
 final settingProvider =
     ChangeNotifierProvider<SettingNotifier>((ref) => SettingNotifier());
@@ -27,17 +28,7 @@ class _SettingPageState extends ConsumerState<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: AppColors.bottomBackground,
-        title: Text("设置"),
-        centerTitle: true,
-      ),
+      appBar: getAppBar(context, "设置"),
       body: SafeArea(
         child: Column(
           children: [

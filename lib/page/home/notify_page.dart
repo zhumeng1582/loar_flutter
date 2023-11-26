@@ -9,6 +9,7 @@ import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import '../../common/colors.dart';
 import '../../common/loading.dart';
 import '../../widget/commit_button.dart';
+import '../../widget/common.dart';
 import 'bean/notify_bean.dart';
 
 final notifyProvider =
@@ -44,23 +45,14 @@ class _NotifyPageState extends ConsumerState<NotifyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("通知"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: getAppBar(context, "通知"),
       body: SafeArea(
         child: Column(
           children: [
             widget.data.type == NotifyType.groupInvite
                 ? Text(
                     "${ref.watch(notifyProvider).userInfo?.name}邀请你加入群聊:${widget.data.name}")
-                : Text(
-                    "${ref.watch(notifyProvider).userInfo?.name}希望成为您的好友"),
+                : Text("${ref.watch(notifyProvider).userInfo?.name}希望成为您的好友"),
             Text("${widget.data.reason}"),
             CommitButton(
                     buttonState: ButtonState.normal,

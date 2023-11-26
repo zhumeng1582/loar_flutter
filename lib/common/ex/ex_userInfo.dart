@@ -1,5 +1,30 @@
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
 
+import '../proto/LoarProto.pb.dart';
+
+class OnlineUser {
+  String? userId = "";
+  BMFCoordinate? position;
+  int? lastTime;
+
+  OnlineUser(this.userId, LoarMessage loarMessage) {
+    if (loarMessage.longitude != 0 && loarMessage.latitude != 0) {
+      position = BMFCoordinate(loarMessage.latitude, loarMessage.longitude);
+    } else {
+      position = null;
+    }
+    lastTime = DateTime.now().millisecondsSinceEpoch;
+  }
+
+  bool isOnline() {
+    return (((lastTime ?? 0) + 6000) >= DateTime.now().millisecondsSinceEpoch);
+  }
+}
+
+extension ExBMFCoordinate on BMFCoordinate {
+  static String userId = "";
+}
 
 extension ExEMConversation on EMConversation {
   Map<String, dynamic> toJson() {

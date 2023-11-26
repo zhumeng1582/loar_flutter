@@ -2,11 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loar_flutter/common/util/ex_widget.dart';
+import 'package:loar_flutter/common/ex/ex_widget.dart';
 
-import '../common/colors.dart';
 import '../widget/ball_view.dart';
+import '../widget/common.dart';
 
 final satelliteNotifier =
     ChangeNotifierProvider<SatelliteNotifier>((ref) => SatelliteNotifier());
@@ -55,17 +54,7 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
   Widget build(BuildContext context) {
     ref.watch(satelliteNotifier).initData();
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: AppColors.bottomBackground,
-        title: Text("卫星星图"),
-        centerTitle: true,
-      ),
+      appBar: getAppBar(context, "离线地图"),
       body: Stack(
         children: [
           Container(

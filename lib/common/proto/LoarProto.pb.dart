@@ -17,8 +17,8 @@ import 'LoarProto.pbenum.dart';
 
 export 'LoarProto.pbenum.dart';
 
-class ChatMessage extends $pb.GeneratedMessage {
-  factory ChatMessage({
+class LoarMessage extends $pb.GeneratedMessage {
+  factory LoarMessage({
     $core.String? conversationId,
     ConversationType? conversationType,
     $core.String? sender,
@@ -59,50 +59,79 @@ class ChatMessage extends $pb.GeneratedMessage {
     }
     return $result;
   }
-  ChatMessage._() : super();
-  factory ChatMessage.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory ChatMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ChatMessage', createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'conversationId', protoName: 'conversationId')
-    ..e<ConversationType>(2, _omitFieldNames ? '' : 'conversationType', $pb.PbFieldType.OE, protoName: 'conversationType', defaultOrMaker: ConversationType.CHAT, valueOf: ConversationType.valueOf, enumValues: ConversationType.values)
+  LoarMessage._() : super();
+
+  factory LoarMessage.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+
+  factory LoarMessage.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'LoarMessage',
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'conversationId',
+        protoName: 'conversationId')
+    ..e<ConversationType>(
+        2, _omitFieldNames ? '' : 'conversationType', $pb.PbFieldType.OE,
+        protoName: 'conversationType',
+        defaultOrMaker: ConversationType.CHAT,
+        valueOf: ConversationType.valueOf,
+        enumValues: ConversationType.values)
     ..aOS(3, _omitFieldNames ? '' : 'sender')
     ..aOS(4, _omitFieldNames ? '' : 'content')
     ..aOS(5, _omitFieldNames ? '' : 'msgId', protoName: 'msgId')
-    ..a<$core.int>(6, _omitFieldNames ? '' : 'sendCount', $pb.PbFieldType.O3, protoName: 'sendCount')
-    ..e<MsgType>(7, _omitFieldNames ? '' : 'msgType', $pb.PbFieldType.OE, protoName: 'msgType', defaultOrMaker: MsgType.TEXT, valueOf: MsgType.valueOf, enumValues: MsgType.values)
+    ..a<$core.int>(6, _omitFieldNames ? '' : 'sendCount', $pb.PbFieldType.O3,
+        protoName: 'sendCount')
+    ..e<MsgType>(7, _omitFieldNames ? '' : 'msgType', $pb.PbFieldType.OE,
+        protoName: 'msgType',
+        defaultOrMaker: MsgType.TEXT,
+        valueOf: MsgType.valueOf,
+        enumValues: MsgType.values)
     ..a<$core.double>(8, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)
     ..a<$core.double>(9, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  ChatMessage clone() => ChatMessage()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  ChatMessage copyWith(void Function(ChatMessage) updates) => super.copyWith((message) => updates(message as ChatMessage)) as ChatMessage;
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
+  LoarMessage clone() => LoarMessage()..mergeFromMessage(this);
+
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
+  LoarMessage copyWith(void Function(LoarMessage) updates) =>
+      super.copyWith((message) => updates(message as LoarMessage))
+          as LoarMessage;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static ChatMessage create() => ChatMessage._();
-  ChatMessage createEmptyInstance() => create();
-  static $pb.PbList<ChatMessage> createRepeated() => $pb.PbList<ChatMessage>();
+  static LoarMessage create() => LoarMessage._();
+
+  LoarMessage createEmptyInstance() => create();
+
+  static $pb.PbList<LoarMessage> createRepeated() => $pb.PbList<LoarMessage>();
+
   @$core.pragma('dart2js:noInline')
-  static ChatMessage getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChatMessage>(create);
-  static ChatMessage? _defaultInstance;
+  static LoarMessage getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<LoarMessage>(create);
+  static LoarMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get conversationId => $_getSZ(0);
+
   @$pb.TagNumber(1)
-  set conversationId($core.String v) { $_setString(0, v); }
+  set conversationId($core.String v) {
+    $_setString(0, v);
+  }
+
   @$pb.TagNumber(1)
   $core.bool hasConversationId() => $_has(0);
+
   @$pb.TagNumber(1)
   void clearConversationId() => clearField(1);
 
