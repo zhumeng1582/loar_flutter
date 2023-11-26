@@ -68,6 +68,8 @@ android {
         }
         release {
             signingConfig signingConfigs.release
+            minifyEnabled false //删除无用代码
+            shrinkResources false //删除无用资源
         }
     }
 }

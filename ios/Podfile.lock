@@ -1,12 +1,12 @@
 PODS:
   - audio_session (0.0.1):
     - Flutter
-  - BaiduMapKit/Base (6.5.5)
-  - BaiduMapKit/Map (6.5.5):
+  - BaiduMapKit/Base (6.5.9)
+  - BaiduMapKit/Map (6.5.9):
     - BaiduMapKit/Base
-  - BaiduMapKit/Search (6.5.5):
+  - BaiduMapKit/Search (6.5.9):
     - BaiduMapKit/Base
-  - BaiduMapKit/Utils (6.5.5):
+  - BaiduMapKit/Utils (6.5.9):
     - BaiduMapKit/Base
   - barcode_scan2 (0.0.1):
     - Flutter
@@ -16,15 +16,15 @@ PODS:
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_baidu_mapapi_base (3.4.1):
-    - BaiduMapKit/Utils (= 6.5.5)
+  - flutter_baidu_mapapi_base (3.5.0):
+    - BaiduMapKit/Utils (= 6.5.9)
     - Flutter
-  - flutter_baidu_mapapi_map (3.4.1):
-    - BaiduMapKit/Map (= 6.5.5)
+  - flutter_baidu_mapapi_map (3.5.0):
+    - BaiduMapKit/Map (= 6.5.9)
     - Flutter
     - flutter_baidu_mapapi_base
-  - flutter_baidu_mapapi_search (3.4.1):
-    - BaiduMapKit/Search (= 6.5.5)
+  - flutter_baidu_mapapi_search (3.5.0):
+    - BaiduMapKit/Search (= 6.5.9)
     - Flutter
     - flutter_baidu_mapapi_base
   - flutter_blue_plus (0.0.1):
@@ -38,6 +38,10 @@ PODS:
     - Flutter
   - flutter_sound_record (0.0.1):
     - Flutter
+  - HyphenateChat (4.1.1)
+  - im_flutter_sdk (0.0.1):
+    - Flutter
+    - HyphenateChat (= 4.1.1)
   - just_audio (0.0.1):
     - Flutter
   - MTBBarcodeScanner (5.0.11)
@@ -64,6 +68,7 @@ DEPENDENCIES:
   - flutter_localization (from `.symlinks/plugins/flutter_localization/ios`)
   - flutter_plugin_record_plus (from `.symlinks/plugins/flutter_plugin_record_plus/ios`)
   - flutter_sound_record (from `.symlinks/plugins/flutter_sound_record/ios`)
+  - im_flutter_sdk (from `.symlinks/plugins/im_flutter_sdk/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -73,6 +78,7 @@ SPEC REPOS:
   trunk:
     - BaiduMapKit
     - BMKLocationKit
+    - HyphenateChat
     - MTBBarcodeScanner
     - SwiftProtobuf
 
@@ -101,6 +107,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_plugin_record_plus/ios"
   flutter_sound_record:
     :path: ".symlinks/plugins/flutter_sound_record/ios"
+  im_flutter_sdk:
+    :path: ".symlinks/plugins/im_flutter_sdk/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/ios"
   path_provider_foundation:
@@ -112,19 +120,21 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
-  BaiduMapKit: 3b79c1d77521fddfebfd62a5ab4663740bee5784
+  BaiduMapKit: 5ec1c4dda6a55be048cf82f6eb09b2891ec85de8
   barcode_scan2: 0af2bb63c81b4565aab6cd78278e4c0fa136dbb0
   BMKLocationKit: 29576a1a804c9defaeae258516591eee015a03d6
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_baidu_mapapi_base: 4f9256710144738294f83d249a14e24334f208bd
-  flutter_baidu_mapapi_map: 93249587ede68eac6dc77f79c5c79c43f9eae5cf
-  flutter_baidu_mapapi_search: 2f693a0f8e9f44f2aeda26236977694c736642c3
+  flutter_baidu_mapapi_base: f976bdf4e870e4fcd40f8ea40cdadfb4e46d3749
+  flutter_baidu_mapapi_map: f522de53b927636e725c68f73d2fbf0f37840ea3
+  flutter_baidu_mapapi_search: fc9a79e33e4d16ca04dc316a914b86d7a5de0940
   flutter_blue_plus: 4837da7d00cf5d441fdd6635b3a57f936778ea96
   flutter_bmflocation: 7ab7efb92d79715fd3c3217075ad97ad18a748b1
   flutter_localization: f43b18844a2b3d2c71fd64f04ffd6b1e64dd54d4
   flutter_plugin_record_plus: 79b8e13ee7ed9a94f6c067018653599528cee1fc
   flutter_sound_record: fa9800029599bccfaa8be22cc372550a5fa505ac
+  HyphenateChat: 95aa4abbad0e763f513acbe21ff9543f50b886cd
+  im_flutter_sdk: 9242a0d080c2f4ade4a0247a21b034036320233e
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
@@ -132,6 +142,6 @@ SPEC CHECKSUMS:
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   SwiftProtobuf: bcfd2bc231cf9ae552cdc7c4e877bd3b41fe57b1
 
-PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
+PODFILE CHECKSUM: fff3348f19d060f45045a9c9fbca3a264147c2f7
 
 COCOAPODS: 1.12.1

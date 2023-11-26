@@ -15,6 +15,7 @@ import '../../common/util/images.dart';
 import '../../common/util/reg.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/commit_button.dart';
+import '../../widget/loginTextField.dart';
 
 final loginProvider =
     ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
@@ -32,7 +33,6 @@ class LoginNotifier extends ChangeNotifier {
   }
 
   Future<bool> login(String account, String password) async {
-
     if (!Reg.isPhone(account)) {
       Loading.toast("请输入正确的手机号");
       return false;
@@ -109,7 +109,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         actions: [
           Text("跳过").paddingHorizontal(30.w).onTap(() {
             login("13265468736", "Z123456");
@@ -123,8 +122,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             Expanded(flex: 10, child: Container()),
             Text("欢迎使用", style: TextStyle(fontSize: 26.sp)),
             Text("微蜂",
-                    style:
-                        TextStyle(fontSize: 80.sp, fontWeight: FontWeight.w400)),
+                style: TextStyle(fontSize: 80.sp, fontWeight: FontWeight.w400)),
             Row(
               children: [
                 Row(
@@ -137,9 +135,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       type: ImageWidgetType.asset,
                     ),
                   ],
-                ).padding(horizontal:10.h,vertical: 2.w).roundedBorder(
+                ).padding(horizontal: 10.h, vertical: 2.w).roundedBorder(
                     radius: 8.r, color: AppColors.title.withOpacity(0.4)),
-                BaseTextField(
+                LoginTextField(
                   fillColor: Colors.transparent,
                   controller: _userAccountController,
                   hintText: "请输入手机号",
@@ -148,29 +146,35 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ],
             ).paddingTop(20.h),
             Gaps.line,
-            Row(children: [
-              Text("密码").paddingHorizontal(25.h),
-              BaseTextField(
-                fillColor: Colors.transparent,
-                controller: _userPasswordController,
-                hintText: "请输入密码",
-                isInputPwd: true,
-                style: TextStyle(color: AppColors.title),
-              ).expanded()
-            ],).paddingTop(30.h),
+            Row(
+              children: [
+                Text("密码").paddingHorizontal(25.h),
+                LoginTextField(
+                  fillColor: Colors.transparent,
+                  controller: _userPasswordController,
+                  hintText: "请输入密码",
+                  isInputPwd: true,
+                  style: TextStyle(color: AppColors.title),
+                ).expanded()
+              ],
+            ).paddingTop(30.h),
             Gaps.line,
-            Row(mainAxisAlignment:MainAxisAlignment.center,children: [Text("登陆",style: TextStyle(fontSize: 34.sp),).padding(all: 20.w)],).roundedBorder(radius: 24.r).onTap(() {
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "登陆",
+                  style: TextStyle(fontSize: 34.sp),
+                ).padding(all: 20.w)
+              ],
+            ).roundedBorder(radius: 24.r).onTap(() {
               login(_userAccountController.text, _userPasswordController.text);
             }).paddingTop(70.h),
             Row(
               children: [
-                Text("忘记密码",
-                    style: TextStyle(
-                    )).onTap(() => forgetPassword()),
+                Text("忘记密码", style: TextStyle()).onTap(() => forgetPassword()),
                 Expanded(child: Container()),
-                Text("注册账户",
-                    style: TextStyle(
-                    )).onTap(() => signUp())
+                Text("注册账户", style: TextStyle()).onTap(() => signUp())
               ],
             ).paddingTop(30.h),
             Expanded(flex: 25, child: Container()),

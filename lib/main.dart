@@ -6,8 +6,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'common/im_data.dart';
 import 'common/routers/RouteObservers.dart';
 import 'dart:io';
 
@@ -18,9 +20,9 @@ var appKey = "1106231108210776#demo";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // initMap();
-  // await initIm();
-  // GlobeDataManager.instance.tryConnection();
+  initMap();
+  await initIm();
+  GlobeDataManager.instance.tryConnection();
   if (Platform.isAndroid) {
     [
       Permission.location,
@@ -69,7 +71,7 @@ class MyApp extends StatelessWidget {
           onGenerateRoute: (RouteSettings settings) =>
               RouteObservers.didPush(settings),
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.commonPrimary),
             useMaterial3: true,
           ),
           builder: (context, child) {
