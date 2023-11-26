@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 
-
 /// 手势 tap
 typedef GestureOnTapChangeCallback = void Function<T>(T val);
 
@@ -110,6 +109,7 @@ extension ExWidget on Widget {
   /// 圆角
   Widget borderRadius({
     Key? key,
+    Color? color,
     double? all,
     double? topLeft,
     double? topRight,
@@ -117,6 +117,7 @@ extension ExWidget on Widget {
     double? bottomRight,
   }) {
     BoxDecoration decoration = BoxDecoration(
+      color: color,
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(topLeft ?? all ?? 0.0),
         topRight: Radius.circular(topRight ?? all ?? 0.0),

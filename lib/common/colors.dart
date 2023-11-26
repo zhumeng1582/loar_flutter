@@ -9,6 +9,7 @@ class AppColors {
   static Color inputBgColor = "#F8F8F8".toColor;
   static Color title = "#000000".toColor;
   static Color get background => "#FFFFFF".toColor;
+  static Color get white => "#FFFFFF".toColor;
   static Color get bottomBackground => Colors.grey.shade200;
   static Color disabledTextColor = "#000000".toColor.withOpacity(0.15);
   static Color disableButtonBackgroundColor = "#000000".toColor.withOpacity(0.07);

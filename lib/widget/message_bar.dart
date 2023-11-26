@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:loar_flutter/common/util/ex_widget.dart';
+
+import '../common/colors.dart';
 
 ///Normal Message bar with more actions
 ///
@@ -31,7 +34,7 @@ import 'package:flutter/material.dart';
 /// [onTapCloseReply] is the close button action of the close button on the
 /// reply widget usually change [replying] attribute to `false`
 
-class MessageBar extends StatelessWidget {
+class MessageBar extends StatefulWidget {
   final bool replying;
   final String replyingTo;
   final List<Widget> actions;
@@ -45,12 +48,14 @@ class MessageBar extends StatelessWidget {
   final Color sendButtonColor;
   final void Function(String)? onTextChanged;
   final void Function(String)? onSend;
+  final void Function()? sendLocalMessage;
   final void Function()? onTapCloseReply;
 
   /// [MessageBar] constructor
   ///
   ///
-  const MessageBar({super.key,
+  const MessageBar({
+    super.key,
     required this.textController,
     this.replying = false,
     this.replyingTo = "",
@@ -64,126 +69,134 @@ class MessageBar extends StatelessWidget {
     this.messageBarHintStyle = const TextStyle(fontSize: 16),
     this.onTextChanged,
     this.onSend,
+    this.sendLocalMessage,
     this.onTapCloseReply,
   });
 
-  /// [MessageBar] builder method
-  ///
+  @override
+  _MessageBarState createState() => _MessageBarState();
+}
+
+class _MessageBarState extends State<MessageBar> {
+  bool isSendText = false;
+
   @override
   Widget build(BuildContext context) {
+    widget.textController.addListener(() {
+      setState(() {
+        isSendText = widget.textController.text.isNotEmpty;
+      });
+    });
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            replying
-                ? Container(
-                    color: replyWidgetColor,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 16,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.reply,
-                          color: replyIconColor,
-                          size: 24,
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              'Re : ' + replyingTo,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: onTapCloseReply,
-                          child: Icon(
-                            Icons.close,
-                            color: replyCloseColor,
-                            size: 24,
-                          ),
-                        ),
-                      ],
-                    ))
-                : Container(),
-            replying
-                ? Container(
-                    height: 1,
-                    color: Colors.grey.shade300,
-                  )
-                : Container(),
-            Container(
-              color: messageBarColor,
-              padding: const EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: 16,
-              ),
-              child: Row(
-                children: <Widget>[
-
-                  Expanded(
-                    child: Container(
-                      child: TextField(
-                        controller: textController,
-                        keyboardType: TextInputType.multiline,
-                        textCapitalization: TextCapitalization.sentences,
-                        minLines: 1,
-                        maxLines: 3,
-                        onChanged: onTextChanged,
-                        decoration: InputDecoration(
-                          hintText: messageBarHitText,
-                          hintMaxLines: 1,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 10),
-                          hintStyle: messageBarHintStyle,
-                          fillColor: Colors.white,
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: const BorderSide(
-                              color: Colors.white,
-                              width: 0.2,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: const BorderSide(
-                              color: Colors.black26,
-                              width: 0.2,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          widget.replying
+              ? Container(
+                  color: widget.replyWidgetColor,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: InkWell(
-                      child: Icon(
-                        Icons.send,
-                        color: sendButtonColor,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.reply,
+                        color: widget.replyIconColor,
                         size: 24,
                       ),
-                      onTap: () {
-                        if (textController.text.trim() != '') {
-                          if (onSend != null) {
-                            onSend!(textController.text.trim());
-                          }
-                          textController.text = '';
-                        }
-                      },
+                      Expanded(
+                        child: Container(
+                          child: Text(
+                            'Re : ' + widget.replyingTo,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: widget.onTapCloseReply,
+                        child: Icon(
+                          Icons.close,
+                          color: widget.replyCloseColor,
+                          size: 24,
+                        ),
+                      ),
+                    ],
+                  ))
+              : Container(),
+          widget.replying
+              ? Container(
+                  height: 1,
+                  color: Colors.grey.shade300,
+                )
+              : Container(),
+          Container(
+            color: widget.messageBarColor,
+            padding: const EdgeInsets.symmetric(
+              vertical: 8,
+              horizontal: 16,
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    controller: widget.textController,
+                    keyboardType: TextInputType.multiline,
+                    textCapitalization: TextCapitalization.sentences,
+                    minLines: 1,
+                    maxLines: 3,
+                    onChanged: widget.onTextChanged,
+                    decoration: InputDecoration(
+                      hintText: widget.messageBarHitText,
+                      hintMaxLines: 1,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 10),
+                      hintStyle: widget.messageBarHintStyle,
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: const BorderSide(
+                          color: Colors.white,
+                          width: 0.2,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: const BorderSide(
+                          color: Colors.black26,
+                          width: 0.2,
+                        ),
+                      ),
                     ),
                   ),
-                  ...actions,
-                ],
-              ),
+                ),
+                isSendText
+                    ? Text(
+                        "发送",
+                        style: TextStyle(color: AppColors.white),
+                      )
+                        .padding(horizontal: 15, vertical: 5)
+                        .borderRadius(all: 5, color: AppColors.commonPrimary)
+                        .padding(left: 16)
+                        .onTap(() {
+                        if (widget.textController.text.trim() != '') {
+                          if (widget.onSend != null) {
+                            widget.onSend!(widget.textController.text.trim());
+                          }
+                          widget.textController.text = '';
+                        }
+                      })
+                    : const Icon(
+                        Icons.place,
+                        color: Colors.black,
+                        size: 24,
+                      ).padding(horizontal: 15, vertical: 5).onTap(widget.sendLocalMessage),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

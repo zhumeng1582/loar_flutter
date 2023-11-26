@@ -99,16 +99,8 @@ extension _UI on _ChatPageState {
     return MessageBar(
       textController: _controller,
       onSend: (message) => sendMessage(message),
-      actions: [
-        InkWell(
-          onTap: sendLocalMessage,
-          child: const Icon(
-            Icons.place,
-            color: Colors.black,
-            size: 24,
-          ),
-        ),
-      ],
+      sendLocalMessage: sendLocalMessage,
+
     );
   }
 }

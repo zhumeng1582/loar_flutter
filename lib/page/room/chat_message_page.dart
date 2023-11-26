@@ -7,6 +7,7 @@ import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../widget/bubble_chat.dart';
 import '../home/provider/im_message_provider.dart';
 import '../../common/colors.dart';
 
@@ -83,7 +84,7 @@ extension _UI on _RoomMessagePageState {
     var isSender = data.from == GlobeDataManager.instance.me?.userId;
     if (data.body is EMLocationMessageBody) {
       EMLocationMessageBody body = data.body as EMLocationMessageBody;
-      return BubbleSpecialOne(
+      return BubbleChat(
         text: "定位消息：${body.latitude},${body.longitude}",
         isSender: isSender,
         color: !isSender ? Colors.grey : AppColors.bubbleBgColor,
@@ -94,7 +95,7 @@ extension _UI on _RoomMessagePageState {
     }
 
     EMTextMessageBody body = data.body as EMTextMessageBody;
-    return BubbleSpecialOne(
+    return BubbleChat(
       text: body.content,
       isSender: isSender,
       color: !isSender ? Colors.grey : AppColors.bubbleBgColor,
@@ -106,6 +107,8 @@ extension _UI on _RoomMessagePageState {
 
   _buildChatLeftItem(EMMessage data, Widget child) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         userAvatar(data),
         child,
@@ -116,6 +119,7 @@ extension _UI on _RoomMessagePageState {
   _buildChatRightItem(EMMessage data, Widget child) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         child,
         userAvatar(data),
