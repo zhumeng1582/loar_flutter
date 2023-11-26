@@ -12,6 +12,7 @@ import 'package:loar_flutter/page/me/QR_generate_page.dart';
 import 'package:loar_flutter/page/me/scan_qr_page.dart';
 import 'package:loar_flutter/page/me/user_info_page.dart';
 import 'package:loar_flutter/page/room/chat_detail_page.dart';
+import 'package:loar_flutter/page/setting/setting_page.dart';
 
 import '../../page/blue/find_device_page.dart';
 import '../../page/contacts/contacts_select_page.dart';
@@ -20,6 +21,7 @@ import '../../page/home/bean/notify_bean.dart';
 import '../../page/login/avatar_select_page.dart';
 import '../../page/me/about_page.dart';
 import '../../page/me/me_detail_page.dart';
+import '../../page/me/me_info_page.dart';
 import '../../page/room/chat_page.dart';
 import '../../page/statellite_map.dart';
 import '../proto/qr_code_data.dart';
@@ -89,12 +91,18 @@ class RouteObservers {
     } else if (settings.name == RouteNames.baiduMapPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const BaiduMapPage());
-    }  else if (settings.name == RouteNames.meDetailPage) {
+    } else if (settings.name == RouteNames.meDetailPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const MeDetailPage());
-    }  else if (settings.name == RouteNames.aboutPage) {
+    } else if (settings.name == RouteNames.aboutPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const AboutDetailPage());
+    } else if (settings.name == RouteNames.settingPage) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const SettingPage());
+    }  else if (settings.name == RouteNames.meInfoPage) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const MeInfoPage());
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(

@@ -68,6 +68,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 }
 
 extension _Action on _ChatPageState {
+
+
   roomDetail() async {
     Navigator.pushNamed(
       context,

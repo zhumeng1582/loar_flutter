@@ -38,6 +38,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     List<EMConversation> conversationsList =
         ref.watch(imProvider).conversationsList;
     List<dynamic> data = [
+      0,
       ref.watch(imProvider).communicationStatue,
       ...notifyList,
       ...conversationsList
@@ -56,12 +57,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         ).paddingLeft(30.w).onTap(blueTooth),
         actions: [
           ImageWidget(
-            url: AssetsImages.iconSearch,
-            width: 46.w,
-            height: 46.h,
-            type: ImageWidgetType.asset,
-          ).paddingRight(30.w).onTap(search),
-          ImageWidget(
             url: AssetsImages.iconScan,
             width: 46.w,
             height: 46.h,
@@ -75,15 +70,16 @@ class _HomePageState extends ConsumerState<HomePage> {
           var item = data[index];
           if (item is CommunicationStatue?) {
             return _buildCommunicationStatue(item);
-          }
-          if (item is EMConversation) {
+          } else if (item is EMConversation) {
             return _buildRoomItem(item).onTap(() {
               _room(item);
             });
-          } else {
+          } else if (item is NotifyBean) {
             return _buildNotifyItem(item).onTap(() {
               _invite(item);
             });
+          } else {
+            return _buildSearch();
           }
         },
       ),
@@ -150,6 +146,28 @@ extension _Action on _HomePageState {
 }
 
 extension _UI on _HomePageState {
+  Widget _buildSearch() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ImageWidget(
+          url: AssetsImages.iconSearch,
+          width: 46.w,
+          height: 46.h,
+          type: ImageWidgetType.asset,
+        ),
+        Text("搜索")
+      ],
+    )
+        .padding(vertical: 5.h)
+        .roundedBorder(radius: 10, color: AppColors.buttonDisableColor)
+        .padding(
+          vertical: 25.h,
+          horizontal: 32.w,
+        )
+        .onTap(search);
+  }
+
   Widget _buildNotifyItem(NotifyBean data) {
     return Column(
       children: [

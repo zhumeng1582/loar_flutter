@@ -32,7 +32,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
   Widget build(BuildContext context) {
     Map<String, EMGroup> groupMap = ref.watch(imProvider).groupMap;
     List<String> contacts = ref.watch(imProvider).contacts;
-    List<dynamic> data = [...contacts, ...groupMap.values];
+    List<dynamic> data = [0, ...contacts, ...groupMap.values];
 
     return Scaffold(
       appBar: AppBar(
@@ -51,9 +51,9 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
-          if (data[index] is String) {
-            var userInfo =
-                ref.read(imProvider).getUserInfo(data[index] as String);
+          var item = data[index];
+          if (item is String) {
+            var userInfo = ref.read(imProvider).getUserInfo(item);
             if (userInfo != null) {
               return _buildRoomItem(userInfo).onTap(() {
                 _userRoom(userInfo);
@@ -61,11 +61,12 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
             } else {
               Container();
             }
-          } else {
-            var group = data[index] as EMGroup;
-            return _buildRoomGroupItem(group).onTap(() {
-              _groupRoom(group);
+          } else if (item is EMGroup) {
+            return _buildRoomGroupItem(item).onTap(() {
+              _groupRoom(item);
             });
+          } else {
+            return _buildSearch();
           }
         },
       ),
@@ -79,6 +80,28 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
 }
 
 extension _UI on _ContactsPageState {
+  Widget _buildSearch() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ImageWidget(
+          url: AssetsImages.iconSearch,
+          width: 46.w,
+          height: 46.h,
+          type: ImageWidgetType.asset,
+        ),
+        Text("搜索")
+      ],
+    )
+        .padding(vertical: 5.h)
+        .roundedBorder(radius: 10, color: AppColors.buttonDisableColor)
+        .padding(
+          vertical: 25.h,
+          horizontal: 32.w,
+        )
+        .onTap(search);
+  }
+
   Widget _getIcon(EMUserInfo data) {
     return ImageWidget(
       url: data.avatarName,
@@ -136,6 +159,13 @@ extension _UI on _ContactsPageState {
 }
 
 extension _Action on _ContactsPageState {
+  search() async {
+    Navigator.pushNamed(
+      context,
+      RouteNames.searchPage,
+    );
+  }
+
   scan() async {
     var qrCodeData = await ref.read(homeProvider).scan();
     if (qrCodeData.userInfo != null) {

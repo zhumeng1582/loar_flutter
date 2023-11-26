@@ -18,5 +18,7 @@ class RouteNames{
   static const baiduMapPage = 'BaiduMapPage';
   static const meDetailPage = 'MeDetailPage';
   static const aboutPage = 'aboutPage';
+  static const settingPage = 'SettingPage';
+  static const meInfoPage = 'MeInfoPage';
 
 }

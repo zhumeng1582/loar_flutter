@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../common/im_data.dart';
 import '../../common/colors.dart';
@@ -13,11 +16,10 @@ import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
 import '../../widget/edit_remark_sheet.dart';
-import '../room/chat_detail_page.dart';
 
-final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
+final meDetailProvider = ChangeNotifierProvider<MeInfoNotifier>((ref) => MeInfoNotifier());
 
-class MeNotifier extends ChangeNotifier {
+class MeInfoNotifier extends ChangeNotifier {
   EMUserInfo me = GlobeDataManager.instance.me!;
 
   updateUserAvatar(String avatarUrl) async {
@@ -50,14 +52,14 @@ class MeNotifier extends ChangeNotifier {
   }
 }
 
-class MePage extends ConsumerStatefulWidget {
-  const MePage({super.key});
+class MeInfoPage extends ConsumerStatefulWidget {
+  const MeInfoPage({super.key});
 
   @override
-  ConsumerState<MePage> createState() => _MePageState();
+  ConsumerState<MeInfoPage> createState() => _MeInfoPageState();
 }
 
-class _MePageState extends ConsumerState<MePage> {
+class _MeInfoPageState extends ConsumerState<MeInfoPage> {
   @override
   void initState() {
     super.initState();
@@ -65,36 +67,28 @@ class _MePageState extends ConsumerState<MePage> {
 
   @override
   Widget build(BuildContext context) {
-    EMUserInfo me = ref.watch(meProvider).me;
+    EMUserInfo me = ref.watch(meDetailProvider).me;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: AppColors.bottomBackground,
-        title: Text("我"),
+        title: Text("蜂讯"),
         centerTitle: true,
       ),
       body: SafeArea(
         child: Column(
           children: [
-            // _topItem(me),
-            Divider(
-              height: 0.1.h,
-            ).paddingTop(200.h),
-            _getMeItem("蜂蜂号", me.userId).onTap(() {
-              Navigator.pushNamed(context, RouteNames.meDetailPage);
-            }),
-            _getMeItem("蜂讯", "").onTap(() {
-              Navigator.pushNamed(context, RouteNames.meInfoPage);
-            }),
-            _getMeItem("蜂圈", ""),
-            _getMeItem("离线地址管理", "").onTap(() {
-              Navigator.pushNamed(context, RouteNames.offlineMap);
-            }),
-            _getMeItem("设置", "").onTap(() {
-              Navigator.pushNamed(context, RouteNames.settingPage);
-            }),
-            _getMeItem("关于微蜂", "").onTap(() {
-              Navigator.pushNamed(context, RouteNames.aboutPage);
-            }),
+            _getTopItem("头像",me),
+            _getMeItem("名字",me.name),
+            _getMeItem("蜂蜂号",me.userId),
+            _getQrItem("我的二维码",me),
+            _getMeItem("性别","男"),
+            _getMeItem("签名","人生，去去就来"),
           ],
         ),
       ),
@@ -107,10 +101,10 @@ class _MePageState extends ConsumerState<MePage> {
   }
 }
 
-extension _Action on _MePageState {
+extension _Action on _MeInfoPageState {
   selectAvatar() async {
     Navigator.pushNamed(context, RouteNames.selectAvatar).then(
-        (value) => {ref.read(meProvider).updateUserAvatar(value as String)});
+            (value) => {ref.read(meDetailProvider).updateUserAvatar(value as String)});
   }
 
   changeName(String name) {
@@ -118,27 +112,12 @@ extension _Action on _MePageState {
       context: context,
       maxLength: 18,
       data: name,
-      onConfirm: (value) => {ref.read(meProvider).changeUserName(value)},
+      onConfirm: (value) => {ref.read(meDetailProvider).changeUserName(value)},
     );
   }
 }
 
-extension _UI on _MePageState {
-  Widget _topItem(EMUserInfo me) {
-    return Column(
-      children: [
-        ClipOval(
-          child: ImageWidget(
-            url: me.avatarName,
-            width: 100.w,
-            height: 100.h,
-            type: ImageWidgetType.asset,
-          ),
-        ).onTap(selectAvatar).paddingTop(80.h),
-      ],
-    );
-  }
-
+extension _UI on _MeInfoPageState {
   Widget _getMeItem(String title, String? value) {
     return Column(
       children: [
@@ -160,4 +139,63 @@ extension _UI on _MePageState {
       ],
     );
   }
+  Widget _getTopItem(String title,EMUserInfo me) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(title,
+                style: TextStyle(fontSize: 38.sp, fontWeight: FontWeight.w400)),
+            Expanded(child: Container()),
+            _topItem( me),
+          ],
+        ).paddingHorizontal(30.w).paddingVertical(40.h),
+        Divider(
+          height: 0.1.h,
+        ),
+      ],
+    );
+  }
+  Widget _getQrItem(String title,EMUserInfo me) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(title,
+                style: TextStyle(fontSize: 38.sp, fontWeight: FontWeight.w400)),
+            Expanded(child: Container()),
+            Stack(
+              children: [
+                QrImageView(
+                  data: jsonEncode(me.toJson()),
+                  version: QrVersions.auto,
+                  gapless: false,
+                  size: 180.w,
+                ),
+              ],
+            ),
+          ],
+        ).paddingHorizontal(30.w),
+        Divider(
+          height: 0.1.h,
+        ),
+      ],
+    );
+  }
+
+  Widget _topItem(EMUserInfo me) {
+    return Column(
+      children: [
+        ClipRect(
+          child: ImageWidget(
+            url: me.avatarName,
+            width: 80.w,
+            height: 80.h,
+            type: ImageWidgetType.asset,
+          ),
+        ).onTap(selectAvatar),
+      ],
+    );
+  }
+
 }
