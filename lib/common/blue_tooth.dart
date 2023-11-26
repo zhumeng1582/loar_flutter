@@ -31,7 +31,7 @@ class BlueToothConnect {
     return BlueToothConnect.instance._device?.isConnected == true;
   }
 
-  disconnect() async{
+  disconnect() async {
     await BlueToothConnect.instance._device?.disconnect();
   }
 
@@ -61,9 +61,9 @@ class BlueToothConnect {
         element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
     _device?.connectionState.listen((BluetoothConnectionState state) {
-      debugPrint("connectionState.listen----->"+state.name);
+      debugPrint("connectionState.listen----->" + state.name);
       if (state == BluetoothConnectionState.connected) {
-        enableCommunication();
+        _enableCommunication();
         success();
       }
     });
@@ -79,7 +79,7 @@ class BlueToothConnect {
     _write(setChar!, data);
   }
 
-  enableCommunication() async {
+  _enableCommunication() async {
     if (setChar != null) {
       List<int> value = [0xC2, 0x00, 0x06, 0x12, 0x34, 0x01, 0x62, 0x00, 0x18];
       setLoraMode(2);
@@ -90,8 +90,24 @@ class BlueToothConnect {
     }
   }
 
-  writeLoraMessage(LoarMessage value) {
+  _enableBroadcast() async {
+    if (setChar != null) {
+      List<int> value = [0xC2, 0x00, 0x06, 0xff, 0xff, 0x00, 0x61, 0x00, 0x17];
+      setLoraMode(2);
+      await Future.delayed(const Duration(milliseconds: 150));
+      _write(loarChar!, value);
+      await Future.delayed(const Duration(milliseconds: 150));
+      setLoraMode(0);
+    }
+  }
+
+  writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) {
     if (loarChar != null) {
+      if (isBroadcast) {
+        _enableBroadcast();
+      } else {
+        _enableCommunication();
+      }
       _write(loarChar!, value.writeToBuffer());
     }
   }
@@ -109,7 +125,6 @@ class BlueToothConnect {
       c.write(value);
     }
   }
-
 
   listenGps(Function message) {
     if (gpsChar != null) {

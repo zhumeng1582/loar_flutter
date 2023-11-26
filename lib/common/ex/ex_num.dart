@@ -80,6 +80,14 @@ extension ExDouble on double {
   static bool fuzzyCompare(double p1, double p2) {
     return (p1 - p2).abs() < 0.00001;
   }
+
+  String get toDistance {
+    if (this < 1000) {
+      return "${toStringAsFixed(2)}米";
+    } else {
+      return "${(this / 1000).toStringAsFixed(2)}公里";
+    }
+  }
 }
 
 extension ShowAmountInt on int? {

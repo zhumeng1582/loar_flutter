@@ -17,6 +17,11 @@ class OnlineUser {
     lastTime = DateTime.now().millisecondsSinceEpoch;
   }
 
+  OnlineUser.create(this.userId, double latitude, double longitude) {
+    position = BMFCoordinate(latitude, longitude);
+    lastTime = DateTime.now().millisecondsSinceEpoch;
+  }
+
   bool isOnline() {
     return (((lastTime ?? 0) + 6000) >= DateTime.now().millisecondsSinceEpoch);
   }

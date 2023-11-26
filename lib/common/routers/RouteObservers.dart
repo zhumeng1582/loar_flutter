@@ -19,6 +19,7 @@ import '../../page/contacts/contacts_select_page.dart';
 import '../../page/home/bean/conversation_bean.dart';
 import '../../page/home/bean/notify_bean.dart';
 import '../../page/login/avatar_select_page.dart';
+import '../../page/map/model/page_type.dart';
 import '../../page/me/about_page.dart';
 import '../../page/me/me_detail_page.dart';
 import '../../page/me/me_info_page.dart';
@@ -89,8 +90,9 @@ class RouteObservers {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const SatelliteMapPage());
     } else if (settings.name == RouteNames.baiduMapPage) {
+      var pageType = settings.arguments as PageType;
       return MaterialPageRoute(
-          settings: settings, builder: (_) => BaiduMapPage());
+          settings: settings, builder: (_) => BaiduMapPage(pageType: pageType));
     } else if (settings.name == RouteNames.meDetailPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const MeDetailPage());

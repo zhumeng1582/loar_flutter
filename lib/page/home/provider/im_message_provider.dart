@@ -36,6 +36,11 @@ class ImNotifier extends ChangeNotifier {
   Map<String, OnlineUser> allOnlineUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
 
+  addOnlineUser() {
+    allOnlineUsers["13265468731"] =
+        OnlineUser.create("13265468731", 22.547, 114.085947);
+  }
+
   init() async {
     Loading.show();
     await loadData();

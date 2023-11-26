@@ -79,6 +79,9 @@ dependencies:
 
   # 自适应字体大小的Text
   auto_size_text: ^3.0.0
+  # 跳转地图导航
+  map_launcher: ^3.1.0
+  flutter_svg: # only if you want to use icons as they are svgs
 
 
 dev_dependencies:

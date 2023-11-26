@@ -26,7 +26,8 @@ class LocationMapNotifier extends ChangeNotifier {
     _myLocPlugin.setAgreePrivacy(true);
 
     _myLocPlugin.singleLocationCallback(callback: (BaiduLocation result) {
-      debugPrint("---------->setPhonePosition");
+      //setPhonePosition30.808109,103.914632
+
       GlobeDataManager.instance
           .setPhonePosition(result.latitude!, result.longitude!);
     });

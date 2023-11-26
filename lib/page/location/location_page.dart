@@ -1,18 +1,18 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loar_flutter/common/im_data.dart';
+import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/colors.dart';
 import '../../common/routers/RouteNames.dart';
+import '../map/model/page_type.dart';
 
 final locationProvider =
     ChangeNotifierProvider<LocationNotifier>((ref) => LocationNotifier());
 
-class LocationNotifier extends ChangeNotifier {
-
-}
+class LocationNotifier extends ChangeNotifier {}
 
 class LocationPage extends ConsumerStatefulWidget {
   const LocationPage({super.key});
@@ -22,11 +22,9 @@ class LocationPage extends ConsumerStatefulWidget {
 }
 
 class _LocationPageState extends ConsumerState<LocationPage> {
-
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -44,13 +42,37 @@ class _LocationPageState extends ConsumerState<LocationPage> {
               height: 0.1.h,
             ).paddingTop(200.h),
             _getItem("蜂窝", "我的位置", false).onTap(() {
-              Navigator.pushNamed(context, RouteNames.baiduMapPage);
+              if (GlobeDataManager.instance.getPosition() == null) {
+                Loading.toast("请先开启定位");
+                return;
+              }
+              Navigator.pushNamed(context, RouteNames.baiduMapPage,
+                  arguments: PageType.me);
             }),
             _getItem("蜂邻", "周围都有谁", false).onTap(() {
-              Navigator.pushNamed(context, RouteNames.baiduMapPage);
+              if (GlobeDataManager.instance.getPosition() == null) {
+                Loading.toast("请先开启定位");
+                return;
+              }
+              Navigator.pushNamed(context, RouteNames.baiduMapPage,
+                  arguments: PageType.nearBy);
             }),
-            _getItem("蜂距", "两者距离", false),
-            _getItem("蜂行", "导航", false),
+            _getItem("蜂距", "两者距离", false).onTap(() {
+              if (GlobeDataManager.instance.getPosition() == null) {
+                Loading.toast("请先开启定位");
+                return;
+              }
+              Navigator.pushNamed(context, RouteNames.baiduMapPage,
+                  arguments: PageType.distance);
+            }),
+            _getItem("蜂行", "导航", false).onTap(() {
+              if (GlobeDataManager.instance.getPosition() == null) {
+                Loading.toast("请先开启定位");
+                return;
+              }
+              Navigator.pushNamed(context, RouteNames.baiduMapPage,
+                  arguments: PageType.navigation);
+            }),
             _getItem("星图", "卫星星图", false).onTap(() {
               Navigator.pushNamed(context, RouteNames.satelliteMapPage);
             }),
@@ -63,12 +85,10 @@ class _LocationPageState extends ConsumerState<LocationPage> {
   @override
   void dispose() {
     super.dispose();
-
   }
 }
 
-extension _Action on _LocationPageState {
-}
+extension _Action on _LocationPageState {}
 
 extension _UI on _LocationPageState {
   Widget _getItem(String title, String? value, bool isNewPage) {
@@ -76,19 +96,22 @@ extension _UI on _LocationPageState {
       children: [
         Row(
           children: [
-            Text(title,style: TextStyle(fontSize: 38.sp,fontWeight: FontWeight.w400),),
+            Text(
+              title,
+              style: TextStyle(fontSize: 38.sp, fontWeight: FontWeight.w400),
+            ),
             Expanded(child: Container()),
             Text(
               value ?? "",
               textAlign: TextAlign.right,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 30.sp,fontWeight: FontWeight.w400),
+              style: TextStyle(fontSize: 30.sp, fontWeight: FontWeight.w400),
             ),
             isNewPage
                 ? Icon(
-              Icons.keyboard_arrow_right,
-              size: 43.w,
-            )
+                    Icons.keyboard_arrow_right,
+                    size: 43.w,
+                  )
                 : Container()
           ],
         ).paddingHorizontal(30.w).paddingVertical(50.h),
