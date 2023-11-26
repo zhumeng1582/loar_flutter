@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/ex/ex_num.dart';
 import 'package:loar_flutter/common/im_data.dart';
+import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/distance.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
@@ -208,6 +209,10 @@ extension _Action on _BaiduMapState {
     print(
         availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
 
+    if (availableMaps.isEmpty) {
+      Loading.toast("请先安装地图应用");
+      return;
+    }
     await availableMaps.first.showMarker(
       coords: Coords(coordinate.latitude, coordinate.longitude),
       title: "",
