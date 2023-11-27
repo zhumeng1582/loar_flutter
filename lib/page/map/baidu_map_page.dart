@@ -38,7 +38,7 @@ class BaiduMapNotifier extends ChangeNotifier {
         other = value.position;
       }
     });
-    return other ?? BMFCoordinate(30, 102);
+    return other ?? BMFCoordinate(22.547, 114.085947);
   }
 
   BMFMarker? getMaker(String id) {
@@ -89,7 +89,7 @@ class BaiduMapNotifier extends ChangeNotifier {
           indexs: indexs,
           colors: colors,
           lineDashType: BMFLineDashType.LineDashTypeNone,
-          lineCapType: BMFLineCapType.LineCapButt,
+          lineCapType: BMFLineCapType.LineCapRound,
           lineJoinType: BMFLineJoinType.LineJoinRound);
       var mePosition = GlobeDataManager.instance.getPosition();
       distance = Distance.getDistance(mePosition!, user.position!);
