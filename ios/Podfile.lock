@@ -44,6 +44,8 @@ PODS:
     - HyphenateChat (= 4.1.1)
   - just_audio (0.0.1):
     - Flutter
+  - map_launcher (0.0.1):
+    - Flutter
   - MTBBarcodeScanner (5.0.11)
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -70,6 +72,7 @@ DEPENDENCIES:
   - flutter_sound_record (from `.symlinks/plugins/flutter_sound_record/ios`)
   - im_flutter_sdk (from `.symlinks/plugins/im_flutter_sdk/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
+  - map_launcher (from `.symlinks/plugins/map_launcher/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -111,6 +114,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/im_flutter_sdk/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/ios"
+  map_launcher:
+    :path: ".symlinks/plugins/map_launcher/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -136,6 +141,7 @@ SPEC CHECKSUMS:
   HyphenateChat: 95aa4abbad0e763f513acbe21ff9543f50b886cd
   im_flutter_sdk: 9242a0d080c2f4ade4a0247a21b034036320233e
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
+  map_launcher: e325db1261d029ff33e08e03baccffe09593ffea
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6

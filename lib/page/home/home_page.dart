@@ -34,7 +34,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<NotifyBean> notifyList = ref.watch(imProvider).notifyList;
+    List<NotifyBean> notifyList = ref.watch(imProvider).notifyMessageList;
     List<EMConversation> conversationsList =
         ref.watch(imProvider).conversationsList;
     List<dynamic> data = [

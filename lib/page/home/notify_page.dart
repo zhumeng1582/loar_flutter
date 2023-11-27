@@ -53,7 +53,7 @@ class _NotifyPageState extends ConsumerState<NotifyPage> {
                 ? Text(
                     "${ref.watch(notifyProvider).userInfo?.name}邀请你加入群聊:${widget.data.name}")
                 : Text("${ref.watch(notifyProvider).userInfo?.name}希望成为您的好友"),
-            Text("${widget.data.reason}"),
+            Text("${widget.data.reason}").paddingTop(10.h),
             CommitButton(
                     buttonState: ButtonState.normal,
                     text: "同意",
@@ -66,7 +66,7 @@ class _NotifyPageState extends ConsumerState<NotifyPage> {
                     tapAction: _reject)
                 .paddingTop(20.h)
           ],
-        ).paddingHorizontal(30.w),
+        ).padding(all: 32.w),
       ),
     );
   }

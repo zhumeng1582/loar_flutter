@@ -81,10 +81,10 @@ extension _Action on _UserInfoPageState {
         context,
         RouteNames.roomPage,
         (route) => route.settings.name == RouteNames.main,
-        arguments: EMConversation.fromJson({"convId":widget.userInfo.userId}),
+        arguments: EMConversation.fromJson({"convId": widget.userInfo.userId}),
       );
     } else {
-      ref.read(imProvider).addContact(widget.userInfo.userId, "请求添加好友");
+      ref.read(imProvider).addContact(widget.userInfo.userId, "您好，可以加个好友吗");
       Loading.toast("已发送消息，等候对方回复");
       Navigator.pop(context);
     }

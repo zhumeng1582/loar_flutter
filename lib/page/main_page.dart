@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/im_data.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -73,7 +74,8 @@ class MainPage extends ConsumerStatefulWidget {
 class _MainPageState extends ConsumerState<MainPage> {
   @override
   void initState() {
-    Future(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await EMClient.getInstance.startCallback();
       ref.read(locationMapProvider).location();
       ref.read(imProvider).addImListener();
       ref.read(mainProvider).getLocation();

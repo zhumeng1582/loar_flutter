@@ -3,12 +3,12 @@ enum NotifyType {
   groupInvite,
 }
 
-
-
-class CommunicationStatue{
+class CommunicationStatue {
   bool available = false;
+
   CommunicationStatue(this.available);
 }
+
 class NotifyBean {
   NotifyType type;
   String inviter;
@@ -17,5 +17,6 @@ class NotifyBean {
   String? reason;
   String time;
 
-  NotifyBean(this.type, this.inviter, this.time,{this.groupId,this.name,this.reason});
+  NotifyBean(this.type, this.inviter, this.time,
+      {this.groupId, this.name, this.reason});
 }

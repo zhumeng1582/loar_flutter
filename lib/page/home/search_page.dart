@@ -72,7 +72,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   style: TextStyle(color: AppColors.commonPrimary),
                 ).paddingLeft(15.w).onTap(search),
               ],
-            ),
+            ).paddingVertical(32.w),
             SizedBox(
               height: 30.h,
             ),

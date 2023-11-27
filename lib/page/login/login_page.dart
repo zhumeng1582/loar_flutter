@@ -38,7 +38,7 @@ class LoginNotifier extends ChangeNotifier {
       return false;
     }
     if (!Reg.isLoginPassword(password)) {
-      Loading.toast("请输入6-16为数字或字母组合密码");
+      Loading.toast("请输入6-16为数字和字母组合密码");
       return false;
     }
     if (!GlobeDataManager.instance.isConnectionSuccessful) {

@@ -42,7 +42,6 @@ Future<void> initIm() async {
   EMOptions options =
       EMOptions(appKey: appKey, autoLogin: false, debugModel: true);
   await EMClient.getInstance.init(options);
-  await EMClient.getInstance.startCallback();
 }
 
 class MyApp extends StatelessWidget {

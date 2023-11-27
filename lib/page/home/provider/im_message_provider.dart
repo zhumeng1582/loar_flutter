@@ -29,7 +29,7 @@ var isConnectionSuccessful = false;
 class ImNotifier extends ChangeNotifier {
   List<EMConversation> conversationsList = [];
   CommunicationStatue communicationStatue = CommunicationStatue(true);
-  List<NotifyBean> notifyList = [];
+  List<NotifyBean> notifyMessageList = [];
   List<String> contacts = [];
   Map<String, EMGroup> groupMap = {};
   Map<String, EMUserInfo> allUsers = {};
@@ -195,17 +195,19 @@ class ImNotifier extends ChangeNotifier {
   }
 
   void addImListener() {
+    debugPrint("------>contactManager contactManager");
     EMClient.getInstance.contactManager.addEventHandler(
-      "UNIQUE_HANDLER_ID_1",
+      "UNIQUE_HANDLER_ID",
       EMContactEventHandler(
         onContactAdded: (userId) {
+          debugPrint("------>onContactAdded userId:$userId");
           addContacts(userId);
         },
         onFriendRequestAccepted: (userId) {
           addContacts(userId);
         },
         onContactInvited: (userId, reason) {
-          notifyList.add(NotifyBean(NotifyType.friendInvite, userId,
+          notifyMessageList.add(NotifyBean(NotifyType.friendInvite, userId,
               "${DateTime.now().millisecondsSinceEpoch}",
               reason: reason));
           notifyListeners();
@@ -215,7 +217,7 @@ class ImNotifier extends ChangeNotifier {
     );
 
     EMClient.getInstance.chatManager.addMessageEvent(
-        "UNIQUE_HANDLER_ID_2",
+        "UNIQUE_HANDLER_ID",
         ChatMessageEvent(
           onSuccess: (msgId, msg) {},
           onProgress: (msgId, progress) {},
@@ -223,7 +225,7 @@ class ImNotifier extends ChangeNotifier {
         ));
 
     EMClient.getInstance.chatManager.addEventHandler(
-      "UNIQUE_HANDLER_ID_3",
+      "UNIQUE_HANDLER_ID",
       EMChatEventHandler(
         onMessagesReceived: (messages) {
           for (var msg in messages) {
@@ -237,7 +239,7 @@ class ImNotifier extends ChangeNotifier {
     );
 
     EMClient.getInstance.groupManager.addEventHandler(
-        "UNIQUE_HANDLER_ID_4",
+        "UNIQUE_HANDLER_ID",
         EMGroupEventHandler(
           onAttributesChangedOfGroupMember: (
             groupId,
@@ -267,13 +269,11 @@ class ImNotifier extends ChangeNotifier {
             groupMap[group.groupId] = group;
             notifyListeners();
           },
-          onInvitationReceivedFromGroup: (
-            groupId,
-            groupName,
-            inviter,
-            reason,
-          ) {
-            notifyList.add(NotifyBean(NotifyType.groupInvite, inviter,
+          onInvitationReceivedFromGroup: (groupId,
+              groupName,
+              inviter,
+              reason,) {
+            notifyMessageList.add(NotifyBean(NotifyType.groupInvite, inviter,
                 "${DateTime.now().millisecondsSinceEpoch}",
                 groupId: groupId, name: groupName, reason: reason));
             notifyListeners();
@@ -282,7 +282,7 @@ class ImNotifier extends ChangeNotifier {
 
     // 注册连接状态监听
     EMClient.getInstance.addConnectionEventHandler(
-      "UNIQUE_HANDLER_ID_5",
+      "UNIQUE_HANDLER_ID",
       EMConnectionEventHandler(
         // sdk 连接成功;
         onConnected: () =>
@@ -362,11 +362,14 @@ class ImNotifier extends ChangeNotifier {
     } on Exception {}
   }
 
+  error(value) {
+    Loading.toast((value as EMError).description);
+  }
+
   addContact(String userId, String reason) async {
-    try {
-      await EMClient.getInstance.contactManager
-          .addContact(userId, reason: reason);
-    } on EMError catch (e) {}
+    await EMClient.getInstance.contactManager
+        .addContact(userId, reason: reason)
+        .catchError((value) => error(value));
   }
 
   acceptInvitation(NotifyBean data) async {
@@ -376,7 +379,6 @@ class ImNotifier extends ChangeNotifier {
             .acceptInvitation(data.groupId!, data.inviter);
         groupMap[data.groupId!] = await fetchGroupInfoFromServer(data.groupId!);
         updateConversation(data.groupId!, ChatType.GroupChat);
-        notifyListeners();
       } else {
         await EMClient.getInstance.contactManager
             .acceptInvitation(data.inviter);
@@ -384,9 +386,10 @@ class ImNotifier extends ChangeNotifier {
             .getAllContactsFromServer();
         updateConversation(data.groupId!, ChatType.ChatRoom);
       }
-      notifyList.remove(data);
-      notifyListeners();
     } on EMError catch (e) {}
+
+    notifyMessageList.remove(data);
+    notifyListeners();
   }
 
   rejectInvitation(NotifyBean data) async {
@@ -398,9 +401,10 @@ class ImNotifier extends ChangeNotifier {
         await EMClient.getInstance.contactManager
             .declineInvitation(data.inviter);
       }
-      notifyList.remove(data);
-      notifyListeners();
     } on EMError catch (e) {}
+
+    notifyMessageList.remove(data);
+    notifyListeners();
   }
 
   Future<EMGroup> fetchGroupInfoFromServer(String groupId) async {
@@ -516,15 +520,15 @@ class ImNotifier extends ChangeNotifier {
   }
 
   void removeImListener() {
-    EMClient.getInstance.contactManager
-        .removeEventHandler("UNIQUE_HANDLER_ID_1");
+    print("------->removeImListener");
+    EMClient.getInstance.contactManager.removeEventHandler("UNIQUE_HANDLER_ID");
 
-    EMClient.getInstance.chatManager.removeMessageEvent("UNIQUE_HANDLER_ID_2");
-    EMClient.getInstance.chatManager.removeEventHandler("UNIQUE_HANDLER_ID_3");
-    EMClient.getInstance.groupManager.removeEventHandler("UNIQUE_HANDLER_ID_4");
+    EMClient.getInstance.chatManager.removeMessageEvent("UNIQUE_HANDLER_ID");
+    EMClient.getInstance.chatManager.removeEventHandler("UNIQUE_HANDLER_ID");
+    EMClient.getInstance.groupManager.removeEventHandler("UNIQUE_HANDLER_ID");
     // 解注册连接状态监听
     EMClient.getInstance.removeConnectionEventHandler(
-      "UNIQUE_HANDLER_ID_5",
+      "UNIQUE_HANDLER_ID",
     );
   }
 }
