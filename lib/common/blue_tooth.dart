@@ -103,11 +103,11 @@ class BlueToothConnect {
 
   writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) {
     if (loarChar != null) {
-      if (isBroadcast) {
-        _enableBroadcast();
-      } else {
-        _enableCommunication();
-      }
+      // if (isBroadcast) {
+      //   _enableBroadcast();
+      // } else {
+      //   _enableCommunication();
+      // }
       _write(loarChar!, value.writeToBuffer());
     }
   }
