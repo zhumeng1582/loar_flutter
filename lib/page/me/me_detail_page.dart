@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
+import 'package:loar_flutter/page/home/provider/network_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../common/im_data.dart';
@@ -18,7 +19,8 @@ import '../../common/util/images.dart';
 import '../../widget/common.dart';
 import '../../widget/edit_remark_sheet.dart';
 
-final meDetailProvider = ChangeNotifierProvider<MeDetailNotifier>((ref) => MeDetailNotifier());
+final meDetailProvider =
+    ChangeNotifierProvider<MeDetailNotifier>((ref) => MeDetailNotifier());
 
 class MeDetailNotifier extends ChangeNotifier {
   EMUserInfo me = GlobeDataManager.instance.me!;
@@ -96,8 +98,7 @@ class _MeDetailPageState extends ConsumerState<MeDetailPage> {
                 getImage()
               ],
             ).paddingTop(10.h),
-            Row(),
-
+            const Row(),
           ],
         ).paddingHorizontal(30.w),
       ),
@@ -112,11 +113,20 @@ class _MeDetailPageState extends ConsumerState<MeDetailPage> {
 
 extension _Action on _MeDetailPageState {
   selectAvatar() async {
-    Navigator.pushNamed(context, RouteNames.selectAvatar).then(
-            (value) => {ref.read(meDetailProvider).updateUserAvatar(value as String)});
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持修改头像");
+      return;
+    }
+
+    Navigator.pushNamed(context, RouteNames.selectAvatar).then((value) =>
+        {ref.read(meDetailProvider).updateUserAvatar(value as String)});
   }
 
   changeName(String name) {
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持修改用户名");
+      return;
+    }
     EditRemarkBottomSheet.show(
       context: context,
       maxLength: 18,
@@ -152,6 +162,7 @@ extension _UI on _MeDetailPageState {
           ),
         ));
   }
+
   Widget _topItem(EMUserInfo me) {
     return Column(
       children: [
@@ -166,5 +177,4 @@ extension _UI on _MeDetailPageState {
       ],
     );
   }
-
 }

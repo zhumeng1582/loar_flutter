@@ -9,10 +9,12 @@ import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/home_provider.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
+import 'package:loar_flutter/page/home/provider/network_provider.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
 
 import '../../common/blue_tooth.dart';
 import '../../common/colors.dart';
+import '../../common/im_data.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
@@ -105,6 +107,11 @@ extension _Action on _HomePageState {
   }
 
   search() async {
+    var isNetwork = await GlobeDataManager.instance.isNetworkAwait();
+    if (!isNetwork) {
+      Loading.toastError("离线模式不支持查询");
+      return;
+    }
     Navigator.pushNamed(
       context,
       RouteNames.searchPage,

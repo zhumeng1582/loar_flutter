@@ -9,11 +9,13 @@ import 'package:nine_grid_view/nine_grid_view.dart';
 
 import '../../common/colors.dart';
 import '../../common/image.dart';
+import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
 import '../home/bean/conversation_bean.dart';
 import '../home/provider/home_provider.dart';
+import '../home/provider/network_provider.dart';
 
 class ContactsPage extends ConsumerStatefulWidget {
   const ContactsPage({super.key});
@@ -160,6 +162,11 @@ extension _UI on _ContactsPageState {
 
 extension _Action on _ContactsPageState {
   search() async {
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持查询");
+      return;
+    }
+
     Navigator.pushNamed(
       context,
       RouteNames.searchPage,

@@ -6,14 +6,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
-
 import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
-import '../../common/util/gaps.dart';
-import '../../common/util/images.dart';
 import '../../widget/baseTextField.dart';
 import '../../widget/common.dart';
 

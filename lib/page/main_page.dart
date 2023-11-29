@@ -3,6 +3,7 @@ import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/im_data.dart';
+import 'package:loar_flutter/page/home/provider/network_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../common/blue_tooth.dart';
@@ -53,9 +54,15 @@ class MainNotifier extends ChangeNotifier {
     }
     text += value;
     if (value.contains("*") && text.contains("GNRMC")) {
+      debugPrint("-------->value = " + value);
       var split = value.split(",");
+      if (split.length < 5 || split[3].isEmpty || split[5].isEmpty) {
+        return;
+      }
+
       var latitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[3]);
       var longitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
+
       var bd09Coordinate =
           CoordConvert.gcj02tobd09(Coords(latitude, longitude));
       GlobeDataManager.instance
@@ -75,7 +82,9 @@ class _MainPageState extends ConsumerState<MainPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ref.read(networkProvider).initState();
       await EMClient.getInstance.startCallback();
+
       ref.read(locationMapProvider).location();
       ref.read(imProvider).addImListener();
       ref.read(mainProvider).getLocation();

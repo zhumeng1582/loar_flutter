@@ -58,7 +58,7 @@ class ImNotifier extends ChangeNotifier {
   Future<void> loadData() async {
     GlobeDataManager.instance.getUserInfo();
 
-    if (GlobeDataManager.instance.isConnectionSuccessful) {
+    if (GlobeDataManager.instance.isEaseMob) {
       contacts =
           await EMClient.getInstance.contactManager.getAllContactsFromServer();
 
@@ -318,7 +318,9 @@ class ImNotifier extends ChangeNotifier {
   //loar消息分发处理
   getRemoteMessage(dynamic message) {
     try {
+      debugPrint("getRemoteMessage-------->");
       LoarMessage loarMessage = LoarMessage.fromBuffer(message);
+      debugPrint("getRemoteMessage-------->$loarMessage");
       if (loarMessage.conversationType == ConversationType.BROARDCAST) {
         allOnlineUsers[loarMessage.sender] =
             OnlineUser(loarMessage.sender, loarMessage);
@@ -431,7 +433,7 @@ class ImNotifier extends ChangeNotifier {
 
     addMessageToMap(targetId, msg);
     notifyListeners();
-    if (GlobeDataManager.instance.isConnectionSuccessful) {
+    if (GlobeDataManager.instance.isEaseMob) {
       await EMClient.getInstance.chatManager.sendMessage(msg);
     } else {
       LoarMessage message = LoarMessage(
@@ -462,7 +464,7 @@ class ImNotifier extends ChangeNotifier {
 
     addMessageToMap(targetId, msg);
     notifyListeners();
-    if (GlobeDataManager.instance.isConnectionSuccessful) {
+    if (GlobeDataManager.instance.isEaseMob) {
       await EMClient.getInstance.chatManager.sendMessage(msg);
     } else {
       LoarMessage message = LoarMessage(

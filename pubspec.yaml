@@ -82,6 +82,7 @@ dependencies:
   # 跳转地图导航
   map_launcher: ^3.1.0
   flutter_svg: # only if you want to use icons as they are svgs
+  connectivity_plus: ^5.0.2
 
 
 dev_dependencies:

@@ -17,8 +17,10 @@ import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
 import '../../widget/common.dart';
 import '../../widget/edit_remark_sheet.dart';
+import '../home/provider/network_provider.dart';
 
-final meDetailProvider = ChangeNotifierProvider<MeInfoNotifier>((ref) => MeInfoNotifier());
+final meDetailProvider =
+    ChangeNotifierProvider<MeInfoNotifier>((ref) => MeInfoNotifier());
 
 class MeInfoNotifier extends ChangeNotifier {
   EMUserInfo me = GlobeDataManager.instance.me!;
@@ -75,7 +77,9 @@ class _MeInfoPageState extends ConsumerState<MeInfoPage> {
         child: Column(
           children: [
             _getTopItem("头像", me),
-            _getMeItem("名字", me.name),
+            _getMeItem("名字", me.name).onTap(() {
+              changeName(me.name);
+            }),
             _getMeItem("蜂蜂号", me.userId),
             _getQrItem("我的二维码", me),
             _getMeItem("性别", "男"),
@@ -94,11 +98,20 @@ class _MeInfoPageState extends ConsumerState<MeInfoPage> {
 
 extension _Action on _MeInfoPageState {
   selectAvatar() async {
-    Navigator.pushNamed(context, RouteNames.selectAvatar).then(
-            (value) => {ref.read(meDetailProvider).updateUserAvatar(value as String)});
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持修改头像");
+      return;
+    }
+    Navigator.pushNamed(context, RouteNames.selectAvatar).then((value) =>
+        {ref.read(meDetailProvider).updateUserAvatar(value as String)});
   }
 
   changeName(String name) {
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持修改名字");
+      return;
+    }
+
     EditRemarkBottomSheet.show(
       context: context,
       maxLength: 18,
@@ -130,7 +143,8 @@ extension _UI on _MeInfoPageState {
       ],
     );
   }
-  Widget _getTopItem(String title,EMUserInfo me) {
+
+  Widget _getTopItem(String title, EMUserInfo me) {
     return Column(
       children: [
         Row(
@@ -138,7 +152,7 @@ extension _UI on _MeInfoPageState {
             Text(title,
                 style: TextStyle(fontSize: 38.sp, fontWeight: FontWeight.w400)),
             Expanded(child: Container()),
-            _topItem( me),
+            _topItem(me),
           ],
         ).paddingHorizontal(30.w).paddingVertical(40.h),
         Divider(
@@ -147,7 +161,8 @@ extension _UI on _MeInfoPageState {
       ],
     );
   }
-  Widget _getQrItem(String title,EMUserInfo me) {
+
+  Widget _getQrItem(String title, EMUserInfo me) {
     return Column(
       children: [
         Row(
@@ -188,5 +203,4 @@ extension _UI on _MeInfoPageState {
       ],
     );
   }
-
 }

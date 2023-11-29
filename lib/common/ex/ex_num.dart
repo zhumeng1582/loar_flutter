@@ -53,11 +53,11 @@ extension ExInt on int {
       } else if (date.day == now.day - 1) {
         return '昨天 ${formatter.format(date)}';
       } else {
-        formatter = DateFormat('MM:dd HH:mm');
+        formatter = DateFormat('MM月dd日 HH:mm');
         return formatter.format(date);
       }
     } else {
-      formatter = DateFormat('YYYY:MM:dd HH:mm');
+      formatter = DateFormat('YYYY年MM月dd日 HH:mm');
       return formatter.format(date);
     }
   }

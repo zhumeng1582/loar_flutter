@@ -21,6 +21,7 @@ class BlueToothConnect {
   BluetoothCharacteristic? gpsChar;
   BluetoothCharacteristic? loarChar;
   BluetoothCharacteristic? setChar;
+  List<LoarMessage> messageQueue = [];
 
   static BlueToothConnect _getInstance() {
     _instance ??= BlueToothConnect._();
@@ -101,15 +102,17 @@ class BlueToothConnect {
     }
   }
 
-  writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) {
-    if (loarChar != null) {
-      // if (isBroadcast) {
-      //   _enableBroadcast();
-      // } else {
-      //   _enableCommunication();
-      // }
-      _write(loarChar!, value.writeToBuffer());
+  sendLoraMessage() {
+    if (messageQueue.isNotEmpty) {
+      if (loarChar != null) {
+        _write(loarChar!, messageQueue[0].writeToBuffer());
+      }
+      messageQueue.removeAt(0);
     }
+  }
+
+  writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) {
+    messageQueue.add(value);
   }
 
   _writeLoraString(List<int> value) {

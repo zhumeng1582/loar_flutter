@@ -1,4 +1,6 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
@@ -18,20 +20,9 @@ import '../../widget/commit_button.dart';
 import '../../widget/loginTextField.dart';
 
 final loginProvider =
-    ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
+ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
 
 class LoginNotifier extends ChangeNotifier {
-  var buttonState = ButtonState.disabled;
-
-  setButtonState(String account, String password) {
-    if (account.isEmpty || password.isEmpty) {
-      buttonState = ButtonState.disabled;
-    } else {
-      buttonState = ButtonState.normal;
-    }
-    notifyListeners();
-  }
-
   Future<bool> login(String account, String password) async {
     if (!Reg.isPhone(account)) {
       Loading.toast("请输入正确的手机号");
@@ -41,33 +32,42 @@ class LoginNotifier extends ChangeNotifier {
       Loading.toast("请输入6-16为数字和字母组合密码");
       return false;
     }
-    if (!GlobeDataManager.instance.isConnectionSuccessful) {
-      var psw = await ImCache.getPassword();
-      if (psw == password) {
+
+    var isNetwork = await GlobeDataManager.instance.isNetworkAwait();
+    if (isNetwork) {
+      try {
+        Loading.show();
+        notifyListeners();
+        await EMClient.getInstance.logout();
+
+        await EMClient.getInstance.login(account, password);
+        GlobeDataManager.instance.isEaseMob = true;
+        ImCache.savePassword(password);
+        Loading.dismiss();
         return true;
-      } else {
-        Loading.toast("账号或密码不正确，请重新输入");
+      } on EMError catch (e) {
+        error(e);
         return false;
       }
     } else {
-      buttonState = ButtonState.loading;
-      notifyListeners();
-      await EMClient.getInstance.logout();
+      return await loginCache(password);
+    }
+  }
 
-      await EMClient.getInstance
-          .login(account, password)
-          .catchError((value) => error(value));
-      ImCache.savePassword(password);
-
-      buttonState = ButtonState.normal;
-      notifyListeners();
+  Future<bool> loginCache(String password) async {
+    var psw = await ImCache.getPassword();
+    Loading.dismiss();
+    if (psw == password) {
+      GlobeDataManager.instance.isEaseMob = false;
       return true;
+    } else {
+      Loading.toastError("离线模式只能登陆上次登陆账号");
+      return false;
     }
   }
 
   error(value) {
-    Loading.toast((value as EMError).description);
-    buttonState = ButtonState.normal;
+    Loading.toastError((value as EMError).description);
     notifyListeners();
     throw value;
   }
@@ -88,20 +88,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void initState() {
     super.initState();
 
-    ref.read(loginProvider).buttonState = ButtonState.normal;
-
     Future(() async {
       // _userAccountController.text = GlobeDataManager.instance.me?.userId ?? "";
       // _userPasswordController.text = await ImCache.getPassword();
 
-      _userAccountController.addListener(() {
-        ref.read(loginProvider).setButtonState(
-            _userAccountController.text, _userPasswordController.text);
-      });
-      _userPasswordController.addListener(() {
-        ref.read(loginProvider).setButtonState(
-            _userAccountController.text, _userPasswordController.text);
-      });
+      _userAccountController.addListener(() {});
+      _userPasswordController.addListener(() {});
     });
   }
 

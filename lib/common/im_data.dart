@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'dart:io' show InternetAddress, SocketException;
 
@@ -15,7 +17,7 @@ class GlobeDataManager {
   static GlobeDataManager get instance => _getInstance();
   static GlobeDataManager? _instance;
 
-  var isConnectionSuccessful = false;
+  var isEaseMob = false;
   BMFCoordinate? _position;
   BMFCoordinate? _phonePosition;
 
@@ -34,39 +36,48 @@ class GlobeDataManager {
     }
   }
 
+  Future<bool> isNetworkAwait() async {
+    try {
+      ConnectivityResult result = await Connectivity().checkConnectivity();
+      return result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.ethernet;
+    } on PlatformException catch (e) {
+      return false;
+    }
+  }
+
   getUserInfo() async {
-    if (isConnectionSuccessful) {
-      try {
-        var value = await EMClient.getInstance.userInfoManager.fetchOwnInfo();
-        if (value != null) {
-          me = value;
-          ImCache.saveMe(value);
-        }
-      } on EMError catch (e) {
-        // 获取当前用户属性失败，返回错误信息。
+    try {
+      var value = await EMClient.getInstance.userInfoManager.fetchOwnInfo();
+      if (value != null) {
+        me = value;
+        ImCache.saveMe(value);
+      } else {
+        _getCacheMe();
       }
-    } else {
+    } on EMError catch (e) {
       _getCacheMe();
+      // 获取当前用户属性失败，返回错误信息。
     }
   }
 
   tryConnection() {
+    Timer.periodic(const Duration(milliseconds: 200), (timer) async {
+      BlueToothConnect.instance.sendLoraMessage();
+    });
+
     Timer.periodic(const Duration(seconds: 3), (timer) async {
       var position = getPosition();
-      if (position != null && me != null) {
+      if (position != null &&
+          me != null &&
+          BlueToothConnect.instance.messageQueue.isEmpty) {
         LoarMessage value = LoarMessage(
             sender: me?.userId,
             longitude: position.longitude,
             latitude: position.latitude,
             conversationType: ConversationType.BROARDCAST);
         BlueToothConnect.instance.writeLoraMessage(value);
-      }
-
-      try {
-        final response = await InternetAddress.lookup('baidu.com');
-        isConnectionSuccessful = response.isNotEmpty;
-      } on SocketException catch (e) {
-        isConnectionSuccessful = false;
       }
     });
   }

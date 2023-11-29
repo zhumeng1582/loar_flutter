@@ -63,6 +63,10 @@ class Loading {
     EasyLoading.showToast(text);
   }
 
+  static void toastError(String text) {
+    EasyLoading.showError(text);
+  }
+
   static void info(String text) {
     EasyLoading.showInfo(text);
   }

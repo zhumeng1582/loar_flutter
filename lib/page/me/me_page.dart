@@ -20,34 +20,6 @@ final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
 class MeNotifier extends ChangeNotifier {
   EMUserInfo me = GlobeDataManager.instance.me!;
 
-  updateUserAvatar(String avatarUrl) async {
-    try {
-      Loading.show();
-      await EMClient.getInstance.userInfoManager
-          .updateUserInfo(avatarUrl: avatarUrl);
-      await GlobeDataManager.instance.getUserInfo();
-      me = GlobeDataManager.instance.me!;
-      notifyListeners();
-      Loading.dismiss();
-      Loading.show("修改头像成功");
-    } on EMError catch (e) {
-      Loading.dismiss();
-    }
-  }
-
-  changeUserName(String name) async {
-    try {
-      Loading.show();
-      await EMClient.getInstance.userInfoManager.updateUserInfo(nickname: name);
-      await GlobeDataManager.instance.getUserInfo();
-      me = GlobeDataManager.instance.me!;
-      Loading.dismiss();
-      Loading.show("修改名称成功");
-      notifyListeners();
-    } on EMError catch (e) {
-      Loading.dismiss();
-    }
-  }
 }
 
 class MePage extends ConsumerStatefulWidget {
@@ -108,36 +80,10 @@ class _MePageState extends ConsumerState<MePage> {
 }
 
 extension _Action on _MePageState {
-  selectAvatar() async {
-    Navigator.pushNamed(context, RouteNames.selectAvatar).then(
-        (value) => {ref.read(meProvider).updateUserAvatar(value as String)});
-  }
 
-  changeName(String name) {
-    EditRemarkBottomSheet.show(
-      context: context,
-      maxLength: 18,
-      data: name,
-      onConfirm: (value) => {ref.read(meProvider).changeUserName(value)},
-    );
-  }
 }
 
 extension _UI on _MePageState {
-  Widget _topItem(EMUserInfo me) {
-    return Column(
-      children: [
-        ClipOval(
-          child: ImageWidget(
-            url: me.avatarName,
-            width: 100.w,
-            height: 100.h,
-            type: ImageWidgetType.asset,
-          ),
-        ).onTap(selectAvatar).paddingTop(80.h),
-      ],
-    );
-  }
 
   Widget _getMeItem(String title, String? value) {
     return Column(

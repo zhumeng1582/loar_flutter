@@ -4,18 +4,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_widget.dart';
 import 'package:loar_flutter/common/im_data.dart';
-import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import 'package:loar_flutter/widget/commit_button.dart';
 import '../../common/image.dart';
+import '../../common/loading.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
 import '../../widget/common.dart';
 import '../../widget/edit_remark_sheet.dart';
 import '../../widget/warning_alert.dart';
-import '../home/bean/conversation_bean.dart';
+import '../home/provider/network_provider.dart';
 
 final roomProvider =
     ChangeNotifierProvider<RoomDetailNotifier>((ref) => RoomDetailNotifier());
@@ -60,6 +60,14 @@ class RoomDetailNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
+  setChatInfo(
+      EMGroup? group, EMUserInfo? userInfo, List<EMUserInfo> userInfoList) {
+    this.group = group;
+    this.userInfo = userInfo;
+    this.userInfoList = userInfoList;
+    notifyListeners();
+  }
+
   getChatInfo(EMConversation conversationBean) async {
     group = null;
     userInfo = null;
@@ -67,7 +75,7 @@ class RoomDetailNotifier extends ChangeNotifier {
     if (conversationBean.type == EMConversationType.GroupChat) {
       group = await fetchGroupInfoFromServer(conversationBean.id);
 
-      var userInfoMap = await fetchUserInfoById(group?.allUsers??[]);
+      var userInfoMap = await fetchUserInfoById(group?.allUsers ?? []);
       userInfoList = userInfoMap.values.toList();
       userInfo = userInfoMap[group?.owner ?? ""];
     } else {
@@ -119,7 +127,12 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
 
   @override
   void initState() {
-    ref.read(roomProvider).getChatInfo(widget.conversation);
+    if (ref.read(networkProvider).isNetwork()) {
+      ref.read(roomProvider).getChatInfo(widget.conversation);
+    } else {
+      getCacheChatInfo();
+    }
+
     super.initState();
   }
 
@@ -147,6 +160,28 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
 }
 
 extension _Action on _RoomDetailPageState {
+  void getCacheChatInfo() {
+    EMGroup? group;
+    EMUserInfo? userInfo;
+    List<EMUserInfo>? userInfoList = [];
+    var allUsers = ref.read(imProvider).allUsers;
+    if (widget.conversation.type == EMConversationType.GroupChat) {
+      group = ref.read(imProvider).groupMap[widget.conversation.id];
+      userInfo = allUsers[group?.owner];
+      for (var value in group?.allUsers ?? []) {
+        if (allUsers.containsKey(value)) {
+          userInfoList.add(allUsers[value]!);
+        }
+      }
+    } else {
+      if (allUsers.containsKey(widget.conversation.id)) {
+        userInfo = allUsers[widget.conversation.id];
+        userInfoList.add(userInfo!);
+      }
+    }
+    ref.read(roomProvider).setChatInfo(group, userInfo, userInfoList);
+  }
+
   bool isOwner() {
     var group = ref.read(roomProvider).group;
     if (group != null) {
@@ -156,6 +191,11 @@ extension _Action on _RoomDetailPageState {
   }
 
   exitGroup() {
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError(isOwner() ? "离线模式不支持解散群聊" : "离线模式不支持退出群聊");
+      return;
+    }
+
     WarningActionSheetAlert.show(
         context: context,
         title: "提醒",
@@ -192,14 +232,19 @@ extension _Action on _RoomDetailPageState {
       Navigator.pushNamedAndRemoveUntil(
         context,
         RouteNames.roomPage,
-        (route) => route.settings.name == RouteNames.main,
+            (route) => route.settings.name == RouteNames.main,
         arguments:
-            EMConversation.fromJson({"convId": group.groupId, "type": 1}),
+        EMConversation.fromJson({"convId": group.groupId, "type": 1}),
       );
     }
   }
 
   selectUser(List<EMUserInfo> userInfo) async {
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持邀请好友");
+      return;
+    }
+
     List<String> data = [];
     if (widget.conversation.type == EMConversationType.Chat) {
       data.add(widget.conversation.id);
@@ -236,6 +281,11 @@ extension _Action on _RoomDetailPageState {
   }
 
   changeName(EMGroup group, String? name) {
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持修改群信息");
+      return;
+    }
+
     if (group.owner == GlobeDataManager.instance.me?.userId) {
       EditRemarkBottomSheet.show(
         context: context,
@@ -248,13 +298,18 @@ extension _Action on _RoomDetailPageState {
 
   changeGroupName(EMGroup group, String name) async {
     var groupNew =
-        await ref.read(roomProvider).changeGroupName(group.groupId, name);
+    await ref.read(roomProvider).changeGroupName(group.groupId, name);
     if (groupNew != null) {
       ref.read(imProvider).changeGroup(groupNew);
     }
   }
 
   changeDescription(EMGroup group, String? name) {
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持修改群信息");
+      return;
+    }
+
     if (group.owner == GlobeDataManager.instance.me?.userId) {
       EditRemarkBottomSheet.show(
         context: context,
