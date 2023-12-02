@@ -20,5 +20,5 @@ class RouteNames{
   static const aboutPage = 'aboutPage';
   static const settingPage = 'SettingPage';
   static const meInfoPage = 'MeInfoPage';
-
+  static const friendPage = 'FriendPage';
 }

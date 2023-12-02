@@ -26,6 +26,27 @@ class AssetsImages {
   static final iconForum = _loadFromPath(named: 'iconForum');
   static final iconPeople = _loadFromPath(named: 'iconPeople');
 
+  static final iconDingWei = _loadFromPath(named: 'iconDingWei');
+  static final iconFenXin = _loadFromPath(named: 'iconFenXin');
+  static final iconSheQu = _loadFromPath(named: 'iconSheQu');
+  static final iconTongXun = _loadFromPath(named: 'iconTongXun');
+  static final iconWode = _loadFromPath(named: 'iconWode');
+
+  static final iconDingWeiSel = _loadFromPath(named: 'iconDingWeiSel');
+  static final iconFenXinSel = _loadFromPath(named: 'iconFenXinSel');
+  static final iconSheQuSel = _loadFromPath(named: 'iconSheQuSel');
+  static final iconTongXunSel = _loadFromPath(named: 'iconTongXunSel');
+  static final iconWodeSel = _loadFromPath(named: 'iconWodeSel');
+  static final iconDaohang = _loadFromPath(named: 'iconDaohang');
+
+  static final iconAbout = _loadFromPath(named: 'iconAbout');
+  static final iconID = _loadFromPath(named: 'iconID');
+  static final iconPengYouQuan = _loadFromPath(named: 'iconPengYouQuan');
+  static final iconSetting = _loadFromPath(named: 'iconSetting');
+  static final iconGeRen = _loadFromPath(named: 'iconGeRen');
+  static final banner = _loadFromPath(named: 'banner');
+  static final button = _loadFromPath(named: 'button');
+
   static String getRandomAvatar() {
     return getAvatar(Random().nextInt(100) + 1);
   }
@@ -40,4 +61,7 @@ class AssetsImages {
 
   static String _loadFromPath({required String named}) =>
       'assets/images/$named.png';
+
+  static String loadImageFromName({required String named}) =>
+      'assets/images/$named';
 }

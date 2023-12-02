@@ -16,6 +16,7 @@ import 'package:loar_flutter/page/setting/setting_page.dart';
 
 import '../../page/blue/find_device_page.dart';
 import '../../page/contacts/contacts_select_page.dart';
+import '../../page/friend/FriendPage.dart';
 import '../../page/home/bean/conversation_bean.dart';
 import '../../page/home/bean/notify_bean.dart';
 import '../../page/login/avatar_select_page.dart';
@@ -105,6 +106,9 @@ class RouteObservers {
     }  else if (settings.name == RouteNames.meInfoPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const MeInfoPage());
+    } else if (settings.name == RouteNames.friendPage) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const FriendPage());
     } else if (settings.name == RouteNames.deviceScreen) {
       // BluetoothDevice device = settings.arguments as BluetoothDevice;
       // return MaterialPageRoute(

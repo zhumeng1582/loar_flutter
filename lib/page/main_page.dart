@@ -3,12 +3,14 @@ import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/im_data.dart';
+import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/page/home/provider/network_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../common/blue_tooth.dart';
 import '../common/colors.dart';
 import '../common/util/coord_convert.dart';
+import '../common/util/images.dart';
 import 'contacts/contacts_page.dart';
 import 'forum/forum_page.dart';
 import 'home/home_page.dart';
@@ -111,22 +113,28 @@ class _MainPageState extends ConsumerState<MainPage> {
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
         // 设置未被选中时的图标颜色
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.wechat,
-              size: 24.0,
-            ),
+            icon: ImageWidget.asset(AssetsImages.iconFenXin,
+                width: 24, height: 24),
+            activeIcon: ImageWidget.asset(AssetsImages.iconFenXinSel,
+                width: 24, height: 24),
             label: '蜂信',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.contact_page, size: 24.0),
+            icon: ImageWidget.asset(AssetsImages.iconTongXun,
+                width: 24, height: 24),
+            activeIcon: ImageWidget.asset(AssetsImages.iconTongXunSel,
+                width: 24, height: 24),
             label: '通讯录',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.place, size: 24.0),
+            icon: ImageWidget.asset(AssetsImages.iconDingWei,
+                width: 24, height: 24),
+            activeIcon: ImageWidget.asset(AssetsImages.iconDingWeiSel,
+                width: 24, height: 24),
             label: '定位',
             backgroundColor: Colors.white,
           ),
@@ -136,12 +144,18 @@ class _MainPageState extends ConsumerState<MainPage> {
           //   backgroundColor: Colors.white,
           // ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 24.0),
+            icon:
+                ImageWidget.asset(AssetsImages.iconWode, width: 24, height: 24),
+            activeIcon: ImageWidget.asset(AssetsImages.iconWodeSel,
+                width: 24, height: 24),
             label: '我的',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.comment, size: 24.0),
+            icon: ImageWidget.asset(AssetsImages.iconSheQu,
+                width: 24, height: 24),
+            activeIcon: ImageWidget.asset(AssetsImages.iconSheQuSel,
+                width: 24, height: 24),
             label: '社区',
             backgroundColor: Colors.white,
           ),

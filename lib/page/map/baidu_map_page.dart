@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/ex/ex_num.dart';
 import 'package:loar_flutter/common/im_data.dart';
+import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/distance.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
@@ -240,6 +241,8 @@ extension _UI on _BaiduMapState {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
+        ImageWidget.asset(AssetsImages.iconDaohang, width: 24, height: 24)
+            .paddingHorizontal(10.h),
         Text(
           "去导航",
           style: TextStyle(
