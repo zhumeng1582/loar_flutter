@@ -5,6 +5,7 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/gaps.dart';
 
 import '../../common/colors.dart';
+import '../../common/routers/RouteNames.dart';
 import '../../widget/common.dart';
 
 final settingProvider =
@@ -33,6 +34,10 @@ class _SettingPageState extends ConsumerState<SettingPage> {
         child: Column(
           children: [
             _getMeItem("设备连接"),
+            Gaps.line,
+            _getMeItem("离线地址管理").onTap(() {
+              Navigator.pushNamed(context, RouteNames.offlineMap);
+            }),
             Gaps.line,
             _getMeItem("账号与安全"),
             Gaps.line,

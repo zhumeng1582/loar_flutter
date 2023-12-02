@@ -58,9 +58,7 @@ class _MePageState extends ConsumerState<MePage> {
             _getMeItem("蜂圈", "朋友圈", AssetsImages.iconPengYouQuan).onTap(() {
               Navigator.pushNamed(context, RouteNames.friendPage);
             }),
-            // _getMeItem("离线地址管理", "").onTap(() {
-            //   Navigator.pushNamed(context, RouteNames.offlineMap);
-            // }),
+
             _getMeItem("设置", "", AssetsImages.iconSetting).onTap(() {
               Navigator.pushNamed(context, RouteNames.settingPage);
             }),

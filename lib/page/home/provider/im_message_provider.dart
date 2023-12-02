@@ -109,12 +109,22 @@ class ImNotifier extends ChangeNotifier {
     }
   }
 
-  String getConversationLastMessage(EMConversation data) {
-    return getMessageText(messageMap[data.id]?.first);
+  String getConversationLastMessage(EMConversation? data) {
+    var message = messageMap[data?.id];
+    if (message?.isNotEmpty == true) {
+      return getMessageText(message?.first);
+    } else {
+      return "去发送一个消息吧";
+    }
   }
 
-  String getConversationLastTime(EMConversation data) {
-    return messageMap[data.id]?.first.serverTime.formatChatTime ?? "";
+  String getConversationLastTime(EMConversation? data) {
+    var message = messageMap[data?.id];
+    if (message?.isNotEmpty == true) {
+      return message?.first.serverTime.formatChatTime ?? "";
+    } else {
+      return "";
+    }
   }
 
   List<String> getConversationAvatars(EMConversation data) {
@@ -269,10 +279,12 @@ class ImNotifier extends ChangeNotifier {
             groupMap[group.groupId] = group;
             notifyListeners();
           },
-          onInvitationReceivedFromGroup: (groupId,
-              groupName,
-              inviter,
-              reason,) {
+          onInvitationReceivedFromGroup: (
+            groupId,
+            groupName,
+            inviter,
+            reason,
+          ) {
             notifyMessageList.add(NotifyBean(NotifyType.groupInvite, inviter,
                 "${DateTime.now().millisecondsSinceEpoch}",
                 groupId: groupId, name: groupName, reason: reason));
