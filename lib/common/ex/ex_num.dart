@@ -39,7 +39,7 @@ extension ExInt on int {
     var date = DateTime.fromMillisecondsSinceEpoch(this);
     var now = DateTime.now();
     var formatter = DateFormat('HH:mm');
-    if (date.year == now.year && date.month == now.month) {
+    if (date.year == now.year) {
       if (date.day == now.day) {
         if (date.hour < 6) {
           return '凌晨 ${formatter.format(date)}';
@@ -57,7 +57,7 @@ extension ExInt on int {
         return formatter.format(date);
       }
     } else {
-      formatter = DateFormat('YYYY年MM月dd日 HH:mm');
+      formatter = DateFormat('yyyy年MM月dd日 HH:mm');
       return formatter.format(date);
     }
   }
