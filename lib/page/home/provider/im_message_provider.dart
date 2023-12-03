@@ -150,9 +150,9 @@ class ImNotifier extends ChangeNotifier {
     messageMap[conversationId] = messageList;
 
     updateConversation(conversationId, message.chatType);
-    EMClient.getInstance.chatManager.updateMessage(message);
-
-    notifyListeners();
+    if (GlobeDataManager.instance.isEaseMob) {
+      EMClient.getInstance.chatManager.updateMessage(message);
+    }
   }
 
   void updateConversation(String conversationId, ChatType chatType) {

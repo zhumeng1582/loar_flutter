@@ -176,5 +176,6 @@ class _MainPageState extends ConsumerState<MainPage> {
   void dispose() {
     super.dispose();
     ref.read(imProvider).removeImListener();
+    ref.read(networkProvider).cancel();
   }
 }

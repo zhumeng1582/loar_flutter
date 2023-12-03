@@ -1,27 +1,24 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../common/im_data.dart';
-import '../../common/colors.dart';
 import '../../common/image.dart';
-import '../../common/loading.dart';
-import '../../common/proto/qr_code_data.dart';
-import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
 import '../../widget/common.dart';
-import '../../widget/edit_remark_sheet.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-final aboutProvider = ChangeNotifierProvider<AboutNotifier>((ref) => AboutNotifier());
+final aboutProvider =
+    ChangeNotifierProvider<AboutNotifier>((ref) => AboutNotifier());
 
 class AboutNotifier extends ChangeNotifier {
-  
+  String version = "";
+
+  getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    version = packageInfo.version;
+    notifyListeners();
+  }
 }
 
 class AboutDetailPage extends ConsumerStatefulWidget {
@@ -35,6 +32,9 @@ class _AboutDetailPageState extends ConsumerState<AboutDetailPage> {
   @override
   void initState() {
     super.initState();
+    Future(() {
+      ref.read(aboutProvider).getVersion();
+    });
   }
 
   @override
@@ -51,16 +51,21 @@ class _AboutDetailPageState extends ConsumerState<AboutDetailPage> {
               height: 280.h,
               type: ImageWidgetType.asset,
             ).paddingTop(160.h),
-            Text("蜂信",style: TextStyle(
-              fontSize: 48.sp,
-              fontWeight: FontWeight.w600
-            ),),
-            Text("Version 1.0.0",style: TextStyle(
-                fontSize: 38.sp,
-            )).paddingTop(10.h),
-            Text("版本更新",style: TextStyle(
-                fontSize: 38.sp,
-            )).padding(horizontal:30.w,vertical: 5.h).roundedBorder(radius: 3.r).paddingTop(10.h),
+            Text(
+              "蜂信",
+              style: TextStyle(fontSize: 48.sp, fontWeight: FontWeight.w600),
+            ),
+            Text(ref.watch(aboutProvider).version,
+                style: TextStyle(
+                  fontSize: 38.sp,
+                )).paddingTop(10.h),
+            Text("版本更新",
+                    style: TextStyle(
+                      fontSize: 38.sp,
+                    ))
+                .padding(horizontal: 30.w, vertical: 5.h)
+                .roundedBorder(radius: 3.r)
+                .paddingTop(10.h),
             Expanded(child: Container()),
           ],
         ).paddingHorizontal(30.w),
@@ -74,11 +79,6 @@ class _AboutDetailPageState extends ConsumerState<AboutDetailPage> {
   }
 }
 
-extension _Action on _AboutDetailPageState {
+extension _Action on _AboutDetailPageState {}
 
-}
-
-extension _UI on _AboutDetailPageState {
-
-
-}
+extension _UI on _AboutDetailPageState {}

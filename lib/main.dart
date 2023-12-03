@@ -34,7 +34,15 @@ void main() async {
       runApp(ProviderScope(child: MyApp()));
     });
   } else {
-    runApp(ProviderScope(child: MyApp()));
+    [
+      Permission.location,
+      Permission.storage,
+      Permission.bluetooth,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan
+    ].request().then((status) {
+      runApp(ProviderScope(child: MyApp()));
+    });
   }
 }
 
@@ -99,5 +107,7 @@ void initMap() async {
   } else {
     BMFMapSDK.setApiKeyAndCoordType(
         'we6iOj29YBaaGjdxcrqMdXFSBXSeEG7g', BMF_COORD_TYPE.BD09LL);
+    Map? map = await BMFMapVersion.nativeMapVersion;
+    print('获取原生地图版本号：$map');
   }
 }
