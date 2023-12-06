@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 class SatelliteData {
   final String name;
   final int count;
+  final double value;
   final UI.Image flag;
   final double azimuth;
   final double elevation;
 
-  SatelliteData(this.name, this.count, this.flag, this.azimuth, this.elevation);
+  SatelliteData(this.name, this.count, this.value, this.flag, this.azimuth,
+      this.elevation);
 }
 
 class SatellitePainter extends CustomPainter {

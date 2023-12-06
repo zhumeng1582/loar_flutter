@@ -8,6 +8,7 @@ import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/images.dart';
 
+import '../widget/bar_chart_painter.dart';
 import '../widget/satellite_painter.dart';
 import '../widget/common.dart';
 import 'dart:ui' as ui;
@@ -59,7 +60,8 @@ class SatelliteNotifier extends ChangeNotifier {
       int type = randomInt(4);
       String name = satelliteType[type];
       ui.Image image = await loadAssetImage(satelliteFlags[name]!);
-      data.add(SatelliteData(name, i, image, random(0, 360), random(0, 90)));
+      data.add(SatelliteData(
+          name, i, random(0, 100), image, random(0, 360), random(0, 90)));
     }
     notifyListeners();
   }
@@ -84,14 +86,29 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
 
   @override
   Widget build(BuildContext context) {
+    var data = ref.watch(satelliteNotifier).data;
+    var bars = ref.watch(satelliteNotifier).data.map((e) => e.value).toList();
+    var barsWidth = bars.length * 55.w;
+
     return Scaffold(
       appBar: getAppBar(context, "卫星星图"),
       body: Column(
         children: [
           CustomPaint(
-            painter: SatellitePainter(ref.watch(satelliteNotifier).data),
+            painter: SatellitePainter(data),
             size: Size(600.w, 600.h),
-          ).paddingTop(80.h).center(),
+          ).paddingTop(50.h).center(),
+          CustomScrollView(
+            scrollDirection: Axis.horizontal,
+            slivers: <Widget>[
+              SliverToBoxAdapter(
+                child: CustomPaint(
+                  painter: BarChartPainter(bars, 50.w, 5.w),
+                  size: Size(max(barsWidth, 690.w), 240.h),
+                ),
+              ),
+            ],
+          ).height(240.h).paddingTop(40.h),
           Row(
             children: [
               satelliteStatic(ref.watch(satelliteNotifier).satelliteType[0])
@@ -103,9 +120,9 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
               satelliteStatic(ref.watch(satelliteNotifier).satelliteType[3])
                   .expanded(),
             ],
-          ).paddingHorizontal(80.w).paddingTop(80.h)
+          ).paddingTop(40.h)
         ],
-      ),
+      ).paddingHorizontal(30.w),
     );
   }
 }
