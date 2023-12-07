@@ -100,7 +100,7 @@ extension _UI on _RoomMessagePageState {
       repeater = "---(由${body.targetLanguages}转发)";
     }
     return BubbleChat(
-      text: "${body.content}$repeater}",
+      text: "${body.content}$repeater",
       isSender: isSender,
       sent: isSender ? data.hasDeliverAck : false,
       color: !isSender ? Colors.grey : AppColors.bubbleBgColor,
