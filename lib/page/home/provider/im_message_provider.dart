@@ -358,15 +358,19 @@ class ImNotifier extends ChangeNotifier {
               GlobeDataManager.instance.me?.userId ||
           groupMap.containsKey(loarMessage.conversationId)) {
         paraLoarMessage(loarMessage);
-        //发送消息已送到标志
-        LoarMessage deliverAckMessage = loarMessage.deepCopy();
 
-        // deliverAckMessage.content = "";
-        // deliverAckMessage.longitude = 0;
-        // deliverAckMessage.latitude = 0;
+        if (loarMessage.conversationId ==
+            GlobeDataManager.instance.me?.userId) {
+          //发送消息已送到标志
+          LoarMessage deliverAckMessage = loarMessage.deepCopy();
 
-        deliverAckMessage.hasDeliverAck = true;
-        BlueToothConnect.instance.writeLoraMessage(deliverAckMessage);
+          // deliverAckMessage.content = "";
+          // deliverAckMessage.longitude = 0;
+          // deliverAckMessage.latitude = 0;
+
+          deliverAckMessage.hasDeliverAck = true;
+          BlueToothConnect.instance.writeLoraMessage(deliverAckMessage);
+        }
       } else if (loarMessage.sendCount == 0) {
         //不是我的消息，直接转发
         loarMessage.sendCount++;
