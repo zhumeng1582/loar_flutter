@@ -29,6 +29,7 @@ class LoarMessage extends $pb.GeneratedMessage {
     $core.double? latitude,
     $core.double? longitude,
     $core.bool? hasDeliverAck,
+    $core.String? repeater,
   }) {
     final $result = create();
     if (conversationId != null) {
@@ -61,6 +62,9 @@ class LoarMessage extends $pb.GeneratedMessage {
     if (hasDeliverAck != null) {
       $result.hasDeliverAck = hasDeliverAck;
     }
+    if (repeater != null) {
+      $result.repeater = repeater;
+    }
     return $result;
   }
 
@@ -86,8 +90,8 @@ class LoarMessage extends $pb.GeneratedMessage {
         valueOf: ConversationType.valueOf,
         enumValues: ConversationType.values)
     ..aOS(3, _omitFieldNames ? '' : 'sender')
-    ..aOS(4, _omitFieldNames ? '' : 'content')..aOS(
-        5, _omitFieldNames ? '' : 'msgId', protoName: 'msgId')
+    ..aOS(4, _omitFieldNames ? '' : 'content')
+    ..aOS(5, _omitFieldNames ? '' : 'msgId', protoName: 'msgId')
     ..a<$core.int>(6, _omitFieldNames ? '' : 'sendCount', $pb.PbFieldType.O3,
         protoName: 'sendCount')
     ..e<MsgType>(7, _omitFieldNames ? '' : 'msgType', $pb.PbFieldType.OE,
@@ -95,11 +99,11 @@ class LoarMessage extends $pb.GeneratedMessage {
         defaultOrMaker: MsgType.TEXT,
         valueOf: MsgType.valueOf,
         enumValues: MsgType.values)
-    ..a<$core.double>(
-        8, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)..a<
-        $core.double>(9, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
+    ..a<$core.double>(8, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)
+    ..a<$core.double>(9, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
     ..aOB(10, _omitFieldNames ? '' : 'hasDeliverAck',
         protoName: 'hasDeliverAck')
+    ..aOS(11, _omitFieldNames ? '' : 'repeater')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('Using this can add significant overhead to your binary. '
@@ -197,6 +201,7 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(8)
   $core.double get latitude => $_getN(7);
+
   @$pb.TagNumber(8)
   set latitude($core.double v) {
     $_setDouble(7, v);
@@ -204,7 +209,6 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(8)
   $core.bool hasLatitude() => $_has(7);
-
   @$pb.TagNumber(8)
   void clearLatitude() => clearField(8);
 
@@ -218,7 +222,6 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(9)
   $core.bool hasLongitude() => $_has(8);
-
   @$pb.TagNumber(9)
   void clearLongitude() => clearField(9);
 
@@ -235,6 +238,20 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(10)
   void clearHasDeliverAck() => clearField(10);
+
+  @$pb.TagNumber(11)
+  $core.String get repeater => $_getSZ(10);
+
+  @$pb.TagNumber(11)
+  set repeater($core.String v) {
+    $_setString(10, v);
+  }
+
+  @$pb.TagNumber(11)
+  $core.bool hasRepeater() => $_has(10);
+
+  @$pb.TagNumber(11)
+  void clearRepeater() => clearField(11);
 }
 
 

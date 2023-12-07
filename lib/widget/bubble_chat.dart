@@ -130,8 +130,8 @@ class SpecialChatBubble extends CustomPainter {
     required this.tail,
   });
 
-  double _radius = 5.0;
-  double _x = 10.0;
+  final double _radius = 5.0;
+  final double _x = 10.0;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -162,7 +162,7 @@ class SpecialChatBubble extends CustomPainter {
               0.0,
               size.width,
               size.height,
-              topRight: Radius.circular(3),
+              topRight: const Radius.circular(3),
             ),
             Paint()
               ..color = this.color
@@ -199,7 +199,7 @@ class SpecialChatBubble extends CustomPainter {
             Paint()
               ..color = this.color
               ..style = PaintingStyle.fill);
-        var path = new Path();
+        var path = Path();
         path.moveTo(_x, 10);
         path.lineTo(_x, 20);
         path.lineTo(0, 15);
@@ -210,7 +210,7 @@ class SpecialChatBubble extends CustomPainter {
               0.0,
               _x,
               size.height,
-              topLeft: Radius.circular(3),
+              topLeft: const Radius.circular(3),
             ),
             Paint()
               ..color = this.color

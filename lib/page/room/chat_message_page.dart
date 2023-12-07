@@ -95,8 +95,12 @@ extension _UI on _RoomMessagePageState {
     }
 
     EMTextMessageBody body = data.body as EMTextMessageBody;
+    var repeater = "";
+    if (body.targetLanguages?.isNotEmpty == true) {
+      repeater = "---(由${body.targetLanguages}转发)";
+    }
     return BubbleChat(
-      text: body.content,
+      text: "${body.content}$repeater}",
       isSender: isSender,
       sent: isSender ? data.hasDeliverAck : false,
       color: !isSender ? Colors.grey : AppColors.bubbleBgColor,

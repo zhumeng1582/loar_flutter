@@ -346,33 +346,31 @@ class ImNotifier extends ChangeNotifier {
       debugPrint("getRemoteMessage-------->");
       LoarMessage loarMessage = LoarMessage.fromBuffer(message);
       debugPrint("getRemoteMessage-------->$loarMessage");
-      if (loarMessage.hasDeliverAck) {
-        //给消息标记已读
+
+      if (loarMessage.hasDeliverAck &&
+          loarMessage.sender == GlobeDataManager.instance.me?.userId) {
+        //给消息标记已送达，只标记我发送的消息
         paraDeliverAckMessage(loarMessage);
       } else if (loarMessage.conversationType == ConversationType.BROARDCAST) {
         allOnlineUsers[loarMessage.sender] =
             OnlineUser(loarMessage.sender, loarMessage);
       } else if (loarMessage.conversationId ==
-          GlobeDataManager.instance.me?.userId ||
+              GlobeDataManager.instance.me?.userId ||
           groupMap.containsKey(loarMessage.conversationId)) {
-        if (loarMessage.hasDeliverAck) {
-          paraDeliverAckMessage(loarMessage);
-        } else {
-          paraLoarMessage(loarMessage);
+        paraLoarMessage(loarMessage);
+        //发送消息已送到标志
+        LoarMessage deliverAckMessage = loarMessage.deepCopy();
 
-          //发送消息已送到标志
-          LoarMessage deliverAckMessage = loarMessage.deepCopy();
+        // deliverAckMessage.content = "";
+        // deliverAckMessage.longitude = 0;
+        // deliverAckMessage.latitude = 0;
 
-          // deliverAckMessage.content = "";
-          // deliverAckMessage.longitude = 0;
-          // deliverAckMessage.latitude = 0;
-
-          deliverAckMessage.hasDeliverAck = true;
-          BlueToothConnect.instance.writeLoraMessage(deliverAckMessage);
-        }
+        deliverAckMessage.hasDeliverAck = true;
+        BlueToothConnect.instance.writeLoraMessage(deliverAckMessage);
       } else if (loarMessage.sendCount == 0) {
         //不是我的消息，直接转发
         loarMessage.sendCount++;
+        loarMessage.repeater = GlobeDataManager.instance.me?.userId ?? "";
         BlueToothConnect.instance.writeLoraMessage(loarMessage);
       }
     } on Exception {}
@@ -392,7 +390,9 @@ class ImNotifier extends ChangeNotifier {
     EMMessage message;
     if (loarMessage.msgType == MsgType.TEXT) {
       message = EMMessage.createReceiveMessage(
-          body: EMTextMessageBody(content: loarMessage.content),
+          body: EMTextMessageBody(
+              content: loarMessage.content,
+              targetLanguages: [loarMessage.repeater]),
           chatType: loarMessage.conversationType == ConversationType.CHAT
               ? ChatType.Chat
               : ChatType.GroupChat);
