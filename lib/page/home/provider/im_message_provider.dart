@@ -554,6 +554,10 @@ class ImNotifier extends ChangeNotifier {
       List<EMMessage> messageList = [];
       for (var element in cursor.data) {
         if (element != null) {
+          if (element.chatType == ChatType.Chat) {
+            //所有历史消息均为已送达
+            element.hasDeliverAck = true;
+          }
           messageList.add(element);
         }
       }
