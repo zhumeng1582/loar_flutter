@@ -17,7 +17,6 @@ import 'home/home_page.dart';
 import 'home/provider/im_message_provider.dart';
 import 'home/provider/location_provider.dart';
 import 'location/location_page.dart';
-import 'map/baidu_map_page.dart';
 import 'me/me_page.dart';
 
 final mainProvider =
@@ -85,7 +84,6 @@ class _MainPageState extends ConsumerState<MainPage> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ref.read(networkProvider).initState();
-      await EMClient.getInstance.startCallback();
 
       ref.read(locationMapProvider).location();
       ref.read(imProvider).addImListener();

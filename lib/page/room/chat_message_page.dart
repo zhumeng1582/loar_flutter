@@ -98,6 +98,7 @@ extension _UI on _RoomMessagePageState {
     return BubbleChat(
       text: body.content,
       isSender: isSender,
+      sent: isSender ? data.hasDeliverAck : false,
       color: !isSender ? Colors.grey : AppColors.bubbleBgColor,
       textStyle: TextStyle(
         fontSize: 24.sp,

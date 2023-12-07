@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/page/room/chat_message_page.dart';
 import '../../common/colors.dart';
+import '../../common/im_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/common.dart';
 import '../../widget/message_bar.dart';
@@ -28,9 +29,11 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   @override
   void initState() {
-    ref
-        .read(imProvider)
-        .getHistoryMessage(widget.conversation.id, widget.conversation.type);
+    if (GlobeDataManager.instance.isEaseMob) {
+      ref
+          .read(imProvider)
+          .getHistoryMessage(widget.conversation.id, widget.conversation.type);
+    }
 
     super.initState();
   }
@@ -85,6 +88,7 @@ extension _Action on _ChatPageState {
         message);
   }
 
+  //发送定位
   sendLocalMessage() {
     ref.read(imProvider).sendLocalMessage(
         widget.conversation.type == EMConversationType.Chat

@@ -204,13 +204,13 @@ class ImNotifier extends ChangeNotifier {
     return AssetsImages.getRandomAvatar();
   }
 
-  void addImListener() {
-    debugPrint("------>contactManager contactManager");
+  void addImListener() async {
+    await EMClient.getInstance.startCallback();
+
     EMClient.getInstance.contactManager.addEventHandler(
       "UNIQUE_HANDLER_ID",
       EMContactEventHandler(
         onContactAdded: (userId) {
-          debugPrint("------>onContactAdded userId:$userId");
           addContacts(userId);
         },
         onFriendRequestAccepted: (userId) {
@@ -237,6 +237,18 @@ class ImNotifier extends ChangeNotifier {
     EMClient.getInstance.chatManager.addEventHandler(
       "UNIQUE_HANDLER_ID",
       EMChatEventHandler(
+        onMessagesDelivered: (list) {
+          for (var message in list) {
+            messageMap[message.conversationId]?.forEach((element) {
+              //服务器消息id和本地消息id不一样，不能通过ID来判断
+              if (element.localTime == message.localTime) {
+                element.hasDeliverAck = message.hasDeliverAck;
+                notifyListeners();
+                return;
+              }
+            });
+          }
+        },
         onMessagesReceived: (messages) {
           for (var msg in messages) {
             if (msg.conversationId != null) {
@@ -502,12 +514,12 @@ class ImNotifier extends ChangeNotifier {
         type: type,
       );
       List<EMMessage> messageList = [];
-      for (int i = cursor.data.length - 1; i >= 0; i--) {
-        var data = cursor.data[i];
-        if (data != null) {
-          messageList.add(data);
+      for (var element in cursor.data) {
+        if (element != null) {
+          messageList.add(element);
         }
       }
+
       messageMap[id] = messageList;
       EMClient.getInstance.chatManager.importMessages(messageList);
       notifyListeners();
@@ -534,7 +546,6 @@ class ImNotifier extends ChangeNotifier {
   }
 
   void removeImListener() {
-    print("------->removeImListener");
     EMClient.getInstance.contactManager.removeEventHandler("UNIQUE_HANDLER_ID");
 
     EMClient.getInstance.chatManager.removeMessageEvent("UNIQUE_HANDLER_ID");

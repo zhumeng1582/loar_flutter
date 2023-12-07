@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
     show BMFMapSDK, BMF_COORD_TYPE;
 
 var appKey = "1106231108210776#demo";
+const bool inProduction = kReleaseMode;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,12 +46,6 @@ void main() async {
       runApp(ProviderScope(child: MyApp()));
     });
   }
-}
-
-Future<void> initIm() async {
-  EMOptions options =
-      EMOptions(appKey: appKey, autoLogin: false, debugModel: true);
-  await EMClient.getInstance.init(options);
 }
 
 class MyApp extends StatelessWidget {
@@ -92,6 +88,15 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+
+Future<void> initIm() async {
+  EMOptions options = EMOptions(
+      appKey: appKey,
+      autoLogin: false,
+      debugModel: true,
+      requireDeliveryAck: true);
+  await EMClient.getInstance.init(options);
 }
 
 void initMap() async {

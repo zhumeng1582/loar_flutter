@@ -43,26 +43,26 @@ class BubbleChat extends StatelessWidget {
     Icon? stateIcon;
     if (sent) {
       stateTick = true;
-      stateIcon = Icon(
+      stateIcon = const Icon(
         Icons.done,
         size: 18,
-        color: Color(0xFF97AD8E),
+        color: Color(0xFFFFFFFF),
       );
     }
     if (delivered) {
       stateTick = true;
-      stateIcon = Icon(
-        Icons.done_all,
+      stateIcon = const Icon(
+        Icons.done,
         size: 18,
-        color: Color(0xFF97AD8E),
+        color: Color(0xFFFFFFFF),
       );
     }
     if (seen) {
       stateTick = true;
-      stateIcon = Icon(
+      stateIcon = const Icon(
         Icons.done_all,
         size: 18,
-        color: Color(0xFF92DEDA),
+        color: Color(0xFFFFFFFF),
       );
     }
 
@@ -82,15 +82,15 @@ class BubbleChat extends StatelessWidget {
                 ),
             margin: isSender
                 ? stateTick
-                    ? EdgeInsets.fromLTRB(7, 7, 14, 7)
-                    : EdgeInsets.fromLTRB(7, 7, 17, 7)
-                : EdgeInsets.fromLTRB(17, 7, 7, 7),
+                    ? const EdgeInsets.fromLTRB(7, 7, 14, 7)
+                    : const EdgeInsets.fromLTRB(7, 7, 17, 7)
+                : const EdgeInsets.fromLTRB(17, 7, 7, 7),
             child: Stack(
               children: <Widget>[
                 Padding(
                   padding: stateTick
-                      ? EdgeInsets.only(right: 20)
-                      : EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                      ? const EdgeInsets.only(right: 20)
+                      : const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                   child: Text(
                     text,
                     style: textStyle,
@@ -103,7 +103,7 @@ class BubbleChat extends StatelessWidget {
                         right: 0,
                         child: stateIcon,
                       )
-                    : SizedBox(
+                    : const SizedBox(
                         width: 1,
                       ),
               ],
@@ -149,7 +149,7 @@ class SpecialChatBubble extends CustomPainter {
               topRight: Radius.circular(_radius),
             ),
             Paint()
-              ..color = this.color
+              ..color = color
               ..style = PaintingStyle.fill);
         var path = Path();
         path.moveTo(size.width - _x, 10);
