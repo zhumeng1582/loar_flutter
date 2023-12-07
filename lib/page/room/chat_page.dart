@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/page/room/chat_message_page.dart';
-import '../../common/colors.dart';
 import '../../common/im_data.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../widget/common.dart';
 import '../../widget/message_bar.dart';
-import '../home/bean/conversation_bean.dart';
 import '../home/provider/im_message_provider.dart';
 
 final roomProvider =

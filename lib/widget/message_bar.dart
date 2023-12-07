@@ -146,6 +146,8 @@ class _MessageBarState extends State<MessageBar> {
                     textCapitalization: TextCapitalization.sentences,
                     minLines: 1,
                     maxLines: 3,
+                    maxLength: 100,
+                    //最大100个字符
                     onChanged: widget.onTextChanged,
                     decoration: InputDecoration(
                       hintText: widget.messageBarHitText,
@@ -192,7 +194,9 @@ class _MessageBarState extends State<MessageBar> {
                         Icons.place,
                         color: Colors.black,
                         size: 24,
-                      ).padding(horizontal: 15, vertical: 5).onTap(widget.sendLocalMessage),
+                      )
+                        .padding(horizontal: 15, vertical: 5)
+                        .onTap(widget.sendLocalMessage),
               ],
             ),
           ),

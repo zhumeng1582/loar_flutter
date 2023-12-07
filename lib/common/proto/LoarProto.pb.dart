@@ -28,6 +28,7 @@ class LoarMessage extends $pb.GeneratedMessage {
     MsgType? msgType,
     $core.double? latitude,
     $core.double? longitude,
+    $core.bool? hasDeliverAck,
   }) {
     final $result = create();
     if (conversationId != null) {
@@ -57,6 +58,9 @@ class LoarMessage extends $pb.GeneratedMessage {
     if (longitude != null) {
       $result.longitude = longitude;
     }
+    if (hasDeliverAck != null) {
+      $result.hasDeliverAck = hasDeliverAck;
+    }
     return $result;
   }
 
@@ -82,8 +86,8 @@ class LoarMessage extends $pb.GeneratedMessage {
         valueOf: ConversationType.valueOf,
         enumValues: ConversationType.values)
     ..aOS(3, _omitFieldNames ? '' : 'sender')
-    ..aOS(4, _omitFieldNames ? '' : 'content')
-    ..aOS(5, _omitFieldNames ? '' : 'msgId', protoName: 'msgId')
+    ..aOS(4, _omitFieldNames ? '' : 'content')..aOS(
+        5, _omitFieldNames ? '' : 'msgId', protoName: 'msgId')
     ..a<$core.int>(6, _omitFieldNames ? '' : 'sendCount', $pb.PbFieldType.O3,
         protoName: 'sendCount')
     ..e<MsgType>(7, _omitFieldNames ? '' : 'msgType', $pb.PbFieldType.OE,
@@ -91,8 +95,11 @@ class LoarMessage extends $pb.GeneratedMessage {
         defaultOrMaker: MsgType.TEXT,
         valueOf: MsgType.valueOf,
         enumValues: MsgType.values)
-    ..a<$core.double>(8, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)
-    ..a<$core.double>(9, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
+    ..a<$core.double>(
+        8, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)..a<
+        $core.double>(9, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
+    ..aOB(10, _omitFieldNames ? '' : 'hasDeliverAck',
+        protoName: 'hasDeliverAck')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('Using this can add significant overhead to your binary. '
@@ -131,7 +138,6 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.bool hasConversationId() => $_has(0);
-
   @$pb.TagNumber(1)
   void clearConversationId() => clearField(1);
 
@@ -192,20 +198,43 @@ class LoarMessage extends $pb.GeneratedMessage {
   @$pb.TagNumber(8)
   $core.double get latitude => $_getN(7);
   @$pb.TagNumber(8)
-  set latitude($core.double v) { $_setDouble(7, v); }
+  set latitude($core.double v) {
+    $_setDouble(7, v);
+  }
+
   @$pb.TagNumber(8)
   $core.bool hasLatitude() => $_has(7);
+
   @$pb.TagNumber(8)
   void clearLatitude() => clearField(8);
 
   @$pb.TagNumber(9)
   $core.double get longitude => $_getN(8);
+
   @$pb.TagNumber(9)
-  set longitude($core.double v) { $_setDouble(8, v); }
+  set longitude($core.double v) {
+    $_setDouble(8, v);
+  }
+
   @$pb.TagNumber(9)
   $core.bool hasLongitude() => $_has(8);
+
   @$pb.TagNumber(9)
   void clearLongitude() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.bool get hasDeliverAck => $_getBF(9);
+
+  @$pb.TagNumber(10)
+  set hasDeliverAck($core.bool v) {
+    $_setBool(9, v);
+  }
+
+  @$pb.TagNumber(10)
+  $core.bool hasHasDeliverAck() => $_has(9);
+
+  @$pb.TagNumber(10)
+  void clearHasDeliverAck() => clearField(10);
 }
 
 

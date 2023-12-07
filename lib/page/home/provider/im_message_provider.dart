@@ -10,6 +10,7 @@ import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/ex/ex_num.dart';
 import 'package:loar_flutter/common/util/im_cache.dart';
 import 'package:loar_flutter/common/util/storage.dart';
+import 'package:protobuf/protobuf.dart';
 
 import '../../../common/blue_tooth.dart';
 import '../../../common/constant.dart';
@@ -345,47 +346,79 @@ class ImNotifier extends ChangeNotifier {
       debugPrint("getRemoteMessage-------->");
       LoarMessage loarMessage = LoarMessage.fromBuffer(message);
       debugPrint("getRemoteMessage-------->$loarMessage");
-      if (loarMessage.conversationType == ConversationType.BROARDCAST) {
+      if (loarMessage.hasDeliverAck) {
+        //给消息标记已读
+        paraDeliverAckMessage(loarMessage);
+      } else if (loarMessage.conversationType == ConversationType.BROARDCAST) {
         allOnlineUsers[loarMessage.sender] =
             OnlineUser(loarMessage.sender, loarMessage);
       } else if (loarMessage.conversationId ==
-              GlobeDataManager.instance.me?.userId ||
+          GlobeDataManager.instance.me?.userId ||
           groupMap.containsKey(loarMessage.conversationId)) {
-        EMMessage message;
-        if (loarMessage.msgType == MsgType.TEXT) {
-          message = EMMessage.createReceiveMessage(
-              body: EMTextMessageBody(content: loarMessage.content),
-              chatType: loarMessage.conversationType == ConversationType.CHAT
-                  ? ChatType.Chat
-                  : ChatType.GroupChat);
+        if (loarMessage.hasDeliverAck) {
+          paraDeliverAckMessage(loarMessage);
         } else {
-          message = EMMessage.createReceiveMessage(
-              body: EMLocationMessageBody(
-                  latitude: loarMessage.latitude,
-                  longitude: loarMessage.longitude),
-              chatType: loarMessage.conversationType == ConversationType.CHAT
-                  ? ChatType.Chat
-                  : ChatType.GroupChat);
-        }
+          paraLoarMessage(loarMessage);
 
-        message.from = loarMessage.sender;
-        message.to = loarMessage.conversationId;
-        var conversationId = "";
+          //发送消息已送到标志
+          LoarMessage deliverAckMessage = loarMessage.deepCopy();
 
-        if (loarMessage.conversationType == ConversationType.CHAT) {
-          conversationId = loarMessage.sender;
-        } else {
-          conversationId = loarMessage.conversationId;
+          // deliverAckMessage.content = "";
+          // deliverAckMessage.longitude = 0;
+          // deliverAckMessage.latitude = 0;
+
+          deliverAckMessage.hasDeliverAck = true;
+          BlueToothConnect.instance.writeLoraMessage(deliverAckMessage);
         }
-        updateConversation(conversationId, message.chatType);
-        addMessageToMap(conversationId, message);
-        notifyListeners();
       } else if (loarMessage.sendCount == 0) {
         //不是我的消息，直接转发
         loarMessage.sendCount++;
         BlueToothConnect.instance.writeLoraMessage(loarMessage);
       }
     } on Exception {}
+  }
+
+  void paraDeliverAckMessage(LoarMessage loarMessage) {
+    messageMap[loarMessage.conversationId]?.forEach((element) {
+      if (element.msgId == element.msgId) {
+        element.hasDeliverAck = true;
+        notifyListeners();
+        return;
+      }
+    });
+  }
+
+  void paraLoarMessage(LoarMessage loarMessage) {
+    EMMessage message;
+    if (loarMessage.msgType == MsgType.TEXT) {
+      message = EMMessage.createReceiveMessage(
+          body: EMTextMessageBody(content: loarMessage.content),
+          chatType: loarMessage.conversationType == ConversationType.CHAT
+              ? ChatType.Chat
+              : ChatType.GroupChat);
+    } else {
+      message = EMMessage.createReceiveMessage(
+          body: EMLocationMessageBody(
+              latitude: loarMessage.latitude, longitude: loarMessage.longitude),
+          chatType: loarMessage.conversationType == ConversationType.CHAT
+              ? ChatType.Chat
+              : ChatType.GroupChat);
+    }
+
+    message.from = loarMessage.sender;
+    message.to = loarMessage.conversationId;
+    var conversationId = "";
+
+    if (loarMessage.conversationType == ConversationType.CHAT) {
+      conversationId = loarMessage.sender;
+    } else {
+      conversationId = loarMessage.conversationId;
+    }
+
+    updateConversation(conversationId, message.chatType);
+    addMessageToMap(conversationId, message);
+
+    notifyListeners();
   }
 
   error(value) {
@@ -463,6 +496,7 @@ class ImNotifier extends ChangeNotifier {
       LoarMessage message = LoarMessage(
         msgId: msg.msgId,
         msgType: MsgType.TEXT,
+        hasDeliverAck: false,
         sender: GlobeDataManager.instance.me?.userId,
         conversationId: targetId,
         conversationType: chatType == ChatType.Chat
