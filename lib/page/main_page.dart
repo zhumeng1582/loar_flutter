@@ -59,6 +59,7 @@ class _MainPageState extends ConsumerState<MainPage> {
       ref.read(locationMapProvider).location();
       ref.read(imProvider).addImListener();
       ref.read(satelliteNotifier).getLocation();
+      ref.read(satelliteNotifier).init();
       ref.read(imProvider).init();
     });
 

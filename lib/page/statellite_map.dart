@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loar_flutter/common/ex/ex_string.dart';
 import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/images.dart';
@@ -67,28 +68,31 @@ class SatelliteNotifier extends ChangeNotifier {
     if (!satelliteType.contains(type)) {
       return;
     }
+    if (gbgSvItems.contains("")) {
+      return;
+    }
+    print("statellite--->${gbgSvData}");
 
     GbgSv gbgSv = svgData[type] ?? GbgSv(0, []);
+    //新数据来了，清除之前的数据
     if (gbgSvItems[2] == "1") {
       gbgSv.satellites.clear();
     }
 
-    GbgSv gbgSv1 = GbgSv(
-      int.parse(gbgSvItems[3]),
-      List<GbgSvSatellite>.generate(((gbgSvItems.length - 5) / 4) as int,
-          (index) {
-        return GbgSvSatellite(
-          type,
-          int.parse(gbgSvItems[4 + index * 4]),
-          int.parse(gbgSvItems[5 + index * 4]),
-          int.parse(gbgSvItems[6 + index * 4]),
-          int.parse(gbgSvItems[7 + index * 4]),
-        );
-      }),
-    );
-    gbgSv.total = gbgSv1.total;
-    gbgSv.satellites.addAll(gbgSv1.satellites);
+    var list = List<GbgSvSatellite>.generate(
+        ((gbgSvItems.length - 5) / 4).toInt(), (index) {
+      return GbgSvSatellite(
+        type,
+        gbgSvItems[4 + index * 4].toInt,
+        gbgSvItems[5 + index * 4].toInt,
+        gbgSvItems[6 + index * 4].toInt,
+        gbgSvItems[7 + index * 4].toInt,
+      );
+    });
+    gbgSv.total = int.parse(gbgSvItems[3]);
+    gbgSv.satellites.addAll(list);
     svgData[type] = gbgSv;
+    notifyListeners();
   }
 
   getLocation() {
