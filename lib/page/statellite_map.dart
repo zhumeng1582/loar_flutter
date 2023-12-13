@@ -8,62 +8,111 @@ import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/images.dart';
 
+import '../common/blue_tooth.dart';
+import '../common/im_data.dart';
+import '../common/util/coord_convert.dart';
 import '../widget/bar_chart_painter.dart';
 import '../widget/satellite_painter.dart';
 import '../widget/common.dart';
-import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
+import 'dart:ui' as UI;
+
+Map<String, String> satelliteFlags = {
+  "GPGSV": AssetsImages.flagUS,
+  "GLGSV": AssetsImages.flagRUS,
+  "GAGSV": AssetsImages.flagOM,
+  "GQGSV": AssetsImages.flagJP,
+  "GBGSV": AssetsImages.flagCN
+};
+Map<String, UI.Image> satelliteImage = {};
+List<String> satelliteType = ["GPGSV", "GBGSV", "GLGSV", "GAGSV", "GQGSV"];
+Map<String, String> satelliteName = {
+  "GPGSV": "GPS",
+  "GLGSV": "GLONASS",
+  "GAGSV": "Galileo",
+  "GQGSV": "QZSS",
+  "GBGSV": "Beidou"
+};
 
 final satelliteNotifier =
     ChangeNotifierProvider<SatelliteNotifier>((ref) => SatelliteNotifier());
 
+class GbgSv {
+  int total;
+  List<GbgSvSatellite> satellites;
+
+  GbgSv(this.total, this.satellites);
+}
+
 class SatelliteNotifier extends ChangeNotifier {
-  List<String> satelliteType = ["GPS", "GLONASS", "北斗", "其他"];
+  var svgData = <String, GbgSv>{};
 
-  Map<String, String> satelliteFlags = {
-    "GPS": AssetsImages.flagUS,
-    "GLONASS": AssetsImages.flagRUS,
-    "北斗": AssetsImages.flagCN,
-    "其他": AssetsImages.flagELse
-  };
-  List<SatelliteData> data = [];
-
-  random(min, max) {
-    // + min  表示生成一个最小数 min 到最大数之间的是数字
-    var num = Random().nextDouble() * (max - min) + min;
-    return num;
-  }
-
-  Future<ui.Image> loadAssetImage(String path) async {
-    // 加载资源文件
-    final data = await rootBundle.load(path);
-    // 把资源文件转换成Uint8List类型
-    final bytes = data.buffer.asUint8List();
-    // 解析Uint8List类型的数据图片
-    final completer = Completer<ui.Image>();
-
-    ui.decodeImageFromList(bytes, (image) {
-      completer.complete(image);
+  List<GbgSvSatellite> getAllStateList() {
+    List<GbgSvSatellite> bars = [];
+    svgData.values.forEach((element) {
+      bars.addAll(element.satellites);
     });
-    return completer.future;
+    return bars;
   }
 
-  randomInt(max) {
-    // + min  表示生成一个最小数 min 到最大数之间的是数字
-    var num = Random().nextInt(max);
-    return num;
+  init() async {
+    satelliteFlags.forEach((key, value) async {
+      satelliteImage[key] = await SatelliteData.loadAssetImage(value);
+    });
   }
 
-  initData() async {
-    data.clear();
-    for (int i = 0; i < 10; i++) {
-      int type = randomInt(4);
-      String name = satelliteType[type];
-      ui.Image image = await loadAssetImage(satelliteFlags[name]!);
-      data.add(SatelliteData(
-          name, i, random(0, 100), image, random(0, 360), random(0, 90)));
+  void para(String gbgSvData) {
+    List<String> gbgSvItems = gbgSvData.split(',');
+    var type = gbgSvItems[0].replaceAll("\$", "");
+    if (!satelliteType.contains(type)) {
+      return;
     }
-    notifyListeners();
+
+    GbgSv gbgSv = svgData[type] ?? GbgSv(0, []);
+    if (gbgSvItems[2] == "1") {
+      gbgSv.satellites.clear();
+    }
+
+    GbgSv gbgSv1 = GbgSv(
+      int.parse(gbgSvItems[3]),
+      List<GbgSvSatellite>.generate(((gbgSvItems.length - 5) / 4) as int,
+          (index) {
+        return GbgSvSatellite(
+          type,
+          int.parse(gbgSvItems[4 + index * 4]),
+          int.parse(gbgSvItems[5 + index * 4]),
+          int.parse(gbgSvItems[6 + index * 4]),
+          int.parse(gbgSvItems[7 + index * 4]),
+        );
+      }),
+    );
+    gbgSv.total = gbgSv1.total;
+    gbgSv.satellites.addAll(gbgSv1.satellites);
+    svgData[type] = gbgSv;
+  }
+
+  getLocation() {
+    BlueToothConnect.instance
+        .listenGps((message) => gpsParser(String.fromCharCodes(message)));
+  }
+
+  gpsParser(String value) {
+    if (value.contains("GNRMC")) {
+      var split = value.split(",");
+      if (split.length < 5 || split[3].isEmpty || split[5].isEmpty) {
+        return;
+      }
+
+      var latitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[3]);
+      var longitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
+
+      var bd09Coordinate =
+          CoordConvert.gcj02tobd09(Coords(latitude, longitude));
+      GlobeDataManager.instance
+          .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
+    } else {
+      para(value);
+    }
   }
 }
 
@@ -77,18 +126,13 @@ class SatelliteMapPage extends ConsumerStatefulWidget {
 class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.watch(satelliteNotifier).initData();
-    });
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var data = ref.watch(satelliteNotifier).data;
-    var bars = ref.watch(satelliteNotifier).data.map((e) => e.value).toList();
-    var barsWidth = bars.length * 55.w;
+    List<GbgSvSatellite> data = ref.watch(satelliteNotifier).getAllStateList();
+    var barsWidth = data.length * 55.w;
 
     return Scaffold(
       appBar: getAppBar(context, "卫星星图"),
@@ -103,7 +147,7 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: CustomPaint(
-                  painter: BarChartPainter(bars, 50.w, 5.w),
+                  painter: BarChartPainter(data, 50.w, 5.w),
                   size: Size(max(barsWidth, 690.w), 240.h),
                 ),
               ),
@@ -111,14 +155,11 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
           ).height(240.h).paddingTop(40.h),
           Row(
             children: [
-              satelliteStatic(ref.watch(satelliteNotifier).satelliteType[0])
-                  .expanded(),
-              satelliteStatic(ref.watch(satelliteNotifier).satelliteType[1])
-                  .expanded(),
-              satelliteStatic(ref.watch(satelliteNotifier).satelliteType[2])
-                  .expanded(),
-              satelliteStatic(ref.watch(satelliteNotifier).satelliteType[3])
-                  .expanded(),
+              satelliteStatic(satelliteType[0]).expanded(),
+              satelliteStatic(satelliteType[1]).expanded(),
+              satelliteStatic(satelliteType[2]).expanded(),
+              satelliteStatic(satelliteType[3]).expanded(),
+              satelliteStatic(satelliteType[4]).expanded(),
             ],
           ).paddingTop(40.h)
         ],
@@ -129,18 +170,15 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
 
 extension _UI on _SatelliteMapPage {
   Widget satelliteStatic(String name) {
-    var data = ref
-        .watch(satelliteNotifier)
-        .data
-        .where((element) => element.name == name)
-        .toList();
+    var data = ref.watch(satelliteNotifier).svgData[name];
+    var showName = satelliteName[name] ?? "";
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ImageWidget.asset(ref.read(satelliteNotifier).satelliteFlags[name]!,
+        ImageWidget.asset(satelliteFlags[name]!,
             width: 40.w, height: 40.h, radius: 60.r),
-        Text(name).paddingVertical(30.h),
-        Text("${data.length}"),
+        Text(showName).paddingVertical(30.h),
+        Text("${data?.satellites.length ?? "0"}"),
       ],
     );
   }

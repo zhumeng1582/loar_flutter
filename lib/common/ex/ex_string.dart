@@ -16,14 +16,31 @@ extension ExString on String {
     var date = DateTime.fromMillisecondsSinceEpoch(int.parse(this));
     return DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
   }
+
   String get toTimeHHmm {
     var date = DateTime.fromMillisecondsSinceEpoch(int.parse(this));
     return DateFormat('HH:mm').format(date);
   }
-  String get formatChatTime{
+
+  String get formatChatTime {
     return int.parse(this).formatChatTime;
   }
-  bool get isGroup{
+
+  bool get isGroup {
     return !startsWith("user");
+  }
+
+  int get toInt {
+    if (isEmpty) {
+      return 0;
+    }
+    return int.parse(this);
+  }
+
+  double get toDouble {
+    if (isEmpty) {
+      return 0;
+    }
+    return double.parse(this);
   }
 }

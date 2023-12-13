@@ -1,22 +1,48 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:ui' as UI;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../page/statellite_map.dart';
+
+class GbgSvSatellite {
+  String name;
+
+  //编号
+  int prn;
+
+  //仰角
+  int elevation;
+
+  //方位角
+  int azimuth;
+
+  //分贝
+  int snr;
+
+  GbgSvSatellite(this.name, this.prn, this.elevation, this.azimuth, this.snr);
+}
 
 class SatelliteData {
-  final String name;
-  final int count;
-  final double value;
-  final UI.Image flag;
-  final double azimuth;
-  final double elevation;
+  static Future<UI.Image> loadAssetImage(String path) async {
+    // 加载资源文件
+    final data = await rootBundle.load(path);
+    // 把资源文件转换成Uint8List类型
+    final bytes = data.buffer.asUint8List();
+    // 解析Uint8List类型的数据图片
+    final completer = Completer<UI.Image>();
 
-  SatelliteData(this.name, this.count, this.value, this.flag, this.azimuth,
-      this.elevation);
+    UI.decodeImageFromList(bytes, (image) {
+      completer.complete(image);
+    });
+    return completer.future;
+  }
 }
 
 class SatellitePainter extends CustomPainter {
-  final List<SatelliteData> data;
+  final List<GbgSvSatellite> data;
 
   SatellitePainter(this.data);
 
@@ -103,12 +129,13 @@ class SatellitePainter extends CustomPainter {
       final dx = cos(angle) * len;
       final dy = sin(angle) * len;
       final satellitePosition = center.translate(dx, dy);
-      Rect src = Rect.fromLTWH(0, 0, satellite.flag.width.toDouble(),
-          satellite.flag.height.toDouble());
+      var flag = satelliteImage[satellite.name]!;
+      Rect src =
+          Rect.fromLTWH(0, 0, flag.width.toDouble(), flag.height.toDouble());
 
       Rect dst = Rect.fromLTWH(
           satellitePosition.dx - 5, satellitePosition.dy - 5, 10, 10);
-      canvas.drawImageRect(satellite.flag, src, dst, Paint());
+      canvas.drawImageRect(flag, src, dst, Paint());
 
       // 在卫星位置绘制一个小圆代表卫星
       // canvas.drawImage(satellite.flag, satellitePosition, Paint());
@@ -116,7 +143,7 @@ class SatellitePainter extends CustomPainter {
       // 在卫星位置写上卫星名
       final textPainter = TextPainter(
         text: TextSpan(
-            text: "${satellite.count}",
+            text: "${satellite.prn}",
             style: const TextStyle(color: Colors.black)),
         textDirection: TextDirection.ltr,
       );

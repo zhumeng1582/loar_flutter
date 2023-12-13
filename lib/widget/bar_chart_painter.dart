@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:loar_flutter/widget/satellite_painter.dart';
 
 class BarChartPainter extends CustomPainter {
-  final List<double> datas;
+  final List<GbgSvSatellite> datas;
   final double barWidth;
   final double gapWidth;
   static const double textFontSize = 9;
@@ -33,7 +34,7 @@ class BarChartPainter extends CustomPainter {
 
     for (int i = 0; i < datas.length; i++) {
       double left = i * (barWidth + gapWidth);
-      double top = size.height - (datas[i] / 100) * barHeight;
+      double top = size.height - (datas[i].snr / 100) * barHeight;
       double right = left + barWidth;
       double bottom = size.height;
       canvas.drawRect(Rect.fromLTRB(left, top, right, bottom), paint);
@@ -44,7 +45,7 @@ class BarChartPainter extends CustomPainter {
         fontSize: textFontSize,
       );
       final textSpan = TextSpan(
-        text: datas[i].toStringAsFixed(2),
+        text: datas[i].snr.toStringAsFixed(2),
         style: textStyle,
       );
       final textPainter = TextPainter(

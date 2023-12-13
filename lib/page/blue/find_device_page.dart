@@ -26,7 +26,7 @@ class FindDevicesNotifier extends ChangeNotifier {
 
     FlutterBluePlus.scanResults.listen((event) {
       var loarList = event
-          .where((element) => isLoar(element.advertisementData.serviceUuids))
+          .where((element) => element.advertisementData.connectable)
           .toList();
       if (loarList.isNotEmpty) {
         scanResults = loarList;
@@ -35,16 +35,6 @@ class FindDevicesNotifier extends ChangeNotifier {
       }
       notifyListeners();
     });
-  }
-
-  bool isLoar(List<Guid> serviceUuids) {
-    // for (var value in serviceUuids) {
-    //   if (value.str.contains("00805F9B34FB")) {
-    //     return true;
-    //   }
-    // }
-    return true;
-    // return false;
   }
 
   void scanDevice() {
@@ -85,7 +75,7 @@ class _FindDevicesScreenState extends ConsumerState<FindDevicesScreen> {
     return ScaffoldMessenger(
       key: snackBarKeyB,
       child: Scaffold(
-        appBar: getAppBar(context, "查找设备"),
+        appBar: getAppBar(context, "连接设备"),
         body: RefreshIndicator(
           onRefresh: () {
             ref.watch(findDevicesProvider).scanDevice();

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/page/home/provider/network_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:loar_flutter/page/statellite_map.dart';
 
 import '../common/blue_tooth.dart';
 import '../common/colors.dart';
 import '../common/util/coord_convert.dart';
 import '../common/util/images.dart';
+import '../widget/satellite_painter.dart';
 import 'contacts/contacts_page.dart';
 import 'forum/forum_page.dart';
 import 'home/home_page.dart';
@@ -42,34 +41,6 @@ class MainNotifier extends ChangeNotifier {
     return tabPages[selectedIndex];
   }
 
-  getLocation() {
-    BlueToothConnect.instance
-        .listenGps((message) => gpsParser(String.fromCharCodes(message)));
-  }
-
-  String text = "";
-
-  gpsParser(String value) {
-    if (value.startsWith("\$")) {
-      text = "";
-    }
-    text += value;
-    if (value.contains("*") && text.contains("GNRMC")) {
-      debugPrint("-------->value = " + value);
-      var split = value.split(",");
-      if (split.length < 5 || split[3].isEmpty || split[5].isEmpty) {
-        return;
-      }
-
-      var latitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[3]);
-      var longitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
-
-      var bd09Coordinate =
-          CoordConvert.gcj02tobd09(Coords(latitude, longitude));
-      GlobeDataManager.instance
-          .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
-    }
-  }
 }
 
 class MainPage extends ConsumerStatefulWidget {
@@ -87,7 +58,7 @@ class _MainPageState extends ConsumerState<MainPage> {
 
       ref.read(locationMapProvider).location();
       ref.read(imProvider).addImListener();
-      ref.read(mainProvider).getLocation();
+      ref.read(satelliteNotifier).getLocation();
       ref.read(imProvider).init();
     });
 

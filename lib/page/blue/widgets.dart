@@ -87,12 +87,12 @@ class ScanResultTile extends StatelessWidget {
       title: _buildTitle(context),
       leading: Text(result.rssi.toString()),
       trailing: ElevatedButton(
-        child: const Text('CONNECT'),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
         ),
         onPressed: (result.advertisementData.connectable) ? onTap : null,
+        child: const Text('连接'),
       ),
       children: <Widget>[
         _buildAdvRow(context, 'Complete Local Name', result.advertisementData.localName),
