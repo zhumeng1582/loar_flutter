@@ -70,6 +70,37 @@ extension ExWidget on Widget {
         child: this,
       );
 
+  /// 圆角
+  Widget backgroundBorderRadius({
+    Key? key,
+    Color? color,
+    Gradient? gradient,
+    double? all,
+    double? topLeft,
+    double? topRight,
+    double? bottomLeft,
+    double? bottomRight,
+  }) {
+    if (gradient == null) {
+      color = color ?? Colors.transparent;
+    }
+    BoxDecoration decoration = BoxDecoration(
+      color: color,
+      gradient: gradient,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(topLeft ?? all ?? 0.0),
+        topRight: Radius.circular(topRight ?? all ?? 0.0),
+        bottomLeft: Radius.circular(bottomLeft ?? all ?? 0.0),
+        bottomRight: Radius.circular(bottomRight ?? all ?? 0.0),
+      ),
+    );
+    return Container(
+      key: key,
+      decoration: decoration,
+      child: this,
+    );
+  }
+
   /// 边框
   Widget border({
     Key? key,

@@ -52,9 +52,9 @@ class _MePageState extends ConsumerState<MePage> {
             _getMeItem("蜂蜂号", "个人ID", AssetsImages.iconID).onTap(() {
               Navigator.pushNamed(context, RouteNames.meDetailPage);
             }),
-            _getMeItem("蜂讯", "个人信息", AssetsImages.iconGeRen).onTap(() {
-              Navigator.pushNamed(context, RouteNames.meInfoPage);
-            }),
+            // _getMeItem("蜂讯", "个人信息", AssetsImages.iconGeRen).onTap(() {
+            //   Navigator.pushNamed(context, RouteNames.meInfoPage);
+            // }),
             _getMeItem("蜂圈", "朋友圈", AssetsImages.iconPengYouQuan).onTap(() {
               Navigator.pushNamed(context, RouteNames.friendPage);
             }),

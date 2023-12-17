@@ -457,15 +457,16 @@ class ImNotifier extends ChangeNotifier {
             .acceptInvitation(data.inviter!);
         contacts = await EMClient.getInstance.contactManager
             .getAllContactsFromServer();
-        updateConversation(data.groupId!, ChatType.ChatRoom);
+        updateConversation(data.inviter!, ChatType.ChatRoom);
       } else if (data.type == NotifyType.joinPublicGroupApproval) {
         await EMClient.getInstance.groupManager
             .acceptJoinApplication(data.groupId!, data.applicant!);
       }
-    } on EMError catch (e) {}
-
-    notifyMessageList.remove(data);
-    notifyListeners();
+      notifyMessageList.remove(data);
+      notifyListeners();
+    } on EMError catch (e) {
+      error(e);
+    }
   }
 
   rejectInvitation(NotifyBean data) async {

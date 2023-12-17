@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loar_flutter/common/im_data.dart';
+import 'package:loar_flutter/common/colors.dart';
 
 import '../../common/blue_tooth.dart';
 import '../../common/routers/RouteNames.dart';
@@ -28,13 +28,38 @@ class FindDevicesNotifier extends ChangeNotifier {
       var loarList = event
           .where((element) => element.advertisementData.connectable)
           .toList();
+
       if (loarList.isNotEmpty) {
         scanResults = loarList;
       } else {
         scanResults = event;
       }
+      if (BlueToothConnect.instance.isConnect()) {
+        scanResults.insert(0, BlueToothConnect.instance.device!);
+      }
+
       notifyListeners();
     });
+  }
+
+  failMessage(Object error) {
+    final snackBar = snackBarFail(prettyException("Connect Error:", error));
+    snackBarKeyB.currentState?.removeCurrentSnackBar();
+    snackBarKeyB.currentState?.showSnackBar(snackBar);
+  }
+
+  goDeviceDetail(ScanResult value) async {
+    if (value.device.isConnected) {
+      await BlueToothConnect.instance.disconnect();
+      notifyListeners();
+    } else {
+      BlueToothConnect.instance.connect(
+          value,
+          () => {
+                stopScan(),
+              },
+          (e) => failMessage(e));
+    }
   }
 
   void scanDevice() {
@@ -99,37 +124,27 @@ class _FindDevicesScreenState extends ConsumerState<FindDevicesScreen> {
   }
 }
 
-extension _Action on _FindDevicesScreenState {
-  goDeviceDetail(ScanResult value) {
-    BlueToothConnect.instance.connect(
-        value,
-        () => {
-              ref.read(findDevicesProvider).stopScan(),
-              Navigator.popAndPushNamed(context, RouteNames.main)
-            },
-        (e) => fail(e));
-  }
-
-  fail(Object error) {
-    final snackBar = snackBarFail(prettyException("Connect Error:", error));
-    snackBarKeyB.currentState?.removeCurrentSnackBar();
-    snackBarKeyB.currentState?.showSnackBar(snackBar);
-  }
-}
+extension _Action on _FindDevicesScreenState {}
 
 extension _UI on _FindDevicesScreenState {
   Widget getFloatingActionButton() {
     if (ref.watch(findDevicesProvider).isScanning) {
       return FloatingActionButton(
-        onPressed: () async {
-          ref.read(findDevicesProvider).stopScan();
-        },
-        backgroundColor: Colors.red,
-        child: const Icon(Icons.stop),
-      );
+          backgroundColor: AppColors.commonPrimary,
+          child: Text(
+            "停止",
+            style: TextStyle(color: AppColors.white),
+          ),
+          onPressed: () {
+            ref.read(findDevicesProvider).stopScan();
+          });
     } else {
       return FloatingActionButton(
-          child: const Text("扫描"),
+          backgroundColor: AppColors.commonPrimary,
+          child: Text(
+            "扫描",
+            style: TextStyle(color: AppColors.white),
+          ),
           onPressed: () {
             ref.read(findDevicesProvider).scanDevice();
           });
@@ -141,7 +156,7 @@ extension _UI on _FindDevicesScreenState {
     for (var value in ref.watch(findDevicesProvider).scanResults) {
       Widget device = ScanResultTile(
         result: value,
-        onTap: () => goDeviceDetail(value),
+        onTap: () => ref.read(findDevicesProvider).goDeviceDetail(value),
       );
       scanList.add(device);
     }

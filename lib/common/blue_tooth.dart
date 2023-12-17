@@ -17,7 +17,7 @@ class BlueToothConnect {
 
   static BlueToothConnect get instance => _getInstance();
   static BlueToothConnect? _instance;
-  BluetoothDevice? _device;
+  ScanResult? device;
   BluetoothCharacteristic? gpsChar;
   BluetoothCharacteristic? loarChar;
   BluetoothCharacteristic? setChar;
@@ -29,11 +29,16 @@ class BlueToothConnect {
   }
 
   bool isConnect() {
-    return BlueToothConnect.instance._device?.isConnected == true;
+    return BlueToothConnect.instance.device?.device.isConnected == true;
   }
 
   disconnect() async {
-    await BlueToothConnect.instance._device?.disconnect();
+    await BlueToothConnect.instance.device?.device.disconnect();
+  }
+
+  bool isConnectDevice(ScanResult value) {
+    return BlueToothConnect.instance.device?.device.remoteId ==
+        value.device.remoteId;
   }
 
   connect(ScanResult value, Function success, Function fail) async {
@@ -42,26 +47,26 @@ class BlueToothConnect {
         .catchError((e) {
       fail(e);
     }).then((v) {
-      _device = value.device;
+      device = value;
     });
 
-    var servicesList = await _device?.discoverServices();
+    var servicesList = await device?.device.discoverServices();
     var service = servicesList?.firstWhere((element) =>
         element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
     loarChar = service?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
 
-    var serviceGps = _device?.servicesList.firstWhere((element) =>
+    var serviceGps = device?.device.servicesList.firstWhere((element) =>
         element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
     gpsChar = serviceGps?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
 
-    var serviceSet = _device?.servicesList.firstWhere((element) =>
+    var serviceSet = device?.device.servicesList.firstWhere((element) =>
         element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
     setChar = serviceSet?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
-    _device?.connectionState.listen((BluetoothConnectionState state) {
+    device?.device.connectionState.listen((BluetoothConnectionState state) {
       debugPrint("connectionState.listen----->" + state.name);
       if (state == BluetoothConnectionState.connected) {
         _enableCommunication();
