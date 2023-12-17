@@ -38,7 +38,7 @@ class NotifyPage extends ConsumerStatefulWidget {
 class _NotifyPageState extends ConsumerState<NotifyPage> {
   @override
   void initState() {
-    ref.read(notifyProvider).fetchUserInfoById(widget.data.inviter);
+    ref.read(notifyProvider).fetchUserInfoById(widget.data.inviter!);
     super.initState();
   }
 

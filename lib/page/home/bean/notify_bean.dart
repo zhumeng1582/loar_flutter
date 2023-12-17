@@ -1,6 +1,7 @@
 enum NotifyType {
   friendInvite,
   groupInvite,
+  joinPublicGroupApproval,
 }
 
 class CommunicationStatue {
@@ -11,12 +12,13 @@ class CommunicationStatue {
 
 class NotifyBean {
   NotifyType type;
-  String inviter;
+  String? inviter;
+  String? applicant;
   String? groupId;
   String? name;
   String? reason;
   String time;
 
-  NotifyBean(this.type, this.inviter, this.time,
-      {this.groupId, this.name, this.reason});
+  NotifyBean(this.type, this.time,
+      {this.inviter, this.applicant, this.groupId, this.name, this.reason});
 }

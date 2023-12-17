@@ -38,7 +38,7 @@ class RoomDetailNotifier extends ChangeNotifier {
 
   Future<EMGroup> _createGroup() async {
     EMGroupOptions groupOptions = EMGroupOptions(
-      style: EMGroupStyle.PublicJoinNeedApproval,
+      style: EMGroupStyle.PrivateMemberCanInvite,
       inviteNeedConfirm: true,
       maxCount: 10,
     );

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/material.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/loading.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/proto/qr_code_data.dart';
@@ -17,6 +18,8 @@ final homeProvider =
 
 class HomeNotifier extends ChangeNotifier {
   Future<QrCodeData?> scan() async {
+    await Permission.camera.request();
+
     var isGranted = await Permission.camera.isGranted;
     if (isGranted) {
       var options = const ScanOptions(
@@ -29,12 +32,12 @@ class HomeNotifier extends ChangeNotifier {
             'flash_on': '开闪光灯',
             'flash_off': '关闪光灯'
           } //标题栏添加闪光灯按钮、退出按钮
-          );
+      );
       var result = await BarcodeScanner.scan(options: options);
       var qrCodeData = jsonDecode(result.rawContent);
       return QrCodeData.fromJson(qrCodeData);
     } else {
-      Permission.camera.request();
+      Loading.error("请在手机设置里打开摄像头权限");
     }
   }
 }

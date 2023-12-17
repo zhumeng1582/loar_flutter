@@ -45,9 +45,7 @@ class _RoomDetailPageState extends ConsumerState<ChatAddDetailPage> {
       appBar: getAppBar(context, "聊天信息"),
       body: SafeArea(
         child: Column(
-          children: [
-            ...getGroup(),
-          ],
+          children: getGroup(),
         ).paddingHorizontal(30.h),
       ),
     );
@@ -103,9 +101,9 @@ extension _UI on _RoomDetailPageState {
     list.add(_getMeItem("群说明", group.description,
         group.owner == GlobeDataManager.instance.me?.userId));
 
-    list.add(CommitButton(
-            buttonState: ButtonState.normal, text: "加入群聊", tapAction: joinGroup)
-        .paddingTop(60.h));
+    // list.add(CommitButton(
+    //         buttonState: ButtonState.normal, text: "加入群聊", tapAction: joinGroup)
+    //     .paddingTop(60.h));
     return list;
   }
 }

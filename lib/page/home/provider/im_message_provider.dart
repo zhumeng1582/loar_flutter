@@ -37,10 +37,6 @@ class ImNotifier extends ChangeNotifier {
   Map<String, OnlineUser> allOnlineUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
 
-  addOnlineUser() {
-    allOnlineUsers["13265468731"] =
-        OnlineUser.create("13265468731", 22.547, 114.085947);
-  }
 
   init() async {
     Loading.show();
@@ -218,9 +214,9 @@ class ImNotifier extends ChangeNotifier {
           addContacts(userId);
         },
         onContactInvited: (userId, reason) {
-          notifyMessageList.add(NotifyBean(NotifyType.friendInvite, userId,
+          notifyMessageList.add(NotifyBean(NotifyType.friendInvite,
               "${DateTime.now().millisecondsSinceEpoch}",
-              reason: reason));
+              inviter: userId, reason: reason));
           notifyListeners();
         },
         onFriendRequestDeclined: (userId) {},
@@ -273,6 +269,17 @@ class ImNotifier extends ChangeNotifier {
             debugPrint("-------->onAttributesChangedOfGroupMember:" +
                 jsonEncode(attributes));
           },
+          onRequestToJoinReceivedFromGroup:
+              (groupId, groupName, applicant, reason) async {
+            notifyMessageList.add(NotifyBean(
+                NotifyType.joinPublicGroupApproval,
+                applicant: applicant,
+                "${DateTime.now().millisecondsSinceEpoch}",
+                groupId: groupId,
+                name: groupName,
+                reason: reason));
+            notifyListeners();
+          },
           onAutoAcceptInvitationFromGroup: (groupId, userId, reason) async {
             groupMap[groupId] = await fetchGroupInfoFromServer(groupId);
             updateConversation(groupId, ChatType.GroupChat);
@@ -298,9 +305,12 @@ class ImNotifier extends ChangeNotifier {
             inviter,
             reason,
           ) {
-            notifyMessageList.add(NotifyBean(NotifyType.groupInvite, inviter,
+            notifyMessageList.add(NotifyBean(NotifyType.groupInvite,
                 "${DateTime.now().millisecondsSinceEpoch}",
-                groupId: groupId, name: groupName, reason: reason));
+                inviter: inviter,
+                groupId: groupId,
+                name: groupName,
+                reason: reason));
             notifyListeners();
           },
         ));
@@ -439,15 +449,18 @@ class ImNotifier extends ChangeNotifier {
     try {
       if (data.type == NotifyType.groupInvite) {
         await EMClient.getInstance.groupManager
-            .acceptInvitation(data.groupId!, data.inviter);
+            .acceptInvitation(data.groupId!, data.inviter!);
         groupMap[data.groupId!] = await fetchGroupInfoFromServer(data.groupId!);
         updateConversation(data.groupId!, ChatType.GroupChat);
-      } else {
+      } else if (data.type == NotifyType.friendInvite) {
         await EMClient.getInstance.contactManager
-            .acceptInvitation(data.inviter);
+            .acceptInvitation(data.inviter!);
         contacts = await EMClient.getInstance.contactManager
             .getAllContactsFromServer();
         updateConversation(data.groupId!, ChatType.ChatRoom);
+      } else if (data.type == NotifyType.joinPublicGroupApproval) {
+        await EMClient.getInstance.groupManager
+            .acceptJoinApplication(data.groupId!, data.applicant!);
       }
     } on EMError catch (e) {}
 
@@ -459,10 +472,10 @@ class ImNotifier extends ChangeNotifier {
     try {
       if (data.type == NotifyType.groupInvite) {
         await EMClient.getInstance.groupManager
-            .declineInvitation(groupId: data.groupId!, inviter: data.inviter);
+            .declineInvitation(groupId: data.groupId!, inviter: data.inviter!);
       } else {
         await EMClient.getInstance.contactManager
-            .declineInvitation(data.inviter);
+            .declineInvitation(data.inviter!);
       }
     } on EMError catch (e) {}
 
@@ -478,20 +491,26 @@ class ImNotifier extends ChangeNotifier {
   leaveGroup(String groupId) async {
     try {
       await EMClient.getInstance.groupManager.leaveGroup(groupId);
-    } on EMError catch (e) {}
+    } on EMError catch (e) {
+      Loading.error(e.description);
+    }
   }
 
   joinPublicGroup(String groupId) async {
     try {
       await EMClient.getInstance.groupManager.joinPublicGroup(groupId);
       Loading.toast("消息已发送,等待群主同意");
-    } on EMError catch (e) {}
+    } on EMError catch (e) {
+      Loading.error(e.description);
+    }
   }
 
   destroyGroup(String groupId) async {
     try {
       await EMClient.getInstance.groupManager.destroyGroup(groupId);
-    } on EMError catch (e) {}
+    } on EMError catch (e) {
+      Loading.error(e.description);
+    }
   }
 
   sendTextMessage(
