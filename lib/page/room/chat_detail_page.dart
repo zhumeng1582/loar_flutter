@@ -38,7 +38,7 @@ class RoomDetailNotifier extends ChangeNotifier {
 
   Future<EMGroup> _createGroup() async {
     EMGroupOptions groupOptions = EMGroupOptions(
-      style: EMGroupStyle.PrivateMemberCanInvite,
+      style: EMGroupStyle.PublicJoinNeedApproval,
       inviteNeedConfirm: true,
       maxCount: 10,
     );
@@ -232,9 +232,9 @@ extension _Action on _RoomDetailPageState {
       Navigator.pushNamedAndRemoveUntil(
         context,
         RouteNames.roomPage,
-            (route) => route.settings.name == RouteNames.main,
+        (route) => route.settings.name == RouteNames.main,
         arguments:
-        EMConversation.fromJson({"convId": group.groupId, "type": 1}),
+            EMConversation.fromJson({"convId": group.groupId, "type": 1}),
       );
     }
   }
@@ -298,7 +298,7 @@ extension _Action on _RoomDetailPageState {
 
   changeGroupName(EMGroup group, String name) async {
     var groupNew =
-    await ref.read(roomProvider).changeGroupName(group.groupId, name);
+        await ref.read(roomProvider).changeGroupName(group.groupId, name);
     if (groupNew != null) {
       ref.read(imProvider).changeGroup(groupNew);
     }

@@ -139,7 +139,7 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
     var barsWidth = data.length * 55.w;
 
     return Scaffold(
-      appBar: getAppBar(context, "卫星星图"),
+      appBar: getAppBar(context, "星图"),
       body: Column(
         children: [
           CustomPaint(
@@ -151,12 +151,12 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: CustomPaint(
-                  painter: BarChartPainter(data, 50.w, 5.w),
-                  size: Size(max(barsWidth, 690.w), 240.h),
+                  painter: BarChartPainter(data, 45.w, 10.w),
+                  size: Size(max(barsWidth, 690.w), 400.h),
                 ),
               ),
             ],
-          ).height(240.h).paddingTop(40.h),
+          ).height(400.h).paddingTop(40.h),
           Row(
             children: [
               satelliteStatic(satelliteType[0]).expanded(),
@@ -180,7 +180,7 @@ extension _UI on _SatelliteMapPage {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ImageWidget.asset(satelliteFlags[name]!,
-            width: 40.w, height: 40.h, radius: 60.r),
+            width: 80.w, height: 80.h, radius: 60.r),
         Text(showName).paddingVertical(30.h),
         Text("${data?.satellites.length ?? "0"}"),
       ],

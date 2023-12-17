@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:loar_flutter/common/colors.dart';
 
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({Key? key, required this.result, this.onTap}) : super(key: key);
@@ -89,7 +90,7 @@ class ScanResultTile extends StatelessWidget {
       trailing: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.line,
         ),
         onPressed: (result.advertisementData.connectable) ? onTap : null,
         child: const Text('连接'),

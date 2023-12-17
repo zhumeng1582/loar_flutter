@@ -90,7 +90,7 @@ class _MeDetailPageState extends ConsumerState<MeDetailPage> {
             Stack(
               children: [
                 QrImageView(
-                  data: jsonEncode(me.toJson()),
+                  data: jsonEncode(QrCodeData(userInfo: me).toJson()),
                   version: QrVersions.auto,
                   gapless: false,
                   size: 280.w,

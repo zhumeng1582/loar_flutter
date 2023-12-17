@@ -32,14 +32,14 @@ class BaiduMapNotifier extends ChangeNotifier {
     _makerList.clear();
   }
 
-  BMFCoordinate getOther() {
+  BMFCoordinate? getOther() {
     BMFCoordinate? other = GlobeDataManager.instance.getPosition();
     _makerList.forEach((key, value) {
       if (key != GlobeDataManager.instance.me?.userId) {
         other = value.position;
       }
     });
-    return other ?? BMFCoordinate(22.547, 114.085947);
+    return other;
   }
 
   BMFMarker? getMaker(String id) {
@@ -117,10 +117,6 @@ class _BaiduMapState extends ConsumerState<BaiduMapPage> {
   @override
   void initState() {
     super.initState();
-    //添加默认数据
-    if (ref.read(imProvider).allOnlineUsers.isEmpty) {
-      ref.read(imProvider).addOnlineUser();
-    }
 
     ref.read(baiduMapProvider).clearMaker();
   }
@@ -178,7 +174,7 @@ class _BaiduMapState extends ConsumerState<BaiduMapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: getAppBar(context, "地图"),
+      appBar: getAppBar(context, getName()),
       body: Stack(
         children: [
           Center(
@@ -190,7 +186,8 @@ class _BaiduMapState extends ConsumerState<BaiduMapPage> {
             ),
           ),
           if (widget.pageType == PageType.distance) getTopWidget().alignTop(),
-          if (widget.pageType == PageType.navigation)
+          if (widget.pageType == PageType.navigation &&
+              ref.read(baiduMapProvider).getOther() != null)
             getBottomWidget().alignBottom(),
         ],
       ),
@@ -204,8 +201,29 @@ class _BaiduMapState extends ConsumerState<BaiduMapPage> {
 }
 
 extension _Action on _BaiduMapState {
+  String getName() {
+    String title = "地图";
+    switch (widget.pageType) {
+      case PageType.me:
+        title = "蜂窝";
+        break;
+      case PageType.nearBy:
+        title = "蜂邻";
+        break;
+      case PageType.distance:
+        title = "蜂距";
+        break;
+      case PageType.navigation:
+        title = "蜂行";
+        break;
+      default:
+        break;
+    }
+    return title;
+  }
+
   launcherMap() async {
-    BMFCoordinate coordinate = ref.read(baiduMapProvider).getOther();
+    BMFCoordinate? coordinate = ref.read(baiduMapProvider).getOther();
     final availableMaps = await MapLauncher.installedMaps;
     print(
         availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
@@ -214,10 +232,12 @@ extension _Action on _BaiduMapState {
       Loading.toast("请先安装地图应用");
       return;
     }
-    await availableMaps.first.showMarker(
-      coords: Coords(coordinate.latitude, coordinate.longitude),
-      title: "",
-    );
+    if (coordinate != null) {
+      await availableMaps.first.showMarker(
+        coords: Coords(coordinate.latitude, coordinate.longitude),
+        title: "",
+      );
+    }
   }
 }
 

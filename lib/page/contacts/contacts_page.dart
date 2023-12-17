@@ -175,16 +175,22 @@ extension _Action on _ContactsPageState {
 
   scan() async {
     var qrCodeData = await ref.read(homeProvider).scan();
-    if (qrCodeData.userInfo != null) {
-    } else if (qrCodeData.room != null) {}
+    if (qrCodeData?.userInfo != null) {
+    } else if (qrCodeData?.room != null) {}
   }
 
   _userRoom(EMUserInfo data) {
     Navigator.pushNamed(
       context,
-      RouteNames.roomPage,
-      arguments: EMConversation.fromJson({"convId": data.userId, "type": 0}),
+      RouteNames.usesInfoPage,
+      arguments: data,
     );
+
+    // Navigator.pushNamed(
+    //   context,
+    //   RouteNames.roomPage,
+    //   arguments: EMConversation.fromJson({"convId": data.userId, "type": 0}),
+    // );
   }
 
   _groupRoom(EMGroup data) {

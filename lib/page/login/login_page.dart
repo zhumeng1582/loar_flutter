@@ -116,18 +116,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 style: TextStyle(fontSize: 80.sp, fontWeight: FontWeight.w400)),
             Row(
               children: [
-                Row(
-                  children: [
-                    Text("+86"),
-                    ImageWidget(
-                      url: AssetsImages.iconDown,
-                      width: 30.w,
-                      height: 30.h,
-                      type: ImageWidgetType.asset,
-                    ),
-                  ],
-                ).padding(horizontal: 10.h, vertical: 2.w).roundedBorder(
-                    radius: 8.r, color: AppColors.title.withOpacity(0.4)),
+                Text("账号").paddingHorizontal(25.h),
                 LoginTextField(
                   fillColor: Colors.transparent,
                   controller: _userAccountController,

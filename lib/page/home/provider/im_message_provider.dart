@@ -481,6 +481,13 @@ class ImNotifier extends ChangeNotifier {
     } on EMError catch (e) {}
   }
 
+  joinPublicGroup(String groupId) async {
+    try {
+      await EMClient.getInstance.groupManager.joinPublicGroup(groupId);
+      Loading.toast("消息已发送,等待群主同意");
+    } on EMError catch (e) {}
+  }
+
   destroyGroup(String groupId) async {
     try {
       await EMClient.getInstance.groupManager.destroyGroup(groupId);

@@ -9,6 +9,7 @@ class RouteNames{
   static const blueSearchList = 'blueSearchList';
   static const deviceScreen = 'device_Screen';
   static const roomDetail = 'roomDetail';
+  static const addRoomDetail = 'addRoomDetail';
   static const selectContact = 'selectContact';
   static const selectAvatar = 'selectAvatar';
   static const offlineMap = 'offlineMap';

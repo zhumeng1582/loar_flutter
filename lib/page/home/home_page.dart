@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +7,6 @@ import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/home_provider.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
-import 'package:loar_flutter/page/home/provider/network_provider.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
 
 import '../../common/blue_tooth.dart';
@@ -96,14 +93,16 @@ class _HomePageState extends ConsumerState<HomePage> {
 
 extension _Action on _HomePageState {
   blueTooth() async {
-    if (BlueToothConnect.instance.isConnect()) {
-      await BlueToothConnect.instance.disconnect();
-      Loading.toast("蓝牙已关闭");
-      setState(() {});
-    } else {
-      Navigator.pushNamed(context, RouteNames.blueSearchList)
-          .then((value) => setState(() {}));
-    }
+    Navigator.pushNamed(context, RouteNames.blueSearchList)
+        .then((value) => setState(() {}));
+
+    // if (BlueToothConnect.instance.isConnect()) {
+    //   await BlueToothConnect.instance.disconnect();
+    //   Loading.toast("蓝牙已关闭");
+    //   setState(() {});
+    // } else {
+    //
+    // }
   }
 
   search() async {
@@ -120,17 +119,29 @@ extension _Action on _HomePageState {
 
   scan() async {
     var qrCodeData = await ref.read(homeProvider).scan();
-    if (qrCodeData.userInfo != null) {
+    if (qrCodeData?.room != null) {
+      if (ref
+          .read(imProvider)
+          .conversationsList
+          .any((element) => element.id == qrCodeData?.room?.groupId)) {
+        Navigator.pushNamed(
+          context,
+          RouteNames.roomPage,
+          arguments: EMConversation.fromJson(
+              {"convId": qrCodeData?.room?.groupId, "type": 1}),
+        );
+      } else {
+        Navigator.pushNamed(
+          context,
+          RouteNames.addRoomDetail,
+          arguments: qrCodeData?.room,
+        );
+      }
+    } else if (qrCodeData?.userInfo != null) {
       Navigator.pushNamed(
         context,
         RouteNames.usesInfoPage,
-        arguments: qrCodeData.userInfo,
-      );
-    } else if (qrCodeData.room != null) {
-      Navigator.pushNamed(
-        context,
-        RouteNames.roomDetail,
-        arguments: qrCodeData.room,
+        arguments: qrCodeData?.userInfo,
       );
     }
   }
@@ -240,7 +251,7 @@ extension _UI on _HomePageState {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "网络和Loar不可用",
+          "网络和LORA不可用",
           style: TextStyle(fontSize: 26.sp),
         ).paddingVertical(8.h)
       ],

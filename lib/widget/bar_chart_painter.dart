@@ -45,7 +45,7 @@ class BarChartPainter extends CustomPainter {
         fontSize: textFontSize,
       );
       final textSpan = TextSpan(
-        text: datas[i].snr.toStringAsFixed(2),
+        text: "${datas[i].snr}",
         style: textStyle,
       );
       final textPainter = TextPainter(

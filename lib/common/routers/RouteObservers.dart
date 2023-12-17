@@ -24,6 +24,7 @@ import '../../page/map/model/page_type.dart';
 import '../../page/me/about_page.dart';
 import '../../page/me/me_detail_page.dart';
 import '../../page/me/me_info_page.dart';
+import '../../page/room/chat_add_detail_page.dart';
 import '../../page/room/chat_page.dart';
 import '../../page/statellite_map.dart';
 import '../proto/qr_code_data.dart';
@@ -65,6 +66,10 @@ class RouteObservers {
       return MaterialPageRoute(
           settings: settings,
           builder: (_) => ChatDetailPage(conversation: conversation));
+    } else if (settings.name == RouteNames.addRoomDetail) {
+      var group = settings.arguments as EMGroup;
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => ChatAddDetailPage(group: group));
     } else if (settings.name == RouteNames.selectContact) {
       var userList = settings.arguments as List<String>;
       return MaterialPageRoute(

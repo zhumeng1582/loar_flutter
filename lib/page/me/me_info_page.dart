@@ -173,7 +173,7 @@ extension _UI on _MeInfoPageState {
             Stack(
               children: [
                 QrImageView(
-                  data: jsonEncode(me.toJson()),
+                  data: jsonEncode(QrCodeData(userInfo: me).toJson()),
                   version: QrVersions.auto,
                   gapless: false,
                   size: 180.w,
