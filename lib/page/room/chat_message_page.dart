@@ -1,15 +1,21 @@
 import 'package:chat_bubbles/bubbles/bubble_special_one.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
+import '../../common/ex/ex_userInfo.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/images.dart';
 import '../../widget/bubble_chat.dart';
 import '../home/provider/im_message_provider.dart';
 import '../../common/colors.dart';
+import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
+
+import '../map/model/page_type.dart';
 
 final roomMessageProvider =
     ChangeNotifierProvider<RoomMessageNotifier>((ref) => RoomMessageNotifier());
@@ -84,14 +90,32 @@ extension _UI on _RoomMessagePageState {
     var isSender = data.from == GlobeDataManager.instance.me?.userId;
     if (data.body is EMLocationMessageBody) {
       EMLocationMessageBody body = data.body as EMLocationMessageBody;
-      return BubbleChat(
-        text: "定位消息：${body.latitude},${body.longitude}",
-        isSender: isSender,
-        color: !isSender ? Colors.grey : AppColors.bubbleBgColor,
-        textStyle: TextStyle(
-          fontSize: 24.sp,
-        ),
-      );
+      return Stack(
+        children: [
+          BMFMapWidget(
+              onBMFMapCreated: (controller) {
+                controller.addMarker(BMFMarker.icon(
+                    position: BMFCoordinate(body.latitude, body.longitude),
+                    title: "",
+                    identifier: GlobeDataManager.instance.me?.userId,
+                    icon: AssetsImages.iconPeople));
+              },
+              mapOptions: BMFMapOptions(
+                mapType: BMFMapType.Standard,
+                zoomLevel: 12,
+                maxZoomLevel: 21,
+                minZoomLevel: 4,
+                showZoomControl: false,
+                center: BMFCoordinate(body.latitude, body.longitude),
+              )),
+          Container().onTap(() {
+            var other =
+                OnlineUser.create(data.from, body.latitude, body.longitude);
+            Navigator.pushNamed(context, RouteNames.baiduMapPage,
+                arguments: MapDataPara(PageType.navigation, other: other));
+          })
+        ],
+      ).paddingHorizontal(20.w).height(180.h).width(540.w);
     }
 
     EMTextMessageBody body = data.body as EMTextMessageBody;

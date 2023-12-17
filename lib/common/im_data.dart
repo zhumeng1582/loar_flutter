@@ -17,7 +17,7 @@ class GlobeDataManager {
 
   var isEaseMob = false;
   BMFCoordinate? _position;
-  BMFCoordinate? _phonePosition;
+  BMFCoordinate? _baiduPosition;
 
   static GlobeDataManager _getInstance() {
     _instance ??= GlobeDataManager._();
@@ -84,16 +84,16 @@ class GlobeDataManager {
     _position = BMFCoordinate(latitude, longitude);
   }
 
-  setPhonePosition(double latitude, double longitude) {
-    _phonePosition = BMFCoordinate(latitude, longitude);
+  setBaiduPosition(double latitude, double longitude) {
+    _baiduPosition = BMFCoordinate(latitude, longitude);
   }
 
   BMFCoordinate? getPosition() {
     if (_position != null) {
       return _position;
     }
-    if (_phonePosition != null) {
-      return _phonePosition;
+    if (_baiduPosition != null) {
+      return _baiduPosition;
     }
     return null;
   }

@@ -47,7 +47,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
                 return;
               }
               Navigator.pushNamed(context, RouteNames.baiduMapPage,
-                  arguments: PageType.me);
+                  arguments: MapDataPara(PageType.me));
             }),
             _getItem("蜂邻", "周围都有谁", false).onTap(() {
               if (GlobeDataManager.instance.getPosition() == null) {
@@ -55,7 +55,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
                 return;
               }
               Navigator.pushNamed(context, RouteNames.baiduMapPage,
-                  arguments: PageType.nearBy);
+                  arguments: MapDataPara(PageType.nearBy));
             }),
             _getItem("蜂距", "两者距离", false).onTap(() {
               if (GlobeDataManager.instance.getPosition() == null) {
@@ -63,7 +63,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
                 return;
               }
               Navigator.pushNamed(context, RouteNames.baiduMapPage,
-                  arguments: PageType.distance);
+                  arguments: MapDataPara(PageType.distance));
             }),
             _getItem("蜂行", "导航", false).onTap(() {
               if (GlobeDataManager.instance.getPosition() == null) {
@@ -71,7 +71,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
                 return;
               }
               Navigator.pushNamed(context, RouteNames.baiduMapPage,
-                  arguments: PageType.navigation);
+                  arguments: MapDataPara(PageType.navigation));
             }),
             _getItem("星图", "卫星星图", false).onTap(() {
               Navigator.pushNamed(context, RouteNames.satelliteMapPage);

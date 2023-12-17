@@ -33,7 +33,7 @@ class BaiduMapNotifier extends ChangeNotifier {
   }
 
   BMFCoordinate? getOther() {
-    BMFCoordinate? other = GlobeDataManager.instance.getPosition();
+    BMFCoordinate? other;
     _makerList.forEach((key, value) {
       if (key != GlobeDataManager.instance.me?.userId) {
         other = value.position;
@@ -46,9 +46,9 @@ class BaiduMapNotifier extends ChangeNotifier {
     return _makerList[id];
   }
 
-  addMakerList(PageType pageType, BMFMapController controller,
+  addMakerList(MapDataPara mapDataPara, BMFMapController controller,
       Map<String, OnlineUser> allOnlineUsers) {
-    if (pageType != PageType.nearBy) {
+    if (mapDataPara.pageType != PageType.nearBy) {
       var mePosition = GlobeDataManager.instance.getPosition();
       if (mePosition != null) {
         BMFMarker marker = BMFMarker.icon(
@@ -60,7 +60,7 @@ class BaiduMapNotifier extends ChangeNotifier {
       }
     }
 
-    if (pageType == PageType.nearBy) {
+    if (mapDataPara.pageType == PageType.nearBy) {
       for (var value in allOnlineUsers.values) {
         if (value.position != null) {
           BMFMarker marker = BMFMarker.icon(
@@ -71,9 +71,9 @@ class BaiduMapNotifier extends ChangeNotifier {
           _makerList[marker.id] = marker;
         }
       }
-    } else if (pageType == PageType.distance ||
-        pageType == PageType.navigation) {
-      var user = allOnlineUsers.values.toList()[0];
+    } else if (mapDataPara.pageType == PageType.distance ||
+        mapDataPara.pageType == PageType.navigation) {
+      var user = mapDataPara.other ?? allOnlineUsers.values.toList()[0];
 
       BMFMarker marker = BMFMarker.icon(
           position: user.position!,
@@ -103,9 +103,9 @@ class BaiduMapNotifier extends ChangeNotifier {
 }
 
 class BaiduMapPage extends ConsumerStatefulWidget {
-  PageType pageType;
+  MapDataPara mapDataPara;
 
-  BaiduMapPage({super.key, required this.pageType});
+  BaiduMapPage({super.key, required this.mapDataPara});
 
   @override
   ConsumerState<BaiduMapPage> createState() => _BaiduMapState();
@@ -135,7 +135,7 @@ class _BaiduMapState extends ConsumerState<BaiduMapPage> {
     _controller.setMapDidLoadCallback(callback: () {
       print('1MapDidLoad-地图加载回调');
       ref.read(baiduMapProvider).addMakerList(
-          widget.pageType, _controller, ref.read(imProvider).allOnlineUsers);
+          widget.mapDataPara, _controller, ref.read(imProvider).allOnlineUsers);
     });
     _controller.setMapDidFinishedRenderCallback(callback: (bool success) {
       print('1MapDidFinishedRenderd-地图绘制完成');
@@ -185,8 +185,9 @@ class _BaiduMapState extends ConsumerState<BaiduMapPage> {
               mapOptions: initMapOptions0(),
             ),
           ),
-          if (widget.pageType == PageType.distance) getTopWidget().alignTop(),
-          if (widget.pageType == PageType.navigation &&
+          if (widget.mapDataPara.pageType == PageType.distance)
+            getTopWidget().alignTop(),
+          if (widget.mapDataPara.pageType == PageType.navigation &&
               ref.read(baiduMapProvider).getOther() != null)
             getBottomWidget().alignBottom(),
         ],
@@ -203,7 +204,7 @@ class _BaiduMapState extends ConsumerState<BaiduMapPage> {
 extension _Action on _BaiduMapState {
   String getName() {
     String title = "地图";
-    switch (widget.pageType) {
+    switch (widget.mapDataPara.pageType) {
       case PageType.me:
         title = "蜂窝";
         break;
@@ -248,7 +249,7 @@ extension _UI on _BaiduMapState {
       mainAxisSize: MainAxisSize.max,
       children: [
         Text(
-          "距离：" + ref.watch(baiduMapProvider).distance.toDistance,
+          "距离：${ref.watch(baiduMapProvider).distance.toDistance}",
           style: TextStyle(
               color: Colors.red, fontSize: 38.sp, fontWeight: FontWeight.w500),
         ).paddingVertical(30.w)
