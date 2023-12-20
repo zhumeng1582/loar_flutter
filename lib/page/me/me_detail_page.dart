@@ -26,32 +26,15 @@ class MeDetailNotifier extends ChangeNotifier {
   EMUserInfo me = GlobeDataManager.instance.me!;
 
   updateUserAvatar(String avatarUrl) async {
-    try {
-      Loading.show();
-      await EMClient.getInstance.userInfoManager
-          .updateUserInfo(avatarUrl: avatarUrl);
-      await GlobeDataManager.instance.getUserInfo();
-      me = GlobeDataManager.instance.me!;
-      notifyListeners();
-      Loading.dismiss();
-      Loading.show("修改头像成功");
-    } on EMError catch (e) {
-      Loading.dismiss();
-    }
+    await GlobeDataManager.instance.updateUserInfo(avatarUrl: avatarUrl);
+    me = GlobeDataManager.instance.me!;
+    notifyListeners();
   }
 
   changeUserName(String name) async {
-    try {
-      Loading.show();
-      await EMClient.getInstance.userInfoManager.updateUserInfo(nickname: name);
-      await GlobeDataManager.instance.getUserInfo();
-      me = GlobeDataManager.instance.me!;
-      Loading.dismiss();
-      Loading.show("修改名称成功");
-      notifyListeners();
-    } on EMError catch (e) {
-      Loading.dismiss();
-    }
+    await GlobeDataManager.instance.updateUserInfo(nickname: name);
+    me = GlobeDataManager.instance.me!;
+    notifyListeners();
   }
 }
 

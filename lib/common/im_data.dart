@@ -9,6 +9,8 @@ import 'package:loar_flutter/common/blue_tooth.dart';
 import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
 import 'package:loar_flutter/common/util/im_cache.dart';
 
+import 'loading.dart';
+
 class GlobeDataManager {
   GlobeDataManager._();
 
@@ -42,6 +44,39 @@ class GlobeDataManager {
           result == ConnectivityResult.ethernet;
     } on PlatformException catch (e) {
       return false;
+    }
+  }
+
+  updateUserInfo({
+    String? nickname,
+    String? avatarUrl,
+    String? mail,
+    int? gender,
+    String? sign,
+    String? birth,
+    String? ext,
+  }) async {
+    try {
+      Loading.show();
+      await EMClient.getInstance.userInfoManager.updateUserInfo(
+          nickname: nickname,
+          avatarUrl: avatarUrl,
+          mail: mail,
+          gender: gender,
+          sign: sign,
+          birth: birth,
+          ext: ext);
+
+      await getUserInfo();
+      Loading.dismiss();
+      Loading.success("修改成功");
+      if (me != null) {
+        ImCache.saveMe(me!);
+      }
+    } on EMError catch (e) {
+      Loading.dismiss();
+
+      Loading.error(e.description);
     }
   }
 

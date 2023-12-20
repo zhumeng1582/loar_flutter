@@ -9,13 +9,12 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../common/im_data.dart';
-import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/loading.dart';
 import '../../common/proto/qr_code_data.dart';
 import '../../common/routers/RouteNames.dart';
-import '../../common/util/images.dart';
 import '../../widget/common.dart';
+import '../../widget/edit_gender_sheet.dart';
 import '../../widget/edit_remark_sheet.dart';
 import '../home/provider/network_provider.dart';
 
@@ -26,32 +25,35 @@ class MeInfoNotifier extends ChangeNotifier {
   EMUserInfo me = GlobeDataManager.instance.me!;
 
   updateUserAvatar(String avatarUrl) async {
-    try {
-      Loading.show();
-      await EMClient.getInstance.userInfoManager
-          .updateUserInfo(avatarUrl: avatarUrl);
-      await GlobeDataManager.instance.getUserInfo();
-      me = GlobeDataManager.instance.me!;
-      notifyListeners();
-      Loading.dismiss();
-      Loading.show("修改头像成功");
-    } on EMError catch (e) {
-      Loading.dismiss();
-    }
+    await GlobeDataManager.instance.updateUserInfo(avatarUrl: avatarUrl);
+    me = GlobeDataManager.instance.me!;
+    notifyListeners();
   }
 
   changeUserName(String name) async {
-    try {
-      Loading.show();
-      await EMClient.getInstance.userInfoManager.updateUserInfo(nickname: name);
-      await GlobeDataManager.instance.getUserInfo();
-      me = GlobeDataManager.instance.me!;
-      Loading.dismiss();
-      Loading.show("修改名称成功");
-      notifyListeners();
-    } on EMError catch (e) {
-      Loading.dismiss();
-    }
+    await GlobeDataManager.instance.updateUserInfo(nickname: name);
+    me = GlobeDataManager.instance.me!;
+    notifyListeners();
+  }
+
+  changeUserSign(String sign) async {
+    await GlobeDataManager.instance.updateUserInfo(sign: sign);
+    me = GlobeDataManager.instance.me!;
+    notifyListeners();
+  }
+
+  changeGender(int gender) async {
+    await GlobeDataManager.instance.updateUserInfo(gender: gender);
+    me = GlobeDataManager.instance.me!;
+    notifyListeners();
+  }
+
+  getGender() {
+    return me.gender == 0
+        ? ""
+        : me.gender == 2
+            ? "女"
+            : "男";
   }
 }
 
@@ -82,8 +84,12 @@ class _MeInfoPageState extends ConsumerState<MeInfoPage> {
             }),
             _getMeItem("蜂蜂号", me.userId),
             _getQrItem("我的二维码", me),
-            _getMeItem("性别", "男"),
-            _getMeItem("签名", "人生，去去就来"),
+            _getMeItem("性别", ref.watch(meDetailProvider).getGender()).onTap(() {
+              changeGender(me.gender);
+            }),
+            _getMeItem("签名", me.sign ?? "您还未编写签名").onTap(() {
+              changeSign(me.sign);
+            }),
           ],
         ),
       ),
@@ -104,6 +110,34 @@ extension _Action on _MeInfoPageState {
     }
     Navigator.pushNamed(context, RouteNames.selectAvatar).then((value) =>
         {ref.read(meDetailProvider).updateUserAvatar(value as String)});
+  }
+
+  changeSign(String? sign) {
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持修改签名");
+      return;
+    }
+
+    EditRemarkBottomSheet.show(
+      context: context,
+      maxLength: 18,
+      data: sign ?? "",
+      onConfirm: (value) => {ref.read(meDetailProvider).changeUserSign(value)},
+    );
+  }
+
+  changeGender(int value) {
+    if (!ref.read(networkProvider).isNetwork()) {
+      Loading.toastError("离线模式不支持修改性别");
+      return;
+    }
+
+    EditGenderBottomSheet.show(
+      context: context,
+      maxLength: 18,
+      data: ref.read(meDetailProvider).getGender(),
+      onConfirm: (value) => {ref.read(meDetailProvider).changeGender(value)},
+    );
   }
 
   changeName(String name) {
