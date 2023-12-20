@@ -62,7 +62,7 @@ class GlobeDataManager {
           nickname: nickname,
           avatarUrl: avatarUrl,
           mail: mail,
-          gender: gender,
+          gender: gender ?? me?.gender,
           sign: sign,
           birth: birth,
           ext: ext);

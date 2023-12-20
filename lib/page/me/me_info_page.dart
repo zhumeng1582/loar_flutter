@@ -78,7 +78,9 @@ class _MeInfoPageState extends ConsumerState<MeInfoPage> {
       body: SafeArea(
         child: Column(
           children: [
-            _getTopItem("头像", me),
+            _getTopItem("头像", me).onTap(() {
+              selectAvatar();
+            }),
             _getMeItem("名字", me.name).onTap(() {
               changeName(me.name);
             }),
@@ -186,7 +188,14 @@ extension _UI on _MeInfoPageState {
             Text(title,
                 style: TextStyle(fontSize: 38.sp, fontWeight: FontWeight.w400)),
             Expanded(child: Container()),
-            _topItem(me),
+            ClipRect(
+              child: ImageWidget(
+                url: me.avatarName,
+                width: 80.w,
+                height: 80.h,
+                type: ImageWidgetType.asset,
+              ),
+            ),
           ],
         ).paddingHorizontal(30.w).paddingVertical(40.h),
         Divider(
@@ -219,21 +228,6 @@ extension _UI on _MeInfoPageState {
         Divider(
           height: 0.1.h,
         ),
-      ],
-    );
-  }
-
-  Widget _topItem(EMUserInfo me) {
-    return Column(
-      children: [
-        ClipRect(
-          child: ImageWidget(
-            url: me.avatarName,
-            width: 80.w,
-            height: 80.h,
-            type: ImageWidgetType.asset,
-          ),
-        ).onTap(selectAvatar),
       ],
     );
   }
