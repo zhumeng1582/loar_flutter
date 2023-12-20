@@ -12,6 +12,35 @@ class ImCache {
   static const meKey = "me";
   static const mePassword = "mePassword";
 
+  static Future<Map<String, List<EMMessage>>> getAllMessage(
+      List<String> conversationIdList) async {
+    Map<String, List<EMMessage>> messageMap = {};
+
+    for (var element in conversationIdList) {
+      messageMap[element] = await _getChatMessageList(element);
+    }
+    return messageMap;
+  }
+
+  static saveChatMessage(String conversationId, List<EMMessage> messageList) {
+    List<Map<String, dynamic>> saveData = [];
+    for (var element in messageList) {
+      saveData.add(element.toJson());
+    }
+
+    StorageUtils.saveList(conversationId, saveData);
+  }
+
+  static Future<List<EMMessage>> _getChatMessageList(
+      String conversationId) async {
+    var list = await StorageUtils.loadList(conversationId);
+    List<EMMessage> ret = [];
+    for (var element in list) {
+      ret.add(EMMessage.fromJson(element));
+    }
+    return ret;
+  }
+
   static saveConversationsList(List<EMConversation> conversationsList) {
     List<Map<String, dynamic>> saveData = [];
     for (var element in conversationsList) {

@@ -6,7 +6,9 @@ import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/colors.dart';
+import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/images.dart';
 import '../map/model/page_type.dart';
 
 final locationProvider =
@@ -41,7 +43,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
             Divider(
               height: 0.1.h,
             ).paddingTop(200.h),
-            _getItem("蜂窝", "我的位置", false).onTap(() {
+            _getItem(AssetsImages.iconFengWo, "蜂窝", "我的位置").onTap(() {
               if (GlobeDataManager.instance.getPosition() == null) {
                 Loading.toast("请先开启定位");
                 return;
@@ -49,7 +51,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
               Navigator.pushNamed(context, RouteNames.baiduMapPage,
                   arguments: MapDataPara(PageType.me));
             }),
-            _getItem("蜂邻", "周围都有谁", false).onTap(() {
+            _getItem(AssetsImages.iconFenLin, "蜂邻", "周围都有谁").onTap(() {
               if (GlobeDataManager.instance.getPosition() == null) {
                 Loading.toast("请先开启定位");
                 return;
@@ -57,7 +59,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
               Navigator.pushNamed(context, RouteNames.baiduMapPage,
                   arguments: MapDataPara(PageType.nearBy));
             }),
-            _getItem("蜂距", "两者距离", false).onTap(() {
+            _getItem(AssetsImages.iconFenJu, "蜂距", "两者距离").onTap(() {
               if (GlobeDataManager.instance.getPosition() == null) {
                 Loading.toast("请先开启定位");
                 return;
@@ -65,7 +67,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
               Navigator.pushNamed(context, RouteNames.baiduMapPage,
                   arguments: MapDataPara(PageType.distance));
             }),
-            _getItem("蜂行", "导航", false).onTap(() {
+            _getItem(AssetsImages.iconFenXing, "蜂行", "导航").onTap(() {
               if (GlobeDataManager.instance.getPosition() == null) {
                 Loading.toast("请先开启定位");
                 return;
@@ -73,7 +75,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
               Navigator.pushNamed(context, RouteNames.baiduMapPage,
                   arguments: MapDataPara(PageType.navigation));
             }),
-            _getItem("星图", "卫星星图", false).onTap(() {
+            _getItem("", "星图", "卫星星图").onTap(() {
               Navigator.pushNamed(context, RouteNames.satelliteMapPage);
             }),
           ],
@@ -91,11 +93,18 @@ class _LocationPageState extends ConsumerState<LocationPage> {
 extension _Action on _LocationPageState {}
 
 extension _UI on _LocationPageState {
-  Widget _getItem(String title, String? value, bool isNewPage) {
+  Widget _getItem(String image, String title, String? value) {
     return Column(
       children: [
         Row(
           children: [
+            if (image.isNotEmpty)
+              ImageWidget(
+                url: image,
+                width: 60.w,
+                height: 60.h,
+                type: ImageWidgetType.asset,
+              ).paddingRight(20.w),
             Text(
               title,
               style: TextStyle(fontSize: 38.sp, fontWeight: FontWeight.w400),
@@ -107,12 +116,6 @@ extension _UI on _LocationPageState {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 30.sp, fontWeight: FontWeight.w400),
             ),
-            isNewPage
-                ? Icon(
-                    Icons.keyboard_arrow_right,
-                    size: 43.w,
-                  )
-                : Container()
           ],
         ).paddingHorizontal(30.w).paddingVertical(50.h),
         Divider(

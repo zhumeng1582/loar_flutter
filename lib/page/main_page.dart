@@ -80,7 +80,7 @@ class _MainPageState extends ConsumerState<MainPage> {
         //点击会产生咔嗒声，长按会产生短暂的振动
         selectedItemColor: AppColors.commonPrimary,
         // 设置被选中时的图标颜色
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: AppColors.title,
         type: BottomNavigationBarType.fixed,
         // 设置未被选中时的图标颜色
         items: <BottomNavigationBarItem>[

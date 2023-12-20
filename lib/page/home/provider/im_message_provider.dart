@@ -37,7 +37,6 @@ class ImNotifier extends ChangeNotifier {
   Map<String, OnlineUser> allOnlineUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
 
-
   init() async {
     Loading.show();
     await loadData();
@@ -94,6 +93,7 @@ class ImNotifier extends ChangeNotifier {
       conversationsList = await ImCache.getConversationsList();
       groupMap = await ImCache.getGroup();
       allUsers = await ImCache.getAllUser();
+      messageMap = await ImCache.getAllMessage(allUsers.keys.toList());
       contacts = (await ImCache.getContacts()) ?? [];
     }
   }
@@ -146,6 +146,8 @@ class ImNotifier extends ChangeNotifier {
     messageList.insert(0, message);
     messageMap[conversationId] = messageList;
 
+    ImCache.saveChatMessage(conversationId, messageList);
+
     updateConversation(conversationId, message.chatType);
     if (GlobeDataManager.instance.isEaseMob) {
       EMClient.getInstance.chatManager.updateMessage(message);
@@ -165,6 +167,7 @@ class ImNotifier extends ChangeNotifier {
         "type": chatType == ChatType.Chat ? 0 : 1
       });
     }
+
     conversationsList.insert(0, conversation);
     ImCache.saveConversationsList(conversationsList);
   }
@@ -590,6 +593,7 @@ class ImNotifier extends ChangeNotifier {
       }
 
       messageMap[id] = messageList;
+      ImCache.saveChatMessage(id, messageList);
       EMClient.getInstance.chatManager.importMessages(messageList);
       notifyListeners();
     } on EMError catch (e) {}

@@ -78,25 +78,25 @@ extension _UI on _MePageState {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Spacer(),
+        const Spacer(),
+        ImageWidget.asset(
+          image,
+          width: 50.w,
+          height: 50.h,
+        ),
+        SizedBox(
+          width: 20.w,
+        ),
         Text(title,
-            style: TextStyle(fontSize: 50.sp, fontWeight: FontWeight.w500)),
+            style: TextStyle(fontSize: 50.sp, fontWeight: FontWeight.w600)),
         SizedBox(
           width: 100.w,
         ),
-        Column(
-          children: [
-            ImageWidget.asset(
-              image,
-              width: 50.w,
-              height: 50.h,
-            ),
-            Text(value,
-                style: TextStyle(fontSize: 40.sp, fontWeight: FontWeight.w400)).paddingTop(5.h),
-          ],
-        ),
-        Spacer(),
+        Text(value,
+                style: TextStyle(fontSize: 40.sp, fontWeight: FontWeight.w500))
+            .paddingTop(5.h),
+        const Spacer(),
       ],
-    ).paddingVertical(60.h).paddingHorizontal(60.w);
+    ).paddingVertical(80.h).paddingHorizontal(60.w);
   }
 }

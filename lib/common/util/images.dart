@@ -52,6 +52,10 @@ class AssetsImages {
   static final flagELse = _loadFromPath(named: 'flagELse');
   static final flagOM = _loadFromPath(named: 'flagOM');
   static final flagJP = _loadFromPath(named: 'flagJP');
+  static final iconFenLin = _loadFromPath(named: 'iconFenLin');
+  static final iconFengWo = _loadFromPath(named: 'iconFenWo');
+  static final iconFenJu = _loadFromPath(named: 'iconFenJu');
+  static final iconFenXing = _loadFromPath(named: 'iconFenXing');
 
   static String getRandomAvatar() {
     return getAvatar(Random().nextInt(100) + 1);

@@ -33,7 +33,10 @@ class _SettingPageState extends ConsumerState<SettingPage> {
       body: SafeArea(
         child: Column(
           children: [
-            _getMeItem("设备连接"),
+            _getMeItem("设备连接").onTap(() {
+              Navigator.pushNamed(context, RouteNames.blueSearchList)
+                  .then((value) => setState(() {}));
+            }),
             Gaps.line,
             _getMeItem("离线地址管理").onTap(() {
               Navigator.pushNamed(context, RouteNames.offlineMap);
