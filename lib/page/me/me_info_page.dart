@@ -84,8 +84,12 @@ class _MeInfoPageState extends ConsumerState<MeInfoPage> {
             _getMeItem("名字", me.name).onTap(() {
               changeName(me.name);
             }),
-            _getMeItem("蜂蜂号", me.userId),
-            _getQrItem("我的二维码", me),
+            _getMeItem("蜂蜂号", me.userId).onTap(() {
+              Navigator.pushNamed(context, RouteNames.meDetailPage);
+            }),
+            _getQrItem("我的二维码", me).onTap(() {
+              Navigator.pushNamed(context, RouteNames.meDetailPage);
+            }),
             _getMeItem("性别", ref.watch(meDetailProvider).getGender()).onTap(() {
               changeGender(me.gender);
             }),

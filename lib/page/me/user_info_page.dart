@@ -6,15 +6,12 @@ import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
-import 'package:loar_flutter/page/home/provider/home_provider.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import 'package:loar_flutter/widget/commit_button.dart';
 
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
-import '../../common/util/images.dart';
 import '../../widget/common.dart';
-import '../home/bean/conversation_bean.dart';
 
 final userInfoProvider =
     ChangeNotifierProvider<UserInfoNotifier>((ref) => UserInfoNotifier());

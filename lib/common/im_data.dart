@@ -58,7 +58,7 @@ class GlobeDataManager {
   }) async {
     try {
       Loading.show();
-      await EMClient.getInstance.userInfoManager.updateUserInfo(
+      me = await EMClient.getInstance.userInfoManager.updateUserInfo(
           nickname: nickname,
           avatarUrl: avatarUrl,
           mail: mail,
@@ -67,7 +67,6 @@ class GlobeDataManager {
           birth: birth,
           ext: ext);
 
-      await getUserInfo();
       Loading.dismiss();
       Loading.success("修改成功");
       if (me != null) {

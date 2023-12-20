@@ -5,10 +5,10 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../../common/im_data.dart';
-import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
+import '../../widget/common.dart';
 
 final meProvider = ChangeNotifierProvider<MeNotifier>((ref) => MeNotifier());
 
@@ -32,11 +32,7 @@ class _MePageState extends ConsumerState<MePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.bottomBackground,
-        title: Text("我"),
-        centerTitle: true,
-      ),
+      appBar: getAppBar(context, "我"),
       body: SafeArea(
         child: Column(
           children: [

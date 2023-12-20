@@ -9,7 +9,6 @@ import 'package:loar_flutter/page/main_page.dart';
 import 'package:loar_flutter/page/map/baidu_map_page.dart';
 import 'package:loar_flutter/page/map/offline_map_page.dart';
 import 'package:loar_flutter/page/me/QR_generate_page.dart';
-import 'package:loar_flutter/page/me/scan_qr_page.dart';
 import 'package:loar_flutter/page/me/user_info_page.dart';
 import 'package:loar_flutter/page/room/chat_detail_page.dart';
 import 'package:loar_flutter/page/setting/setting_page.dart';
@@ -17,10 +16,8 @@ import 'package:loar_flutter/page/setting/setting_page.dart';
 import '../../page/blue/find_device_page.dart';
 import '../../page/contacts/contacts_select_page.dart';
 import '../../page/friend/FriendPage.dart';
-import '../../page/home/bean/conversation_bean.dart';
 import '../../page/home/bean/notify_bean.dart';
 import '../../page/login/avatar_select_page.dart';
-import '../../page/map/model/page_type.dart';
 import '../../page/map/model/page_type.dart';
 import '../../page/me/about_page.dart';
 import '../../page/me/me_detail_page.dart';
@@ -49,9 +46,6 @@ class RouteObservers {
       return MaterialPageRoute(
           settings: settings,
           builder: (_) => QRGeneratePage(qrCodeData: qrCodeData));
-    } else if (settings.name == RouteNames.qrScan) {
-      return MaterialPageRoute(
-          settings: settings, builder: (_) => ScanQRPage());
     } else if (settings.name == RouteNames.blueSearchList) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const FindDevicesScreen());
