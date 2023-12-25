@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../common/image.dart';
+import '../common/util/images.dart';
+
 ///WhatsApp's chat bubble type
 ///
 ///chat bubble color can be customized using [color]
@@ -15,6 +18,7 @@ class BubbleChat extends StatelessWidget {
   final bool tail;
   final Color color;
   final bool sent;
+  final bool overtime;
   final bool delivered;
   final bool seen;
   final TextStyle textStyle;
@@ -28,6 +32,7 @@ class BubbleChat extends StatelessWidget {
     this.color = Colors.white70,
     this.tail = true,
     this.sent = false,
+    this.overtime = false,
     this.delivered = false,
     this.seen = false,
     this.textStyle = const TextStyle(
@@ -40,7 +45,14 @@ class BubbleChat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool stateTick = false;
-    Icon? stateIcon;
+    Widget? stateIcon;
+    //已发送
+    if (overtime) {
+      stateTick = true;
+      stateIcon =
+          ImageWidget.asset(AssetsImages.iconRepeat, width: 18, height: 18);
+    }
+    //已发送
     if (sent) {
       stateTick = true;
       stateIcon = const Icon(
@@ -49,6 +61,7 @@ class BubbleChat extends StatelessWidget {
         color: Color(0xFFFFFFFF),
       );
     }
+    //已送达
     if (delivered) {
       stateTick = true;
       stateIcon = const Icon(
@@ -57,6 +70,7 @@ class BubbleChat extends StatelessWidget {
         color: Color(0xFFFFFFFF),
       );
     }
+    //已看见
     if (seen) {
       stateTick = true;
       stateIcon = const Icon(

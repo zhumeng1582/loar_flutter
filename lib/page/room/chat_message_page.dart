@@ -128,6 +128,7 @@ extension _UI on _RoomMessagePageState {
     return BubbleChat(
       text: "${body.content}$repeater",
       isSender: isSender,
+      overtime: data.localTime - DateTime.now().millisecondsSinceEpoch > 5000,
       sent: isSender ? data.hasDeliverAck : false,
       color: !isSender ? Colors.grey : AppColors.bubbleBgColor,
       textStyle: TextStyle(
