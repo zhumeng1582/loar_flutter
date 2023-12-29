@@ -7,6 +7,7 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/images.dart';
 
 import '../../common/colors.dart';
+import '../../common/constant.dart';
 import '../../common/im_data.dart';
 import '../../common/image.dart';
 import '../../common/loading.dart';
@@ -18,7 +19,7 @@ import '../../widget/commit_button.dart';
 import '../../widget/loginTextField.dart';
 
 final signUpProvider =
-ChangeNotifierProvider<SignUpNotifier>((ref) => SignUpNotifier());
+    ChangeNotifierProvider<SignUpNotifier>((ref) => SignUpNotifier());
 
 class SignUpNotifier extends ChangeNotifier {
   var avatar = AssetsImages.getRandomAvatar();
@@ -45,30 +46,15 @@ class SignUpNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  updateUser(String name, String phone) async {
+  updateUser(String name, String phone, String password) async {
     await EMClient.getInstance.userInfoManager
-        .updateUserInfo(nickname: name, phone: phone, avatarUrl: avatar)
+        .updateUserInfo(
+            nickname: name, phone: phone, avatarUrl: avatar, ext: password)
         .catchError((value) => error(value));
   }
 
-  Future<bool> saveUser(String account, String password) async {
-    var isNetwork = await GlobeDataManager.instance.isNetworkAwait();
-    if (!isNetwork) {
-      Loading.toast("请先连接网络");
-      return false;
-    }
-
-    if (!Reg.isPhone(account)) {
-      Loading.toast("请输入正确的手机号");
-      return false;
-    }
-    if (!Reg.isLoginPassword(password)) {
-      Loading.toast("请输入6-16为数字或字母密码");
-      return false;
-    }
-    await EMClient.getInstance
-        .createAccount(account, password)
-        .catchError((value) => error(value));
+  Future<bool> createAccount(String account, String password) async {
+    await EMClient.getInstance.createAccount(account, password);
 
     return true;
   }
@@ -260,21 +246,37 @@ extension _Action on _SignUpPageState {
     String userName = _userNameController.text;
     String password = _userPasswordController.text;
     String password2 = _userPassword2Controller.text;
+    var isNetwork = await GlobeDataManager.instance.isNetworkAwait();
+    if (!isNetwork) {
+      Loading.toast("请先连接网络");
+      return false;
+    }
     if (!ref.read(signUpProvider).isCheck) {
       Loading.toast("请先阅读并同意服务协议");
       return;
     }
+    if (!Reg.isPhone(account)) {
+      Loading.toast("请输入正确的手机号");
+      return false;
+    }
+    if (!Reg.isLoginPassword(password)) {
+      Loading.toast("请输入6-16为数字或字母密码");
+      return false;
+    }
+
     if (password != password2) {
       Loading.toast("两次密码不一致，请重新输入");
       return;
     }
     try {
       Loading.show();
-      bool isSuccess =
-          await ref.read(signUpProvider).saveUser(account, password);
+      bool isSuccess = await ref
+          .read(signUpProvider)
+          .createAccount(account, Constant.loginPassword);
       if (isSuccess) {
-        await ref.read(signUpProvider).login(account, password);
-        await ref.read(signUpProvider).updateUser(userName, account);
+        await ref.read(signUpProvider).login(account, Constant.loginPassword);
+
+        await ref.read(signUpProvider).updateUser(userName, account, password);
 
         Loading.dismiss();
         Navigator.popAndPushNamed(

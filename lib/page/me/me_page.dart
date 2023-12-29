@@ -40,22 +40,33 @@ class _MePageState extends ConsumerState<MePage> {
             Divider(
               height: 0.1.h,
             ).paddingTop(200.h),
-            _getMeItem("蜂蜂号", "个人ID", AssetsImages.iconID).onTap(() {
-              Navigator.pushNamed(context, RouteNames.meDetailPage);
-            }),
-            _getMeItem("蜂讯", "个人信息", AssetsImages.iconGeRen).onTap(() {
+            // _getMeItem("蜂蜂号", "个人ID", AssetsImages.iconID).onTap(() {
+            //   Navigator.pushNamed(context, RouteNames.meDetailPage);
+            // }),
+            _getMeItem("蜂蜂号", AssetsImages.iconGeRen).onTap(() {
               Navigator.pushNamed(context, RouteNames.meInfoPage);
             }),
-            _getMeItem("蜂圈", "朋友圈", AssetsImages.iconPengYouQuan).onTap(() {
+            Divider(
+              height: 0.1.h,
+            ),
+            _getMeItem("蜂圈", AssetsImages.iconPengYouQuan).onTap(() {
               Navigator.pushNamed(context, RouteNames.friendPage);
             }),
-
-            _getMeItem("设置", "", AssetsImages.iconSetting).onTap(() {
+            Divider(
+              height: 0.1.h,
+            ),
+            _getMeItem("设置", AssetsImages.iconSetting).onTap(() {
               Navigator.pushNamed(context, RouteNames.settingPage);
             }),
-            _getMeItem("关于微蜂", "", AssetsImages.iconAbout).onTap(() {
+            Divider(
+              height: 0.1.h,
+            ),
+            _getMeItem("关于微蜂", AssetsImages.iconAbout).onTap(() {
               Navigator.pushNamed(context, RouteNames.aboutPage);
             }),
+            Divider(
+              height: 0.1.h,
+            ),
           ],
         ),
       ),
@@ -71,36 +82,22 @@ class _MePageState extends ConsumerState<MePage> {
 extension _Action on _MePageState {}
 
 extension _UI on _MePageState {
-  Widget _getMeItem(String title, String? value, String image) {
-    return Column(
+  Widget _getMeItem(String title, String image) {
+    return Row(
       children: [
-        Row(
-          children: [
-            Text(title,
-                style: TextStyle(fontSize: 38.sp, fontWeight: FontWeight.w400)),
-            Expanded(child: Container()),
-            Column(
-              children: [
-                if (image.isNotEmpty)
-                  ImageWidget.asset(
-                    image,
-                    width: 48.w,
-                    height: 48.h,
-                  ).paddingBottom(20.h),
-                if (value?.isNotEmpty == true)
-                  Text(
-                    value ?? "",
-                    textAlign: TextAlign.right,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-              ],
-            ).width(150.w)
-          ],
-        ).paddingHorizontal(30.w).paddingVertical(40.h),
-        Divider(
-          height: 0.1.h,
-        ),
+        ImageWidget.asset(
+          image,
+          width: 48.w,
+          height: 48.h,
+        ).paddingRight(20.h),
+        Text(title,
+            style: TextStyle(fontSize: 38.sp, fontWeight: FontWeight.w400)),
+        Expanded(child: Container()),
+        Icon(
+          Icons.keyboard_arrow_right,
+          size: 43.w,
+        )
       ],
-    );
+    ).paddingHorizontal(30.w).paddingVertical(40.h);
   }
 }

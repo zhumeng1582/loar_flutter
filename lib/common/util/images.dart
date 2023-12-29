@@ -46,17 +46,19 @@ class AssetsImages {
   static final iconGeRen = _loadFromPath(named: 'iconGeRen');
   static final banner = _loadFromPath(named: 'banner');
   static final button = _loadFromPath(named: 'button');
-  static final flagCN = _loadFromPath(named: 'flagCN');
-  static final flagUS = _loadFromPath(named: 'flagUS');
-  static final flagRUS = _loadFromPath(named: 'flagRUS');
-  static final flagELse = _loadFromPath(named: 'flagELse');
-  static final flagOM = _loadFromPath(named: 'flagOM');
-  static final flagJP = _loadFromPath(named: 'flagJP');
+
   static final iconFenLin = _loadFromPath(named: 'iconFenLin');
   static final iconFengWo = _loadFromPath(named: 'iconFenWo');
   static final iconFenJu = _loadFromPath(named: 'iconFenJu');
   static final iconFenXing = _loadFromPath(named: 'iconFenXing');
   static final iconRepeat = _loadFromPath(named: 'iconRepeat');
+  static final iconFengTu = _loadFromPath(named: 'iconFengTu');
+
+  static final GA = _loadFromPath(named: 'GA');
+  static final GB = _loadFromPath(named: 'GB');
+  static final GL = _loadFromPath(named: 'GL');
+  static final GP = _loadFromPath(named: 'GP');
+  static final GQ = _loadFromPath(named: 'GQ');
 
   static String getRandomAvatar() {
     return getAvatar(Random().nextInt(100) + 1);

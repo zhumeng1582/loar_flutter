@@ -75,7 +75,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
               Navigator.pushNamed(context, RouteNames.baiduMapPage,
                   arguments: MapDataPara(PageType.navigation));
             }),
-            _getItem("", "星图", "卫星星图").onTap(() {
+            _getItem(AssetsImages.iconFengTu, "星图", "卫星星图").onTap(() {
               Navigator.pushNamed(context, RouteNames.satelliteMapPage);
             }),
           ],
@@ -103,6 +103,7 @@ extension _UI on _LocationPageState {
                 url: image,
                 width: 60.w,
                 height: 60.h,
+                radius: 0,
                 type: ImageWidgetType.asset,
               ).paddingRight(20.w),
             Text(

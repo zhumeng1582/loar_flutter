@@ -8,6 +8,7 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/gaps.dart';
 
 import '../../common/colors.dart';
+import '../../common/constant.dart';
 import '../../common/im_data.dart';
 import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
@@ -19,7 +20,7 @@ import '../../widget/commit_button.dart';
 import '../../widget/loginTextField.dart';
 
 final loginProvider =
-ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
+    ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
 
 class LoginNotifier extends ChangeNotifier {
   Future<bool> login(String account, String password) async {
@@ -39,7 +40,8 @@ class LoginNotifier extends ChangeNotifier {
         notifyListeners();
         await EMClient.getInstance.logout();
 
-        await EMClient.getInstance.login(account, password);
+        await EMClient.getInstance.login(account, Constant.loginPassword);
+
         GlobeDataManager.instance.isEaseMob = true;
         ImCache.savePassword(password);
         Loading.dismiss();
@@ -102,7 +104,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       appBar: AppBar(
         actions: [
           Text("跳过").paddingHorizontal(30.w).onTap(() {
-            login("13265468736", "z123456");
+            login("18888888888", "qwe123");
           }),
         ],
       ),
@@ -190,12 +192,25 @@ extension _Action on _LoginPageState {
   login(String account, String password) async {
     bool isSuccess = await ref.read(loginProvider).login(account, password);
     if (isSuccess) {
-      Navigator.popAndPushNamed(
-        context,
-        // RouteNames.blueSearchList,
-        RouteNames.main,
-      );
+      EMUserInfo? userInfo =
+          await GlobeDataManager.instance.getOnlineUserInfo();
+      if (userInfo?.ext == password) {
+        Navigator.popAndPushNamed(
+          context,
+          // RouteNames.blueSearchList,
+          RouteNames.main,
+        );
+      } else {
+        logout();
+      }
+    } else {
+      logout();
     }
+  }
+
+  logout() async {
+    await EMClient.getInstance.logout();
+    Loading.error("账号或密码不正确，请重新输入");
   }
 }
 

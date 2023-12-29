@@ -40,7 +40,6 @@ class MainNotifier extends ChangeNotifier {
   Widget getCurrentWidget() {
     return tabPages[selectedIndex];
   }
-
 }
 
 class MainPage extends ConsumerStatefulWidget {
@@ -86,25 +85,25 @@ class _MainPageState extends ConsumerState<MainPage> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: ImageWidget.asset(AssetsImages.iconFenXin,
-                width: 24, height: 24),
+                radius: 0, width: 24, height: 24),
             activeIcon: ImageWidget.asset(AssetsImages.iconFenXinSel,
-                width: 24, height: 24),
+                radius: 0, width: 24, height: 24),
             label: '蜂信',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: ImageWidget.asset(AssetsImages.iconTongXun,
-                width: 24, height: 24),
+                radius: 0, width: 24, height: 24),
             activeIcon: ImageWidget.asset(AssetsImages.iconTongXunSel,
-                width: 24, height: 24),
+                radius: 0, width: 24, height: 24),
             label: '通讯录',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: ImageWidget.asset(AssetsImages.iconDingWei,
-                width: 24, height: 24),
+                radius: 0, width: 24, height: 24),
             activeIcon: ImageWidget.asset(AssetsImages.iconDingWeiSel,
-                width: 24, height: 24),
+                radius: 0, width: 24, height: 24),
             label: '定位',
             backgroundColor: Colors.white,
           ),
@@ -114,18 +113,22 @@ class _MainPageState extends ConsumerState<MainPage> {
           //   backgroundColor: Colors.white,
           // ),
           BottomNavigationBarItem(
-            icon:
-                ImageWidget.asset(AssetsImages.iconWode, width: 24, height: 24),
+            icon: ImageWidget.asset(
+              AssetsImages.iconWode,
+              width: 24,
+              height: 24,
+              radius: 0,
+            ),
             activeIcon: ImageWidget.asset(AssetsImages.iconWodeSel,
-                width: 24, height: 24),
+                radius: 0, width: 24, height: 24),
             label: '我的',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: ImageWidget.asset(AssetsImages.iconSheQu,
-                width: 24, height: 24),
+                radius: 0, width: 24, height: 24),
             activeIcon: ImageWidget.asset(AssetsImages.iconSheQuSel,
-                width: 24, height: 24),
+                radius: 0, width: 24, height: 24),
             label: '社区',
             backgroundColor: Colors.white,
           ),

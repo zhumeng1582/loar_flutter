@@ -19,11 +19,11 @@ import 'package:flutter/services.dart';
 import 'dart:ui' as UI;
 
 Map<String, String> satelliteFlags = {
-  "GPGSV": AssetsImages.flagUS,
-  "GLGSV": AssetsImages.flagRUS,
-  "GAGSV": AssetsImages.flagOM,
-  "GQGSV": AssetsImages.flagJP,
-  "GBGSV": AssetsImages.flagCN
+  "GPGSV": AssetsImages.GP,
+  "GLGSV": AssetsImages.GL,
+  "GAGSV": AssetsImages.GA,
+  "GQGSV": AssetsImages.GQ,
+  "GBGSV": AssetsImages.GB
 };
 Map<String, UI.Image> satelliteImage = {};
 List<String> satelliteType = ["GPGSV", "GBGSV", "GLGSV", "GAGSV", "GQGSV"];

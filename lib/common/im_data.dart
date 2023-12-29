@@ -79,6 +79,14 @@ class GlobeDataManager {
     }
   }
 
+  Future<EMUserInfo?> getOnlineUserInfo() async {
+    try {
+      return await EMClient.getInstance.userInfoManager.fetchOwnInfo();
+    } on EMError catch (e) {
+      return null;
+    }
+  }
+
   getUserInfo() async {
     try {
       var value = await EMClient.getInstance.userInfoManager.fetchOwnInfo();
