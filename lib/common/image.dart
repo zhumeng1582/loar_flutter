@@ -90,7 +90,7 @@ class ImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.all(
-      Radius.circular(radius ?? 6),
+      Radius.circular(radius ?? 0),
     );
     Widget? image;
     switch (type) {

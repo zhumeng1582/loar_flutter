@@ -17,17 +17,26 @@ final searchProvider =
     ChangeNotifierProvider<SearchNotifier>((ref) => SearchNotifier());
 
 class SearchNotifier extends ChangeNotifier {
-  Map<String, EMUserInfo>? userInfo;
+  Map<String, EMUserInfo> userInfo = {};
 
   clear() {
-    userInfo = null;
+    userInfo.clear();
   }
 
   fetchUserInfoById(List<String> contacts) async {
     Loading.show();
-    userInfo = await EMClient.getInstance.userInfoManager
-        .fetchUserInfoById(contacts)
-        .catchError((value) => Loading.dismiss());
+
+    var searchUserInfo =
+        await EMClient.getInstance.userInfoManager.fetchUserInfoById(contacts);
+    clear();
+    if (searchUserInfo.isNotEmpty) {
+      searchUserInfo.forEach((key, value) {
+        if (value.ext != null) {
+          userInfo[key] = value;
+        }
+      });
+    }
+
     Loading.dismiss();
     notifyListeners();
   }
@@ -94,13 +103,12 @@ extension _Action on _SearchPageState {
 
 extension _UI on _SearchPageState {
   List<Widget> getUserList() {
-    var list = ref
+    return ref
         .watch(searchProvider)
         .userInfo
-        ?.values
-        .map((e) => _buildRoomItem(e))
+        .values
+        .map((e) => _buildUserItem(e))
         .toList();
-    return list ?? [];
   }
 
   Widget _getIcon(EMUserInfo data) {
@@ -112,7 +120,7 @@ extension _UI on _SearchPageState {
     );
   }
 
-  Widget _buildRoomItem(EMUserInfo data) {
+  Widget _buildUserItem(EMUserInfo data) {
     return Row(
       children: [
         _getIcon(data).paddingHorizontal(30.w),

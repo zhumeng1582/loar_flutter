@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/page/home/provider/network_provider.dart';
 import 'package:loar_flutter/page/statellite_map.dart';
 
-import '../common/blue_tooth.dart';
 import '../common/colors.dart';
-import '../common/util/coord_convert.dart';
 import '../common/util/images.dart';
-import '../widget/satellite_painter.dart';
 import 'contacts/contacts_page.dart';
 import 'forum/forum_page.dart';
 import 'home/home_page.dart';
@@ -85,25 +81,25 @@ class _MainPageState extends ConsumerState<MainPage> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: ImageWidget.asset(AssetsImages.iconFenXin,
-                radius: 0, width: 24, height: 24),
+                width: 24, height: 24),
             activeIcon: ImageWidget.asset(AssetsImages.iconFenXinSel,
-                radius: 0, width: 24, height: 24),
+                width: 24, height: 24),
             label: '蜂信',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: ImageWidget.asset(AssetsImages.iconTongXun,
-                radius: 0, width: 24, height: 24),
+                width: 24, height: 24),
             activeIcon: ImageWidget.asset(AssetsImages.iconTongXunSel,
-                radius: 0, width: 24, height: 24),
+                width: 24, height: 24),
             label: '通讯录',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: ImageWidget.asset(AssetsImages.iconDingWei,
-                radius: 0, width: 24, height: 24),
+                width: 24, height: 24),
             activeIcon: ImageWidget.asset(AssetsImages.iconDingWeiSel,
-                radius: 0, width: 24, height: 24),
+                width: 24, height: 24),
             label: '定位',
             backgroundColor: Colors.white,
           ),
@@ -117,18 +113,17 @@ class _MainPageState extends ConsumerState<MainPage> {
               AssetsImages.iconWode,
               width: 24,
               height: 24,
-              radius: 0,
             ),
             activeIcon: ImageWidget.asset(AssetsImages.iconWodeSel,
-                radius: 0, width: 24, height: 24),
+                width: 24, height: 24),
             label: '我的',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
             icon: ImageWidget.asset(AssetsImages.iconSheQu,
-                radius: 0, width: 24, height: 24),
+                width: 24, height: 24),
             activeIcon: ImageWidget.asset(AssetsImages.iconSheQuSel,
-                radius: 0, width: 24, height: 24),
+                width: 24, height: 24),
             label: '社区',
             backgroundColor: Colors.white,
           ),
