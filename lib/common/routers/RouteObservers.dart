@@ -24,6 +24,7 @@ import '../../page/me/me_detail_page.dart';
 import '../../page/me/me_info_page.dart';
 import '../../page/room/chat_add_detail_page.dart';
 import '../../page/room/chat_page.dart';
+import '../../page/setting/change_password_page.dart';
 import '../../page/statellite_map.dart';
 import '../proto/qr_code_data.dart';
 import 'RouteNames.dart';
@@ -104,7 +105,10 @@ class RouteObservers {
     } else if (settings.name == RouteNames.settingPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const SettingPage());
-    }  else if (settings.name == RouteNames.meInfoPage) {
+    } else if (settings.name == RouteNames.changePasswordPage) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => const ChangePasswordPage());
+    } else if (settings.name == RouteNames.meInfoPage) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => const MeInfoPage());
     } else if (settings.name == RouteNames.friendPage) {

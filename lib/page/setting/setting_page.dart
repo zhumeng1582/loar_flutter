@@ -42,7 +42,9 @@ class _SettingPageState extends ConsumerState<SettingPage> {
               Navigator.pushNamed(context, RouteNames.offlineMap);
             }),
             Gaps.line,
-            _getMeItem("账号与安全"),
+            _getMeItem("账号与安全").onTap(() {
+              Navigator.pushNamed(context, RouteNames.changePasswordPage);
+            }),
             Gaps.line,
             _getMeItem("通用"),
             Gaps.line,

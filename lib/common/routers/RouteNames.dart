@@ -19,6 +19,7 @@ class RouteNames{
   static const meDetailPage = 'MeDetailPage';
   static const aboutPage = 'aboutPage';
   static const settingPage = 'SettingPage';
+  static const changePasswordPage = 'changePasswordPage';
   static const meInfoPage = 'MeInfoPage';
   static const friendPage = 'FriendPage';
 }
