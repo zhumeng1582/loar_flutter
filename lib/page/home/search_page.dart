@@ -34,6 +34,7 @@ class SearchNotifier extends ChangeNotifier {
 
     if (searchUserInfo.isNotEmpty) {
       searchUserInfo.forEach((key, value) {
+        //用户设置了密码才算是真实用户
         if (value.ext?.isNotEmpty == true) {
           userInfo[key] = value;
         }

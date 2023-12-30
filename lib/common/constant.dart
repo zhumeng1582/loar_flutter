@@ -10,5 +10,7 @@ class Constant {
 
   static get loginPassword => "9aukyLfDz3jcJsmQXgwnTiYCpUMb";
 
+  static get encryptKey => "kjnyhibs";
+
 // static get  messageMap => "messageMap";
 }

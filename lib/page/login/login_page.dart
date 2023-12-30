@@ -12,6 +12,7 @@ import '../../common/constant.dart';
 import '../../common/im_data.dart';
 import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/encrypter.dart';
 import '../../common/util/im_cache.dart';
 import '../../common/util/images.dart';
 import '../../common/util/reg.dart';
@@ -33,6 +34,7 @@ class LoginNotifier extends ChangeNotifier {
       return false;
     }
 
+    password = Encrypter.encrypt(password, Constant.encryptKey);
     var isNetwork = await GlobeDataManager.instance.isNetworkAwait();
     if (isNetwork) {
       try {

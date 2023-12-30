@@ -12,6 +12,7 @@ import '../../common/im_data.dart';
 import '../../common/image.dart';
 import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/encrypter.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/im_cache.dart';
 import '../../common/util/reg.dart';
@@ -275,7 +276,7 @@ extension _Action on _SignUpPageState {
           .createAccount(account, Constant.loginPassword);
       if (isSuccess) {
         await ref.read(signUpProvider).login(account, Constant.loginPassword);
-
+        password = Encrypter.encrypt(password, Constant.encryptKey);
         await ref.read(signUpProvider).updateUser(userName, account, password);
 
         Loading.dismiss();
