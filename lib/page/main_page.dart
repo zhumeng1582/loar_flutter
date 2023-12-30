@@ -51,11 +51,12 @@ class _MainPageState extends ConsumerState<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ref.read(networkProvider).initState();
 
-      ref.read(locationMapProvider).location();
       ref.read(imProvider).addImListener();
+      ref.read(imProvider).init();
+
+      ref.read(locationMapProvider).location();
       ref.read(satelliteNotifier).getLocation();
       ref.read(satelliteNotifier).init();
-      ref.read(imProvider).init();
     });
 
     super.initState();

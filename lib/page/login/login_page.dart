@@ -41,11 +41,18 @@ class LoginNotifier extends ChangeNotifier {
         await EMClient.getInstance.logout();
 
         await EMClient.getInstance.login(account, Constant.loginPassword);
-
-        GlobeDataManager.instance.isEaseMob = true;
-        ImCache.savePassword(password);
+        EMUserInfo? userInfo =
+            await GlobeDataManager.instance.getOnlineUserInfo();
         Loading.dismiss();
-        return true;
+        if (userInfo?.ext == password) {
+          GlobeDataManager.instance.isEaseMob = true;
+          ImCache.savePassword(password);
+          return true;
+        } else {
+          await EMClient.getInstance.logout();
+          Loading.error("账号或密码不正确，请重新输入");
+          return false;
+        }
       } on EMError catch (e) {
         error(e);
         return false;
@@ -191,26 +198,14 @@ extension _Action on _LoginPageState {
 
   login(String account, String password) async {
     bool isSuccess = await ref.read(loginProvider).login(account, password);
-    if (isSuccess) {
-      EMUserInfo? userInfo =
-          await GlobeDataManager.instance.getOnlineUserInfo();
-      if (userInfo?.ext == password) {
-        Navigator.popAndPushNamed(
-          context,
-          // RouteNames.blueSearchList,
-          RouteNames.main,
-        );
-      } else {
-        logout();
-      }
-    } else {
-      logout();
-    }
-  }
 
-  logout() async {
-    await EMClient.getInstance.logout();
-    Loading.error("账号或密码不正确，请重新输入");
+    if (isSuccess) {
+      Navigator.popAndPushNamed(
+        context,
+        // RouteNames.blueSearchList,
+        RouteNames.main,
+      );
+    }
   }
 }
 

@@ -28,16 +28,22 @@ class SearchNotifier extends ChangeNotifier {
 
     var searchUserInfo =
         await EMClient.getInstance.userInfoManager.fetchUserInfoById(contacts);
+    Loading.dismiss();
+
     clear();
+
     if (searchUserInfo.isNotEmpty) {
       searchUserInfo.forEach((key, value) {
-        if (value.ext != null) {
+        if (value.ext?.isNotEmpty == true) {
           userInfo[key] = value;
         }
       });
     }
 
-    Loading.dismiss();
+    if (userInfo.isEmpty) {
+      Loading.error("未查询到用户信息");
+    }
+
     notifyListeners();
   }
 }

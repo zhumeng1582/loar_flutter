@@ -52,7 +52,7 @@ class ImNotifier extends ChangeNotifier {
   }
 
   Future<void> loadData() async {
-    GlobeDataManager.instance.getUserInfo();
+    await GlobeDataManager.instance.getUserInfo();
 
     if (GlobeDataManager.instance.isEaseMob) {
       contacts =
@@ -582,13 +582,14 @@ class ImNotifier extends ChangeNotifier {
         type: type,
       );
       List<EMMessage> messageList = [];
-      for (var element in cursor.data) {
-        if (element != null) {
-          if (element.chatType == ChatType.Chat) {
+      for (int i = cursor.data.length - 1; i >= 0; i--) {
+        var data = cursor.data[i];
+        if (data != null) {
+          if (data.chatType == ChatType.Chat) {
             //所有历史消息均为已送达
-            element.hasDeliverAck = true;
+            data.hasDeliverAck = true;
           }
-          messageList.add(element);
+          messageList.add(data);
         }
       }
 
