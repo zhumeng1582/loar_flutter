@@ -72,6 +72,7 @@ extension _UI on _AvatarSelectPageState {
       url: data,
       width: 40.w,
       height: 40.h,
+      radius: 6.r,
       type: ImageWidgetType.asset,
     ).paddingVertical(5.h).paddingHorizontal(5.w);
   }

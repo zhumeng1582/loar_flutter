@@ -197,6 +197,7 @@ extension _UI on _MeInfoPageState {
                 url: me.avatarName,
                 width: 80.w,
                 height: 80.h,
+                radius: 6.r,
                 type: ImageWidgetType.asset,
               ),
             ),

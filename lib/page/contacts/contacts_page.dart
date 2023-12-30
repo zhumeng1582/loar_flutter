@@ -46,6 +46,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
             url: AssetsImages.iconScan,
             width: 46.w,
             height: 46.h,
+            radius: 6.r,
             type: ImageWidgetType.asset,
           ).paddingRight(30.w).onTap(scan)
         ],
@@ -90,6 +91,7 @@ extension _UI on _ContactsPageState {
           url: AssetsImages.iconSearch,
           width: 46.w,
           height: 46.h,
+          radius: 6.r,
           type: ImageWidgetType.asset,
         ),
         Text("搜索")
@@ -109,6 +111,7 @@ extension _UI on _ContactsPageState {
       url: data.avatarName,
       width: 80.w,
       height: 80.h,
+      radius: 6.r,
       type: ImageWidgetType.asset,
     );
   }
@@ -122,6 +125,7 @@ extension _UI on _ContactsPageState {
       itemCount: users.length,
       itemBuilder: (BuildContext context, int index) {
         return ImageWidget(
+          radius: 6.r,
           url: ref.watch(imProvider).getAvatarUrl(users[index]),
           type: ImageWidgetType.asset,
         );
@@ -135,8 +139,8 @@ extension _UI on _ContactsPageState {
         Row(
           children: [
             _getIcon(data).paddingHorizontal(30.w),
-            Text(data.userId).expanded(),
-            Text(data.name).paddingHorizontal(30.w),
+            // Text(data.userId).expanded(),
+            Text(data.name),
           ],
         ),
         Gaps.line.paddingLeft(140.w).paddingVertical(15.h)

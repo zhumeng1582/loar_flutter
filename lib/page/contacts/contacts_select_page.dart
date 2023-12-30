@@ -69,6 +69,7 @@ extension _UI on _ContactsSelectPageState {
       url: data.avatarName,
       width: 40.w,
       height: 40.h,
+      radius: 6.r,
       type: ImageWidgetType.asset,
     );
   }

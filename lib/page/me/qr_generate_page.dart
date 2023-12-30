@@ -80,9 +80,11 @@ extension _Action on _QRGeneratePageState {
               color: Colors.white,
             ),
             child: ImageWidget(
-              url: widget.qrCodeData.userInfo?.avatarName??AssetsImages.iconLauncher,
+              url: widget.qrCodeData.userInfo?.avatarName ??
+                  AssetsImages.iconLauncher,
               width: 80.w,
               height: 80.h,
+              radius: 6.r,
               type: ImageWidgetType.asset,
             ),
           ),

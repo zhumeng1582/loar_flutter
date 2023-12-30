@@ -98,6 +98,7 @@ extension _UI on _UserInfoPageState {
             url: widget.userInfo.avatarName,
             width: 100.w,
             height: 100.h,
+            radius: 6.r,
             type: ImageWidgetType.asset,
           ),
         ).paddingTop(80.h),

@@ -116,6 +116,7 @@ extension _UI on _SearchPageState {
       url: data.avatarName,
       width: 80.w,
       height: 80.h,
+      radius: 6.r,
       type: ImageWidgetType.asset,
     );
   }

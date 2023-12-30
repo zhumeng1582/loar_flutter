@@ -22,6 +22,16 @@ class BlueToothConnect {
   BluetoothCharacteristic? loarChar;
   BluetoothCharacteristic? setChar;
   List<LoarMessage> messageQueue = [];
+  Function? loarMessage;
+  Function? gpsMessage;
+
+  setListen(Function message) {
+    this.loarMessage = message;
+  }
+
+  setGPSMessage(Function message) {
+    this.gpsMessage = message;
+  }
 
   static BlueToothConnect _getInstance() {
     _instance ??= BlueToothConnect._();
@@ -66,6 +76,9 @@ class BlueToothConnect {
     setChar = serviceSet?.characteristics.firstWhere((element) =>
         element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
+    BlueToothConnect.instance._listenLoar(loarMessage!);
+    BlueToothConnect.instance._listenGps(gpsMessage!);
+
     device?.device.connectionState.listen((BluetoothConnectionState state) {
       debugPrint("connectionState.listen----->" + state.name);
       if (state == BluetoothConnectionState.connected) {
@@ -73,11 +86,6 @@ class BlueToothConnect {
         success();
       }
     });
-  }
-
-  void setLedOnOff(bool on) {
-    List<int> data = [0xF2, on ? 1 : 0];
-    _write(setChar!, data);
   }
 
   void setLoraMode(int mode) {
@@ -134,13 +142,13 @@ class BlueToothConnect {
     }
   }
 
-  listenGps(Function message) {
+  _listenGps(Function message) {
     if (gpsChar != null) {
       _setNotifyValue(gpsChar!, message);
     }
   }
 
-  listenLoar(Function message) {
+  _listenLoar(Function message) {
     if (loarChar != null) {
       _setNotifyValue(loarChar!, message);
     }

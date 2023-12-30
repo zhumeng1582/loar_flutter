@@ -320,6 +320,7 @@ extension _UI on _HomePageState {
       itemBuilder: (BuildContext context, int index) {
         return ImageWidget(
           url: avatarUrls[index],
+          radius: 6.r,
           type: ImageWidgetType.asset,
         );
       },

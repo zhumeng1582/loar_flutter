@@ -269,8 +269,8 @@ class ImNotifier extends ChangeNotifier {
             attributes,
             operatorId,
           ) {
-            debugPrint("-------->onAttributesChangedOfGroupMember:" +
-                jsonEncode(attributes));
+            debugPrint(
+                "-------->onAttributesChangedOfGroupMember:${jsonEncode(attributes)}");
           },
           onRequestToJoinReceivedFromGroup:
               (groupId, groupName, applicant, reason) async {
@@ -350,15 +350,15 @@ class ImNotifier extends ChangeNotifier {
         onTokenWillExpire: () => {},
       ),
     );
-    BlueToothConnect.instance.listenLoar((text) => {getRemoteMessage(text)});
+    BlueToothConnect.instance.setListen((text) => {getRemoteMessage(text)});
   }
 
   //loar消息分发处理
   getRemoteMessage(dynamic message) {
+    debugPrint("1getRemoteMessage-------->$message");
     try {
-      debugPrint("getRemoteMessage-------->");
       LoarMessage loarMessage = LoarMessage.fromBuffer(message);
-      debugPrint("getRemoteMessage-------->$loarMessage");
+      debugPrint("2getRemoteMessage-------->$loarMessage");
 
       if (loarMessage.hasDeliverAck &&
           loarMessage.sender == GlobeDataManager.instance.me?.userId) {

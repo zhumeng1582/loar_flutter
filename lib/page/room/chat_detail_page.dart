@@ -337,12 +337,14 @@ extension _UI on _RoomDetailPageState {
                 url: user.avatarName,
                 width: 30.w,
                 height: 30.h,
+                radius: 6.r,
                 type: ImageWidgetType.asset,
               )),
           ImageWidget(
             url: AssetsImages.iconAdd,
             width: 10.w,
             height: 10.h,
+            radius: 6.r,
             type: ImageWidgetType.asset,
           ).padding(all: 20.w).roundedBorder().onTap(() => selectUser(userInfo))
         ]);

@@ -97,10 +97,11 @@ class SatelliteNotifier extends ChangeNotifier {
 
   getLocation() {
     BlueToothConnect.instance
-        .listenGps((message) => gpsParser(String.fromCharCodes(message)));
+        .setGPSMessage((message) => gpsParser(String.fromCharCodes(message)));
   }
 
   gpsParser(String value) {
+    debugPrint("gpsParser------>$value");
     if (value.contains("GNRMC")) {
       var split = value.split(",");
       if (split.length < 5 || split[3].isEmpty || split[5].isEmpty) {
