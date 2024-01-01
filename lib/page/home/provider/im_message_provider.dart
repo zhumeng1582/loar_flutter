@@ -14,6 +14,7 @@ import 'package:protobuf/protobuf.dart';
 
 import '../../../common/blue_tooth.dart';
 import '../../../common/constant.dart';
+import '../../../common/custom_group.dart';
 import '../../../common/ex/ex_userInfo.dart';
 import '../../../common/im_data.dart';
 import '../../../common/loading.dart';
@@ -86,15 +87,36 @@ class ImNotifier extends ChangeNotifier {
           await EMClient.getInstance.chatManager.loadAllConversations();
 
       ImCache.saveConversationsList(conversationsList);
+      addCustomGroup();
       ImCache.saveGroup(groupMap);
       ImCache.saveAllUser(allUsers);
       ImCache.saveContacts(contacts);
     } else {
       conversationsList = await ImCache.getConversationsList();
       groupMap = await ImCache.getGroup();
+      addCustomGroup();
       allUsers = await ImCache.getAllUser();
       messageMap = await ImCache.getAllMessage(allUsers.keys.toList());
       contacts = (await ImCache.getContacts()) ?? [];
+    }
+  }
+
+  addCustomGroup() {
+    if (!conversationsList
+        .any((element) => element.id == CustomGroup.sosEMConversation.id)) {
+      conversationsList.add(CustomGroup.sosEMConversation);
+    }
+    if (!conversationsList
+        .any((element) => element.id == CustomGroup.squareEMConversation.id)) {
+      conversationsList.add(CustomGroup.squareEMConversation);
+    }
+
+    if (!groupMap.containsKey(CustomGroup.sosGroup.groupId)) {
+      groupMap[CustomGroup.sosGroup.groupId] = CustomGroup.sosGroup;
+    }
+
+    if (!groupMap.containsKey(CustomGroup.squareGroup.groupId)) {
+      groupMap[CustomGroup.squareGroup.groupId] = CustomGroup.squareGroup;
     }
   }
 

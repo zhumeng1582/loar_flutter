@@ -25,6 +25,8 @@ class AssetsImages {
   static final iconShopping = _loadFromPath(named: 'iconShopping');
   static final iconForum = _loadFromPath(named: 'iconForum');
   static final iconPeople = _loadFromPath(named: 'iconPeople');
+  static final iconSOS = _loadFromPath(named: 'iconSOS');
+  static final iconSquare = _loadFromPath(named: 'iconSquare');
 
   static final iconDingWei = _loadFromPath(named: 'iconDingWei');
   static final iconFenXin = _loadFromPath(named: 'iconFenXin');

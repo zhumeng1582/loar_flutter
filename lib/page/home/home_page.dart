@@ -11,6 +11,7 @@ import 'package:nine_grid_view/nine_grid_view.dart';
 
 import '../../common/blue_tooth.dart';
 import '../../common/colors.dart';
+import '../../common/custom_group.dart';
 import '../../common/im_data.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
@@ -147,6 +148,16 @@ extension _Action on _HomePageState {
   }
 
   _room(EMConversation data) {
+    if (GlobeDataManager.instance.isEaseMob) {
+      if (data.id == CustomGroup.sosGroupId) {
+        Loading.toast("对不起，当前网络禁止使用SOS");
+        return;
+      } else if (data.id == CustomGroup.squareGroupId) {
+        Loading.toast("对不起，当前网络禁止使用广场");
+        return;
+      }
+    }
+
     Navigator.pushNamed(
       context,
       RouteNames.roomPage,
@@ -311,19 +322,35 @@ extension _UI on _HomePageState {
   }
 
   Widget _getIcon(EMConversation data) {
-    var avatarUrls = ref.watch(imProvider).getConversationAvatars(data);
-    return NineGridView(
-      width: 80.w,
-      height: 80.h,
-      type: NineGridType.weChatGp,
-      itemCount: avatarUrls.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ImageWidget(
-          url: avatarUrls[index],
-          radius: 6.r,
-          type: ImageWidgetType.asset,
-        );
-      },
-    );
+    if (data.id == CustomGroup.sosGroupId) {
+      return ImageWidget(
+        width: 60.w,
+        height: 60.h,
+        url: AssetsImages.iconSOS,
+        type: ImageWidgetType.asset,
+      ).padding(all: 10.w);
+    } else if (data.id == CustomGroup.squareGroupId) {
+      return ImageWidget(
+        width: 60.w,
+        height: 60.h,
+        url: AssetsImages.iconSquare,
+        type: ImageWidgetType.asset,
+      ).padding(all: 10.w);
+    } else {
+      var avatarUrls = ref.watch(imProvider).getConversationAvatars(data);
+      return NineGridView(
+        width: 80.w,
+        height: 80.h,
+        type: NineGridType.weChatGp,
+        itemCount: avatarUrls.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ImageWidget(
+            url: avatarUrls[index],
+            radius: 6.r,
+            type: ImageWidgetType.asset,
+          );
+        },
+      );
+    }
   }
 }
