@@ -156,7 +156,12 @@ extension _Action on _MeInfoPageState {
       context: context,
       maxLength: 18,
       data: name,
-      onConfirm: (value) => {ref.read(meDetailProvider).changeUserName(value)},
+      onConfirm: (value) => {
+        if (value.isEmpty)
+          Loading.toast("用户昵称不能为空")
+        else
+          ref.read(meDetailProvider).changeUserName(value)
+      },
     );
   }
 }

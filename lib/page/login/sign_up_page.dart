@@ -256,6 +256,11 @@ extension _Action on _SignUpPageState {
       Loading.toast("请先阅读并同意服务协议");
       return;
     }
+    if (userName.isEmpty) {
+      Loading.toast("用户昵称不能为空");
+      return false;
+    }
+
     if (!Reg.isPhone(account)) {
       Loading.toast("请输入正确的手机号");
       return false;
