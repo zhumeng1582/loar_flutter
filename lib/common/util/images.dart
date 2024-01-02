@@ -40,6 +40,8 @@ class AssetsImages {
   static final iconTongXunSel = _loadFromPath(named: 'iconTongXunSel');
   static final iconWodeSel = _loadFromPath(named: 'iconWodeSel');
   static final iconDaohang = _loadFromPath(named: 'iconDaohang');
+  static final bgFriend1 = _loadFromPath(named: 'bgFriend1');
+  static final bgFriend2 = _loadFromPath(named: 'bgFriend2');
 
   static final iconAbout = _loadFromPath(named: 'iconAbout');
   static final iconID = _loadFromPath(named: 'iconID');
