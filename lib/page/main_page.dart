@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loar_flutter/common/image.dart';
+import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/page/home/provider/network_provider.dart';
 import 'package:loar_flutter/page/statellite_map.dart';
 
@@ -15,7 +19,7 @@ import 'location/location_page.dart';
 import 'me/me_page.dart';
 
 final mainProvider =
-    ChangeNotifierProvider<MainNotifier>((ref) => MainNotifier());
+ChangeNotifierProvider<MainNotifier>((ref) => MainNotifier());
 
 class MainNotifier extends ChangeNotifier {
   final List tabPages = [
@@ -46,6 +50,8 @@ class MainPage extends ConsumerStatefulWidget {
 }
 
 class _MainPageState extends ConsumerState<MainPage> {
+  DateTime? lastPopTime;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -64,79 +70,93 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ref.watch(mainProvider).getCurrentWidget(),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.bottomBackground,
-        selectedFontSize: 14.0,
-        unselectedFontSize: 14.0,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        enableFeedback: true,
-        //点击会产生咔嗒声，长按会产生短暂的振动
-        selectedItemColor: AppColors.commonPrimary,
-        // 设置被选中时的图标颜色
-        unselectedItemColor: AppColors.title,
-        type: BottomNavigationBarType.fixed,
-        // 设置未被选中时的图标颜色
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: ImageWidget.asset(AssetsImages.iconFenXin,
-                width: 24, height: 24),
-            activeIcon: ImageWidget.asset(AssetsImages.iconFenXinSel,
-                width: 24, height: 24),
-            label: '蜂信',
-            backgroundColor: Colors.white,
-          ),
-          BottomNavigationBarItem(
-            icon: ImageWidget.asset(AssetsImages.iconTongXun,
-                width: 24, height: 24),
-            activeIcon: ImageWidget.asset(AssetsImages.iconTongXunSel,
-                width: 24, height: 24),
-            label: '通讯录',
-            backgroundColor: Colors.white,
-          ),
-          BottomNavigationBarItem(
-            icon: ImageWidget.asset(AssetsImages.iconDingWei,
-                width: 24, height: 24),
-            activeIcon: ImageWidget.asset(AssetsImages.iconDingWeiSel,
-                width: 24, height: 24),
-            label: '定位',
-            backgroundColor: Colors.white,
-          ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.sos, size: 24.0),
-          //   label: 'SOS',
-          //   backgroundColor: Colors.white,
-          // ),
-          BottomNavigationBarItem(
-            icon: ImageWidget.asset(
-              AssetsImages.iconWode,
-              width: 24,
-              height: 24,
+    return WillPopScope(
+      onWillPop: () async {
+        // 点击返回键的操作
+        if (lastPopTime == null ||
+            DateTime.now().difference(lastPopTime!) >
+                const Duration(seconds: 2)) {
+          lastPopTime = DateTime.now();
+          Loading.toast('再按一次退出');
+        } else {
+          SystemNavigator.pop();
+        }
+        return false;
+      },
+      child: Scaffold(
+        body: ref.watch(mainProvider).getCurrentWidget(),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: AppColors.bottomBackground,
+          selectedFontSize: 14.0,
+          unselectedFontSize: 14.0,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          enableFeedback: true,
+          //点击会产生咔嗒声，长按会产生短暂的振动
+          selectedItemColor: AppColors.commonPrimary,
+          // 设置被选中时的图标颜色
+          unselectedItemColor: AppColors.title,
+          type: BottomNavigationBarType.fixed,
+          // 设置未被选中时的图标颜色
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: ImageWidget.asset(AssetsImages.iconFenXin,
+                  width: 24, height: 24),
+              activeIcon: ImageWidget.asset(AssetsImages.iconFenXinSel,
+                  width: 24, height: 24),
+              label: '蜂信',
+              backgroundColor: Colors.white,
             ),
-            activeIcon: ImageWidget.asset(AssetsImages.iconWodeSel,
-                width: 24, height: 24),
-            label: '我的',
-            backgroundColor: Colors.white,
-          ),
-          BottomNavigationBarItem(
-            icon: ImageWidget.asset(AssetsImages.iconSheQu,
-                width: 24, height: 24),
-            activeIcon: ImageWidget.asset(AssetsImages.iconSheQuSel,
-                width: 24, height: 24),
-            label: '社区',
-            backgroundColor: Colors.white,
-          ),
-        ],
+            BottomNavigationBarItem(
+              icon: ImageWidget.asset(AssetsImages.iconTongXun,
+                  width: 24, height: 24),
+              activeIcon: ImageWidget.asset(AssetsImages.iconTongXunSel,
+                  width: 24, height: 24),
+              label: '通讯录',
+              backgroundColor: Colors.white,
+            ),
+            BottomNavigationBarItem(
+              icon: ImageWidget.asset(AssetsImages.iconDingWei,
+                  width: 24, height: 24),
+              activeIcon: ImageWidget.asset(AssetsImages.iconDingWeiSel,
+                  width: 24, height: 24),
+              label: '定位',
+              backgroundColor: Colors.white,
+            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.sos, size: 24.0),
+            //   label: 'SOS',
+            //   backgroundColor: Colors.white,
+            // ),
+            BottomNavigationBarItem(
+              icon: ImageWidget.asset(
+                AssetsImages.iconWode,
+                width: 24,
+                height: 24,
+              ),
+              activeIcon: ImageWidget.asset(AssetsImages.iconWodeSel,
+                  width: 24, height: 24),
+              label: '我的',
+              backgroundColor: Colors.white,
+            ),
+            BottomNavigationBarItem(
+              icon: ImageWidget.asset(AssetsImages.iconSheQu,
+                  width: 24, height: 24),
+              activeIcon: ImageWidget.asset(AssetsImages.iconSheQuSel,
+                  width: 24, height: 24),
+              label: '社区',
+              backgroundColor: Colors.white,
+            ),
+          ],
 
-        // 设置当前（即被选中时）页面
-        currentIndex: ref.watch(mainProvider).selectedIndex,
+          // 设置当前（即被选中时）页面
+          currentIndex: ref.watch(mainProvider).selectedIndex,
 
-        // 当点击其中一个[items]被触发
-        onTap: (int index) {
-          ref.watch(mainProvider).setSelectIndex(index);
-        },
+          // 当点击其中一个[items]被触发
+          onTap: (int index) {
+            ref.watch(mainProvider).setSelectIndex(index);
+          },
+        ),
       ),
     );
   }
