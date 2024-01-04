@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
-import 'package:loar_flutter/common/proto/index.dart';
+import 'lora_packet.dart';
 
 class BlueToothConnect {
   BlueToothConnect._();
@@ -14,6 +14,7 @@ class BlueToothConnect {
 
   final String _GPS_SERVICE_UUID = "00F3";
   final String _GPS_CHAR_UUID = "AE03";
+  static int splitLength = 20;
 
   static BlueToothConnect get instance => _getInstance();
   static BlueToothConnect? _instance;
@@ -22,15 +23,17 @@ class BlueToothConnect {
   BluetoothCharacteristic? loarChar;
   BluetoothCharacteristic? setChar;
   List<LoarMessage> messageQueue = [];
+  Map<List<int>, List<int>> loarData = {};
+
   Function? loarMessage;
   Function? gpsMessage;
 
   setListen(Function message) {
-    this.loarMessage = message;
+    loarMessage = message;
   }
 
   setGPSMessage(Function message) {
-    this.gpsMessage = message;
+    gpsMessage = message;
   }
 
   static BlueToothConnect _getInstance() {
@@ -78,6 +81,7 @@ class BlueToothConnect {
 
     BlueToothConnect.instance._listenLoar(loarMessage!);
     BlueToothConnect.instance._listenGps(gpsMessage!);
+    BlueToothConnect.instance._listenSet(setMessage);
 
     device?.device.connectionState.listen((BluetoothConnectionState state) {
       debugPrint("connectionState.listen----->" + state.name);
@@ -115,16 +119,27 @@ class BlueToothConnect {
     }
   }
 
-  sendLoraMessage() {
+  sendLoraMessage() async {
     if (messageQueue.isNotEmpty) {
       if (loarChar != null) {
-        _write(loarChar!, messageQueue[0].writeToBuffer());
+        var data =
+            Packet.splitData(messageQueue[0].writeToBuffer(), splitLength);
+        for (int i = 0; i < data.length;) {
+          _write(loarChar!, data[i]).then((value) {
+            i++; //发送失败之后发送下一条
+            debugPrint('_write------->Data sent successfully');
+          }).catchError((error) {
+            //发送失败之后重试
+            debugPrint('_write------->Failed to send data: $error');
+          });
+          await Future.delayed(const Duration(milliseconds: 1));
+        }
+        messageQueue.removeAt(0);
       }
-      messageQueue.removeAt(0);
     }
   }
 
-  writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) {
+  writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) async {
     messageQueue.add(value);
   }
 
@@ -137,7 +152,6 @@ class BlueToothConnect {
   _write(BluetoothCharacteristic c, List<int> value) {
     if (c.properties.write) {
       debugPrint("_write------->${value}");
-
       c.write(value);
     }
   }
@@ -150,11 +164,33 @@ class BlueToothConnect {
 
   _listenLoar(Function message) {
     if (loarChar != null) {
-      _setNotifyValue(loarChar!, message);
+      _setNotifyValue(loarChar!, (text) => {receiveData(text, message)});
     }
   }
 
-  listenSet(Function message) {
+  receiveData(List<int> data, Function message) {
+    Packet packet = Packet.fromIntList(data);
+    if (loarData.containsKey(packet.messageId)) {
+      loarData[packet.messageId]?.addAll(packet.data);
+    } else {
+      loarData[packet.messageId] = packet.data;
+    }
+    if (loarData[packet.messageId]?.length == packet.length) {
+      message(loarData[packet.messageId]);
+      loarData.remove(packet.messageId);
+    }
+  }
+
+  setMessage(List<int> message) {
+    if (message.length == 4 && message[0] == 0xFD) {
+      //0x01 最大发送500，保证数据完整性控制在200；0x00 最大发送20
+      if (message[1] == 0x01) {
+        splitLength = 200;
+      }
+    }
+  }
+
+  _listenSet(Function message) {
     if (setChar != null) {
       _setNotifyValue(setChar!, message);
     }

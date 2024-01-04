@@ -107,7 +107,7 @@ class GlobeDataManager {
       BlueToothConnect.instance.sendLoraMessage();
     });
 
-    Timer.periodic(const Duration(seconds: 3), (timer) async {
+    Timer.periodic(const Duration(seconds: 30), (timer) async {
       var position = getPosition();
       if (position != null &&
           me != null &&
