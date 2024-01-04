@@ -110,12 +110,12 @@ extension _UI on _RoomMessagePageState {
               )),
           Container().onTap(() {
             var other =
-                OnlineUser.create(data.from, body.latitude, body.longitude);
+            OnlineUser.create(data.from, body.latitude, body.longitude);
             Navigator.pushNamed(context, RouteNames.baiduMapPage,
                 arguments: MapDataPara(PageType.navigation, other: other));
           })
         ],
-      ).paddingHorizontal(20.w).height(180.h).width(540.w);
+      ).paddingHorizontal(20.w).height(280.h).width(540.w);
     }
 
     EMTextMessageBody body = data.body as EMTextMessageBody;

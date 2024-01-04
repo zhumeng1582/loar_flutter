@@ -126,7 +126,7 @@ class BlueToothConnect {
             Packet.splitData(messageQueue[0].writeToBuffer(), splitLength);
         for (int i = 0; i < data.length;) {
           _write(loarChar!, data[i]).then((value) {
-            i++; //发送失败之后发送下一条
+            i++; //发送成功之后发送下一条
             debugPrint('_write------->Data sent successfully');
           }).catchError((error) {
             //发送失败之后重试
