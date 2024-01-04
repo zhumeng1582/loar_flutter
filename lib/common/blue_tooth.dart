@@ -83,39 +83,34 @@ class BlueToothConnect {
     BlueToothConnect.instance._listenGps(gpsMessage!);
     BlueToothConnect.instance._listenSet(setMessage);
 
-    device?.device.connectionState.listen((BluetoothConnectionState state) {
-      debugPrint("connectionState.listen----->" + state.name);
+    device?.device.connectionState
+        .listen((BluetoothConnectionState state) async {
+      debugPrint("connectionState.listen----->${state.name}");
       if (state == BluetoothConnectionState.connected) {
-        _enableCommunication();
-        success();
+        await _enableCommunication().then((value) {
+          success();
+        }).catchError((error) {
+          fail(error);
+        });
+      } else {
+        fail();
       }
     });
   }
 
-  void setLoraMode(int mode) {
+  setLoraMode(int mode) async {
     List<int> data = [0xF3, mode];
-    _write(setChar!, data);
+    await _write(setChar!, data);
   }
 
   _enableCommunication() async {
     if (setChar != null) {
+      await setLoraMode(2);
+      await Future.delayed(const Duration(milliseconds: 150));
       List<int> value = [0xC2, 0x00, 0x06, 0x12, 0x34, 0x01, 0x62, 0x00, 0x18];
-      setLoraMode(2);
+      await _write(loarChar!, value);
       await Future.delayed(const Duration(milliseconds: 150));
-      _write(loarChar!, value);
-      await Future.delayed(const Duration(milliseconds: 150));
-      setLoraMode(0);
-    }
-  }
-
-  _enableBroadcast() async {
-    if (setChar != null) {
-      List<int> value = [0xC2, 0x00, 0x06, 0xff, 0xff, 0x00, 0x61, 0x00, 0x17];
-      setLoraMode(2);
-      await Future.delayed(const Duration(milliseconds: 150));
-      _write(loarChar!, value);
-      await Future.delayed(const Duration(milliseconds: 150));
-      setLoraMode(0);
+      await setLoraMode(0);
     }
   }
 
@@ -125,7 +120,7 @@ class BlueToothConnect {
         var data =
             Packet.splitData(messageQueue[0].writeToBuffer(), splitLength);
         for (int i = 0; i < data.length;) {
-          _write(loarChar!, data[i]).then((value) {
+          await _write(loarChar!, data[i]).then((value) {
             i++; //发送成功之后发送下一条
             debugPrint('_write------->Data sent successfully');
           }).catchError((error) {
@@ -143,16 +138,10 @@ class BlueToothConnect {
     messageQueue.add(value);
   }
 
-  _writeLoraString(List<int> value) {
-    if (loarChar != null) {
-      _write(loarChar!, value);
-    }
-  }
-
-  _write(BluetoothCharacteristic c, List<int> value) {
+  _write(BluetoothCharacteristic c, List<int> value) async {
     if (c.properties.write) {
       debugPrint("_write------->${value}");
-      c.write(value);
+      await c.write(value);
     }
   }
 
