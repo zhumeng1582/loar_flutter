@@ -38,8 +38,9 @@ class RoomDetailNotifier extends ChangeNotifier {
 
   Future<EMGroup> _createGroup() async {
     EMGroupOptions groupOptions = EMGroupOptions(
-      style: EMGroupStyle.PublicOpenJoin,
-      maxCount: 10000,
+      style: EMGroupStyle.PrivateMemberCanInvite,
+      inviteNeedConfirm: true,
+      maxCount: 10,
     );
 
     return await EMClient.getInstance.groupManager.createGroup(
@@ -143,7 +144,7 @@ class _RoomDetailPageState extends ConsumerState<ChatDetailPage> {
         child: Column(
           children: [
             _userInfoList(ref.watch(roomProvider).userInfoList)
-                .paddingBottom(10.h),
+                .paddingVertical(20.h),
             ...getGroup(),
           ],
         ).paddingHorizontal(30.h),

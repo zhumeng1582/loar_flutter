@@ -304,14 +304,15 @@ extension _Action on _SignUpPageState {
     }
   }
 
-  Future<EMGroup> _createGroup() async {
+  Future _createGroup() async {
     EMGroupOptions groupOptions = EMGroupOptions(
       style: EMGroupStyle.PublicOpenJoin,
       maxCount: 10000,
     );
-    return await EMClient.getInstance.groupManager.createGroup(
+    var group = await EMClient.getInstance.groupManager.createGroup(
       options: groupOptions,
     );
+    debugPrint("createGroup------>${group.groupId}");
   }
 
   joinGroup() async {
