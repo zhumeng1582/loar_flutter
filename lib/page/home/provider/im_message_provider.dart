@@ -163,11 +163,11 @@ class ImNotifier extends ChangeNotifier {
     ImCache.saveChatMessage(conversationId, messageList);
 
     updateConversation(conversationId, message.chatType);
-    if (GlobeDataManager.instance.isEaseMob) {
-      EMClient.getInstance.chatManager
-          .updateMessage(message)
-          .catchError((value) => error(value));
-    }
+    // if (GlobeDataManager.instance.isEaseMob) {
+    //   EMClient.getInstance.chatManager
+    //       .updateMessage(message)
+    //       .catchError((value) => error(value));
+    // }
   }
 
   void updateConversation(String conversationId, ChatType chatType) {
@@ -189,14 +189,19 @@ class ImNotifier extends ChangeNotifier {
   }
 
   addContacts(String userId) async {
+    if (contacts.contains(userId)) {
+      return;
+    }
+
     var contactsMap =
         await EMClient.getInstance.userInfoManager.fetchUserInfoById([userId]);
-    if (!contacts.contains(userId)) {
+    if (contactsMap.isNotEmpty) {
       contacts.add(userId);
+      allUsers[userId] = contactsMap[userId]!;
+      ImCache.saveAllUser(allUsers);
+      sendCmdMessage(ChatType.Chat, userId, "我们已经是好友了，快来聊天吧");
+      notifyListeners();
     }
-    allUsers.addAll(contactsMap);
-    ImCache.saveAllUser(allUsers);
-    notifyListeners();
   }
 
   EMUserInfo? getUserInfo(String? userId) {
@@ -228,9 +233,11 @@ class ImNotifier extends ChangeNotifier {
       EMContactEventHandler(
         onContactAdded: (userId) {
           addContacts(userId);
+          debugPrint("addContacts----1----->$userId");
         },
         onFriendRequestAccepted: (userId) {
-          addContacts(userId);
+          // addContacts(userId);
+          debugPrint("addContacts----2----->$userId");
         },
         onContactInvited: (userId, reason) {
           notifyMessageList.add(NotifyBean(NotifyType.friendInvite,
@@ -279,6 +286,9 @@ class ImNotifier extends ChangeNotifier {
     EMClient.getInstance.groupManager.addEventHandler(
         "UNIQUE_HANDLER_ID",
         EMGroupEventHandler(
+          onGroupDestroyed: (String groupId, String? groupName) {
+            groupMap.remove(groupId);
+          },
           onAttributesChangedOfGroupMember: (
             groupId,
             userId,
@@ -318,12 +328,10 @@ class ImNotifier extends ChangeNotifier {
             groupMap[group.groupId] = group;
             notifyListeners();
           },
-          onInvitationReceivedFromGroup: (
-            groupId,
-            groupName,
-            inviter,
-            reason,
-          ) {
+          onInvitationReceivedFromGroup: (groupId,
+              groupName,
+              inviter,
+              reason,) {
             notifyMessageList.add(NotifyBean(NotifyType.groupInvite,
                 "${DateTime.now().millisecondsSinceEpoch}",
                 inviter: inviter,
@@ -538,6 +546,19 @@ class ImNotifier extends ChangeNotifier {
     var msg = EMMessage.createTxtSendMessage(
         targetId: targetId, content: messageContent, chatType: chatType);
 
+    await sendMessage(targetId, msg, chatType, messageContent);
+  }
+
+  sendCmdMessage(
+      ChatType chatType, String targetId, String messageContent) async {
+    var msg = EMMessage.createCmdSendMessage(
+        targetId: targetId, action: messageContent);
+
+    await sendMessage(targetId, msg, chatType, messageContent);
+  }
+
+  Future<void> sendMessage(String targetId, EMMessage msg, ChatType chatType,
+      String messageContent) async {
     addMessageToMap(targetId, msg);
     notifyListeners();
     if (GlobeDataManager.instance.isEaseMob) {
@@ -618,7 +639,7 @@ class ImNotifier extends ChangeNotifier {
 
   String getMessageText(EMMessage? message) {
     if (message == null) {
-      return "去发送一个消息吧";
+      return "去发送一条消息吧";
     }
     switch (message.body.type) {
       case MessageType.TXT:
@@ -626,8 +647,13 @@ class ImNotifier extends ChangeNotifier {
           EMTextMessageBody body = message.body as EMTextMessageBody;
           return body.content;
         }
+      case MessageType.CMD:
+        {
+          EMCmdMessageBody body = message.body as EMCmdMessageBody;
+          return body.action;
+        }
       default:
-        return "收到一个新消息";
+        return "收到一条新消息";
     }
   }
 

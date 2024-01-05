@@ -1,4 +1,3 @@
-import 'package:chat_bubbles/bubbles/bubble_special_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -79,7 +78,19 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildRoomMessageItem(EMMessage data) {
-    if (data.from == GlobeDataManager.instance.me?.userId) {
+    if (data.body is EMCmdMessageBody) {
+      EMCmdMessageBody body = data.body as EMCmdMessageBody;
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            body.action,
+            style:
+                TextStyle(fontSize: 22.sp, color: AppColors.disabledTextColor),
+          )
+        ],
+      );
+    } else if (data.from == GlobeDataManager.instance.me?.userId) {
       return _buildChatRightItem(data, _buildChatContent(data));
     } else {
       return _buildChatLeftItem(data, _buildChatContent(data));
@@ -110,7 +121,7 @@ extension _UI on _RoomMessagePageState {
               )),
           Container().onTap(() {
             var other =
-            OnlineUser.create(data.from, body.latitude, body.longitude);
+                OnlineUser.create(data.from, body.latitude, body.longitude);
             Navigator.pushNamed(context, RouteNames.baiduMapPage,
                 arguments: MapDataPara(PageType.navigation, other: other));
           })
