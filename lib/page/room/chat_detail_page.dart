@@ -38,9 +38,8 @@ class RoomDetailNotifier extends ChangeNotifier {
 
   Future<EMGroup> _createGroup() async {
     EMGroupOptions groupOptions = EMGroupOptions(
-      style: EMGroupStyle.PrivateMemberCanInvite,
-      inviteNeedConfirm: true,
-      maxCount: 10,
+      style: EMGroupStyle.PublicOpenJoin,
+      maxCount: 10000,
     );
 
     return await EMClient.getInstance.groupManager.createGroup(

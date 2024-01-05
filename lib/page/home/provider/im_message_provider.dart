@@ -73,15 +73,7 @@ class ImNotifier extends ChangeNotifier {
         await getHistoryMessage(element.groupId, EMConversationType.GroupChat);
       }
 
-      var userList = [...contacts];
-      groupMap.forEach((key, value) {
-        userList.addAll([
-          value.owner!,
-          ...value.adminList ?? [],
-          ...value.memberList ?? []
-        ]);
-      });
-      await loadUerInfo(userList);
+      await loadUerInfo();
 
       conversationsList =
           await EMClient.getInstance.chatManager.loadAllConversations();
@@ -157,9 +149,10 @@ class ImNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> loadUerInfo(List<String> contacts) async {
+  Future<void> loadUerInfo() async {
+    var userList = [...groupMap[CustomGroup.allUserGroup].allUsers];
     var contactsMap =
-        await EMClient.getInstance.userInfoManager.fetchUserInfoById(contacts);
+        await EMClient.getInstance.userInfoManager.fetchUserInfoById(userList);
     allUsers.addAll(contactsMap);
   }
 
@@ -172,7 +165,9 @@ class ImNotifier extends ChangeNotifier {
 
     updateConversation(conversationId, message.chatType);
     if (GlobeDataManager.instance.isEaseMob) {
-      EMClient.getInstance.chatManager.updateMessage(message);
+      EMClient.getInstance.chatManager
+          .updateMessage(message)
+          .catchError((value) => error(value));
     }
   }
 

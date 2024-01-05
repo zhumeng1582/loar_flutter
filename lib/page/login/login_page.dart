@@ -14,10 +14,7 @@ import '../../common/loading.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/encrypter.dart';
 import '../../common/util/im_cache.dart';
-import '../../common/util/images.dart';
 import '../../common/util/reg.dart';
-import '../../widget/baseTextField.dart';
-import '../../widget/commit_button.dart';
 import '../../widget/loginTextField.dart';
 
 final loginProvider =

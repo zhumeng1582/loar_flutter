@@ -35,9 +35,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
         .watch(imProvider)
         .groupMap
         .values
-        .where((element) =>
-            element.groupId != CustomGroup.sosGroupId &&
-            element.groupId != CustomGroup.squareGroupId)
+        .where((element) => !CustomGroup.hideAllGroup.contains(element.groupId))
         .toList();
 
     List<String> contacts = ref.watch(imProvider).contacts;
@@ -107,9 +105,9 @@ extension _UI on _ContactsPageState {
         .padding(vertical: 5.h)
         .roundedBorder(radius: 10, color: AppColors.buttonDisableColor)
         .padding(
-      vertical: 25.h,
-      horizontal: 32.w,
-    )
+          vertical: 25.h,
+          horizontal: 32.w,
+        )
         .onTap(search);
   }
 
@@ -186,7 +184,8 @@ extension _Action on _ContactsPageState {
 
   scan() async {
     var qrCodeData = await ref.read(homeProvider).scan();
-    if (qrCodeData?.userInfo != null) {} else if (qrCodeData?.room != null) {}
+    if (qrCodeData?.userInfo != null) {
+    } else if (qrCodeData?.room != null) {}
   }
 
   _userRoom(EMUserInfo data) {

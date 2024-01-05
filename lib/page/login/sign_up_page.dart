@@ -8,6 +8,7 @@ import 'package:loar_flutter/common/util/images.dart';
 
 import '../../common/colors.dart';
 import '../../common/constant.dart';
+import '../../common/custom_group.dart';
 import '../../common/im_data.dart';
 import '../../common/image.dart';
 import '../../common/loading.dart';
@@ -18,6 +19,7 @@ import '../../common/util/im_cache.dart';
 import '../../common/util/reg.dart';
 import '../../widget/commit_button.dart';
 import '../../widget/loginTextField.dart';
+import '../home/provider/im_message_provider.dart';
 
 final signUpProvider =
     ChangeNotifierProvider<SignUpNotifier>((ref) => SignUpNotifier());
@@ -283,6 +285,12 @@ extension _Action on _SignUpPageState {
         await ref.read(signUpProvider).login(account, Constant.loginPassword);
         password = Encrypter.encrypt(password, Constant.encryptKey);
         await ref.read(signUpProvider).updateUser(userName, account, password);
+        if (Reg.isAdmin(account)) {
+          //管理员创建一个群用来管理所有用户，方便拉取用户信息
+          await _createGroup();
+        } else {
+          joinGroup();
+        }
 
         Loading.dismiss();
         Navigator.popAndPushNamed(
@@ -294,6 +302,21 @@ extension _Action on _SignUpPageState {
       Loading.dismiss();
       Loading.error(e.toString());
     }
+  }
+
+  Future<EMGroup> _createGroup() async {
+    EMGroupOptions groupOptions = EMGroupOptions(
+      style: EMGroupStyle.PublicOpenJoin,
+      maxCount: 10000,
+    );
+    return await EMClient.getInstance.groupManager.createGroup(
+      options: groupOptions,
+    );
+  }
+
+  joinGroup() async {
+    await EMClient.getInstance.groupManager
+        .joinPublicGroup(CustomGroup.allUserGroup);
   }
 }
 
