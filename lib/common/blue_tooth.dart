@@ -23,7 +23,7 @@ class BlueToothConnect {
   BluetoothCharacteristic? loarChar;
   BluetoothCharacteristic? setChar;
   List<LoarMessage> messageQueue = [];
-  Map<List<int>, List<int>> loarData = {};
+  Map<String, List<int>> loarData = {};
 
   Function? loarMessage;
   Function? gpsMessage;
@@ -117,19 +117,22 @@ class BlueToothConnect {
   sendLoraMessage() async {
     if (messageQueue.isNotEmpty) {
       if (loarChar != null) {
-        var data =
-            Packet.splitData(messageQueue[0].writeToBuffer(), splitLength);
+        var sendData = messageQueue[0];
+        var data = Packet.splitData(sendData.writeToBuffer(), splitLength);
+        bool sendSuccess = true;
         for (int i = 0; i < data.length;) {
           await _write(loarChar!, data[i]).then((value) {
             i++; //发送成功之后发送下一条
+            sendSuccess = true;
             debugPrint('_write------->Data sent successfully');
           }).catchError((error) {
             //发送失败之后重试
+            sendSuccess = false;
             debugPrint('_write------->Failed to send data: $error');
           });
-          await Future.delayed(const Duration(milliseconds: 1));
+          await Future.delayed(Duration(milliseconds: sendSuccess ? 20 : 1));
         }
-        messageQueue.removeAt(0);
+        messageQueue.remove(sendData);
       }
     }
   }
@@ -159,14 +162,14 @@ class BlueToothConnect {
 
   receiveData(List<int> data, Function message) {
     Packet packet = Packet.fromIntList(data);
-    if (loarData.containsKey(packet.messageId)) {
-      loarData[packet.messageId]?.addAll(packet.data);
-    } else {
-      loarData[packet.messageId] = packet.data;
-    }
-    if (loarData[packet.messageId]?.length == packet.length) {
-      message(loarData[packet.messageId]);
-      loarData.remove(packet.messageId);
+    String key = packet.getMessageId();
+    var temp = loarData[key] ?? [];
+    temp.addAll(packet.data);
+    loarData[key] = temp;
+
+    if (temp.length == packet.length) {
+      message(temp);
+      loarData.remove(key);
     }
   }
 

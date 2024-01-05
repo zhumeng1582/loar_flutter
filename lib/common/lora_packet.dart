@@ -5,16 +5,20 @@ class Packet {
   List<int> dataHead = [];
   List<int> messageId = [];
 
+  String getMessageId() {
+    return "${messageId[0]}${messageId[1]}";
+  }
+
   //数据包的总长度，非当前包长度
   int length = 0;
 
   Packet(this.dataHead, this.messageId, this.length, this.data);
 
-  Packet.fromIntList(List<int> data) {
-    dataHead = data.sublist(0, 2);
-    messageId = data.sublist(2, 4);
-    length = data[4];
-    data = data.sublist(5, data.length);
+  Packet.fromIntList(List<int> listData) {
+    dataHead = listData.sublist(0, 2);
+    messageId = listData.sublist(2, 4);
+    length = listData[4];
+    data = listData.sublist(5, listData.length);
   }
 
   List<int> toIntList() {

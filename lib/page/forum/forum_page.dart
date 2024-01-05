@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
-import '../../common/im_data.dart';
 import '../../common/colors.dart';
 import '../../common/image.dart';
-import '../../common/loading.dart';
-import '../../common/proto/qr_code_data.dart';
-import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
-import '../../widget/edit_remark_sheet.dart';
-import '../room/chat_detail_page.dart';
 
 final forumProvider =
     ChangeNotifierProvider<ForumNotifier>((ref) => ForumNotifier());

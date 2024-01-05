@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,13 +9,10 @@ import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
 
-import '../../common/colors.dart';
-import '../../common/image.dart';
-import '../../common/loading.dart';
+import '../../common/index.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/gaps.dart';
 import '../../common/util/images.dart';
-import '../home/bean/conversation_bean.dart';
 import '../home/provider/home_provider.dart';
 import '../home/provider/network_provider.dart';
 
@@ -32,9 +31,17 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, EMGroup> groupMap = ref.watch(imProvider).groupMap;
+    List<EMGroup> groupList = ref
+        .watch(imProvider)
+        .groupMap
+        .values
+        .where((element) =>
+            element.groupId != CustomGroup.sosGroupId &&
+            element.groupId != CustomGroup.squareGroupId)
+        .toList();
+
     List<String> contacts = ref.watch(imProvider).contacts;
-    List<dynamic> data = [0, ...contacts, ...groupMap.values];
+    List<dynamic> data = [0, ...contacts, ...groupList];
 
     return Scaffold(
       appBar: AppBar(
@@ -100,9 +107,9 @@ extension _UI on _ContactsPageState {
         .padding(vertical: 5.h)
         .roundedBorder(radius: 10, color: AppColors.buttonDisableColor)
         .padding(
-          vertical: 25.h,
-          horizontal: 32.w,
-        )
+      vertical: 25.h,
+      horizontal: 32.w,
+    )
         .onTap(search);
   }
 
@@ -179,8 +186,7 @@ extension _Action on _ContactsPageState {
 
   scan() async {
     var qrCodeData = await ref.read(homeProvider).scan();
-    if (qrCodeData?.userInfo != null) {
-    } else if (qrCodeData?.room != null) {}
+    if (qrCodeData?.userInfo != null) {} else if (qrCodeData?.room != null) {}
   }
 
   _userRoom(EMUserInfo data) {
