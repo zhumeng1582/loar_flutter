@@ -5,12 +5,9 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
-import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/util/gaps.dart';
-import '../../common/util/images.dart';
 import '../../widget/common.dart';
-import '../home/provider/home_provider.dart';
 import '../home/provider/im_message_provider.dart';
 
 final contractSelectProvider = ChangeNotifierProvider<ContactsSelectNotifier>(
@@ -53,7 +50,7 @@ class _ContactsSelectPageState extends ConsumerState<ContactsSelectPage> {
             Container();
           }
         },
-      ),
+      ).paddingVertical(20.h),
     );
   }
 
@@ -67,8 +64,8 @@ extension _UI on _ContactsSelectPageState {
   Widget _getIcon(EMUserInfo data) {
     return ImageWidget(
       url: data.avatarName,
-      width: 40.w,
-      height: 40.h,
+      width: 80.w,
+      height: 80.h,
       radius: 6.r,
       type: ImageWidgetType.asset,
     );
@@ -80,7 +77,6 @@ extension _UI on _ContactsSelectPageState {
         Row(
           children: [
             _getIcon(data).paddingHorizontal(30.w),
-            Text(data.userId).expanded(),
             Text(data.name).paddingHorizontal(30.w),
           ],
         ),
