@@ -546,7 +546,7 @@ class ImNotifier extends ChangeNotifier {
     var msg = EMMessage.createTxtSendMessage(
         targetId: targetId, content: messageContent, chatType: chatType);
 
-    await sendMessage(targetId, msg, chatType, messageContent);
+    await _sendMessage(targetId, msg, chatType, messageContent);
   }
 
   sendCmdMessage(
@@ -554,10 +554,10 @@ class ImNotifier extends ChangeNotifier {
     var msg = EMMessage.createCmdSendMessage(
         targetId: targetId, action: messageContent);
 
-    await sendMessage(targetId, msg, chatType, messageContent);
+    await _sendMessage(targetId, msg, chatType, messageContent);
   }
 
-  Future<void> sendMessage(String targetId, EMMessage msg, ChatType chatType,
+  Future<void> _sendMessage(String targetId, EMMessage msg, ChatType chatType,
       String messageContent) async {
     addMessageToMap(targetId, msg);
     notifyListeners();
