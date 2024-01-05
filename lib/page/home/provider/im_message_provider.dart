@@ -311,11 +311,15 @@ class ImNotifier extends ChangeNotifier {
           },
           onAutoAcceptInvitationFromGroup: (groupId, userId, reason) async {
             groupMap[groupId] = await fetchGroupInfoFromServer(groupId);
+            sendCmdMessage(
+                ChatType.GroupChat, groupId, "${allUsers[userId].name} 加入群聊");
             updateConversation(groupId, ChatType.GroupChat);
             notifyListeners();
           },
           onInvitationAcceptedFromGroup: (groupId, userId, reason) async {
             groupMap[groupId] = await fetchGroupInfoFromServer(groupId);
+            sendCmdMessage(
+                ChatType.GroupChat, groupId, "${allUsers[userId].name} 加入群聊");
             updateConversation(groupId, ChatType.GroupChat);
             notifyListeners();
           },

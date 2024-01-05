@@ -79,60 +79,26 @@ extension _UI on _RoomMessagePageState {
 
   Widget _buildRoomMessageItem(EMMessage data) {
     if (data.body is EMCmdMessageBody) {
-      EMCmdMessageBody body = data.body as EMCmdMessageBody;
-      if (data.direction == MessageDirection.RECEIVE) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              body.action,
-              style: TextStyle(
-                  fontSize: 22.sp, color: AppColors.disabledTextColor),
-            )
-          ],
-        );
+      return _buildChatCmdItem(data);
+    } else if (data.body is EMLocationMessageBody) {
+      if (data.from == GlobeDataManager.instance.me?.userId) {
+        return _buildChatRightItem(data, _buildChatLocationContent(data));
       } else {
-        return Container();
+        return _buildChatLeftItem(data, _buildChatLocationContent(data));
       }
-    } else if (data.from == GlobeDataManager.instance.me?.userId) {
-      return _buildChatRightItem(data, _buildChatContent(data));
+    } else if (data.body is EMTextMessageBody) {
+      if (data.from == GlobeDataManager.instance.me?.userId) {
+        return _buildChatRightItem(data, _buildChatTextContent(data));
+      } else {
+        return _buildChatLeftItem(data, _buildChatTextContent(data));
+      }
     } else {
-      return _buildChatLeftItem(data, _buildChatContent(data));
+      return Container();
     }
   }
 
-  Widget _buildChatContent(EMMessage data) {
+  Widget _buildChatTextContent(EMMessage data) {
     var isSender = data.from == GlobeDataManager.instance.me?.userId;
-    if (data.body is EMLocationMessageBody) {
-      EMLocationMessageBody body = data.body as EMLocationMessageBody;
-      return Stack(
-        children: [
-          BMFMapWidget(
-              onBMFMapCreated: (controller) {
-                controller.addMarker(BMFMarker.icon(
-                    position: BMFCoordinate(body.latitude, body.longitude),
-                    title: "",
-                    identifier: GlobeDataManager.instance.me?.userId,
-                    icon: AssetsImages.iconPeople));
-              },
-              mapOptions: BMFMapOptions(
-                mapType: BMFMapType.Standard,
-                zoomLevel: 12,
-                maxZoomLevel: 21,
-                minZoomLevel: 4,
-                showZoomControl: false,
-                center: BMFCoordinate(body.latitude, body.longitude),
-              )),
-          Container().onTap(() {
-            var other =
-                OnlineUser.create(data.from, body.latitude, body.longitude);
-            Navigator.pushNamed(context, RouteNames.baiduMapPage,
-                arguments: MapDataPara(PageType.navigation, other: other));
-          })
-        ],
-      ).paddingHorizontal(20.w).height(280.h).width(540.w);
-    }
-
     EMTextMessageBody body = data.body as EMTextMessageBody;
     var repeater = "";
 
@@ -150,6 +116,36 @@ extension _UI on _RoomMessagePageState {
         fontSize: 24.sp,
       ),
     );
+  }
+
+  Widget _buildChatLocationContent(EMMessage data) {
+    EMLocationMessageBody body = data.body as EMLocationMessageBody;
+    return Stack(
+      children: [
+        BMFMapWidget(
+            onBMFMapCreated: (controller) {
+              controller.addMarker(BMFMarker.icon(
+                  position: BMFCoordinate(body.latitude, body.longitude),
+                  title: "",
+                  identifier: GlobeDataManager.instance.me?.userId,
+                  icon: AssetsImages.iconPeople));
+            },
+            mapOptions: BMFMapOptions(
+              mapType: BMFMapType.Standard,
+              zoomLevel: 12,
+              maxZoomLevel: 21,
+              minZoomLevel: 4,
+              showZoomControl: false,
+              center: BMFCoordinate(body.latitude, body.longitude),
+            )),
+        Container().onTap(() {
+          var other =
+              OnlineUser.create(data.from, body.latitude, body.longitude);
+          Navigator.pushNamed(context, RouteNames.baiduMapPage,
+              arguments: MapDataPara(PageType.navigation, other: other));
+        })
+      ],
+    ).paddingHorizontal(20.w).height(280.h).width(540.w);
   }
 
   _buildChatLeftItem(EMMessage data, Widget child) {
@@ -205,4 +201,21 @@ extension _UI on _RoomMessagePageState {
 //     ],
 //   );
 // }
+}
+
+Widget _buildChatCmdItem(EMMessage data) {
+  EMCmdMessageBody body = data.body as EMCmdMessageBody;
+  if (data.direction == MessageDirection.RECEIVE) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          body.action,
+          style: TextStyle(fontSize: 22.sp, color: AppColors.disabledTextColor),
+        )
+      ],
+    );
+  } else {
+    return Container();
+  }
 }
