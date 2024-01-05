@@ -80,16 +80,20 @@ extension _UI on _RoomMessagePageState {
   Widget _buildRoomMessageItem(EMMessage data) {
     if (data.body is EMCmdMessageBody) {
       EMCmdMessageBody body = data.body as EMCmdMessageBody;
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            body.action,
-            style:
-                TextStyle(fontSize: 22.sp, color: AppColors.disabledTextColor),
-          )
-        ],
-      );
+      if (data.direction == MessageDirection.RECEIVE) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              body.action,
+              style: TextStyle(
+                  fontSize: 22.sp, color: AppColors.disabledTextColor),
+            )
+          ],
+        );
+      } else {
+        return Container();
+      }
     } else if (data.from == GlobeDataManager.instance.me?.userId) {
       return _buildChatRightItem(data, _buildChatContent(data));
     } else {
