@@ -65,11 +65,10 @@ class ImNotifier extends ChangeNotifier {
 
       var groupList =
           await EMClient.getInstance.groupManager.fetchJoinedGroupsFromServer();
-      groupList.forEach((element) async {
+
+      for (var element in groupList) {
         groupMap[element.groupId] =
             await fetchGroupInfoFromServer(element.groupId);
-      });
-      for (var element in groupList) {
         await getHistoryMessage(element.groupId, EMConversationType.GroupChat);
       }
 
@@ -150,7 +149,7 @@ class ImNotifier extends ChangeNotifier {
   }
 
   Future<void> loadUerInfo() async {
-    var userList = [...groupMap[CustomGroup.allUserGroup].allUsers];
+    var userList = groupMap[CustomGroup.allUserGroup].allUsers;
     var contactsMap =
         await EMClient.getInstance.userInfoManager.fetchUserInfoById(userList);
     allUsers.addAll(contactsMap);
