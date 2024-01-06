@@ -59,13 +59,13 @@ class GlobeDataManager {
     try {
       Loading.show();
       me = await EMClient.getInstance.userInfoManager.updateUserInfo(
-          nickname: nickname,
-          avatarUrl: avatarUrl,
-          mail: mail,
+          nickname: nickname ?? me?.nickName,
+          avatarUrl: avatarUrl ?? me?.avatarUrl,
+          mail: mail ?? me?.mail,
           gender: gender ?? me?.gender,
-          sign: sign,
-          birth: birth,
-          ext: ext);
+          sign: sign ?? me?.sign,
+          birth: birth ?? me?.birth,
+          ext: ext ?? me?.ext);
 
       Loading.dismiss();
       Loading.success("修改成功");

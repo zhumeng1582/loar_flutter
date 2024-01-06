@@ -30,13 +30,18 @@ var isConnectionSuccessful = false;
 
 class ImNotifier extends ChangeNotifier {
   List<EMConversation> conversationsList = [];
-  CommunicationStatue communicationStatue = CommunicationStatue(true);
+  CommunicationStatue communicationStatue = CommunicationStatue();
   List<NotifyBean> notifyMessageList = [];
   List<String> contacts = [];
   Map<String, EMGroup> groupMap = {};
   Map<String, EMUserInfo> allUsers = {};
   Map<String, OnlineUser> allOnlineUsers = {};
   Map<String, List<EMMessage>> messageMap = {};
+
+  updateUserInfo(EMUserInfo userInfo) {
+    allUsers[userInfo.userId] = userInfo;
+    notifyListeners();
+  }
 
   init() async {
     Loading.show();
@@ -216,13 +221,13 @@ class ImNotifier extends ChangeNotifier {
 
   String getAvatarUrl(String? userId) {
     if (allUsers.containsKey(userId)) {
-      return allUsers[userId]?.avatarUrl ?? AssetsImages.getRandomAvatar();
+      return allUsers[userId]?.avatarUrl ?? AssetsImages.getDefaultAvatar();
     }
     if (GlobeDataManager.instance.me?.userId == userId) {
       return GlobeDataManager.instance.me?.avatarUrl ??
-          AssetsImages.getRandomAvatar();
+          AssetsImages.getDefaultAvatar();
     }
-    return AssetsImages.getRandomAvatar();
+    return AssetsImages.getDefaultAvatar();
   }
 
   void addImListener() async {
@@ -357,13 +362,10 @@ class ImNotifier extends ChangeNotifier {
       "UNIQUE_HANDLER_ID",
       EMConnectionEventHandler(
         // sdk 连接成功;
-        onConnected: () =>
-            {communicationStatue.available = true, notifyListeners()},
+        onConnected: () => {notifyListeners()},
         // 由于网络问题导致的断开，sdk会尝试自动重连，连接成功后会回调 "onConnected";
-        onDisconnected: () => {
-          communicationStatue.available = BlueToothConnect.instance.isConnect(),
-          notifyListeners()
-        },
+        onDisconnected: () =>
+            {BlueToothConnect.instance.disconnect(), notifyListeners()},
         // 用户 token 鉴权失败;
         onUserAuthenticationFailed: () => {},
         // 由于密码变更被踢下线;
@@ -571,11 +573,11 @@ class ImNotifier extends ChangeNotifier {
 
   Future<void> _sendMessage(String targetId, EMMessage msg, ChatType chatType,
       String messageContent) async {
-    addMessageToMap(targetId, msg);
-    notifyListeners();
     if (GlobeDataManager.instance.isEaseMob) {
-      await EMClient.getInstance.chatManager.sendMessage(msg);
-    } else {
+      await EMClient.getInstance.chatManager
+          .sendMessage(msg)
+          .then((value) => {addMessageToMap(targetId, msg), notifyListeners()});
+    } else if (BlueToothConnect.instance.isConnect()) {
       LoarMessage message = LoarMessage(
         msgId: msg.msgId,
         msgType: MsgType.TEXT,
@@ -588,6 +590,11 @@ class ImNotifier extends ChangeNotifier {
         content: messageContent,
       );
       BlueToothConnect.instance.writeLoraMessage(message);
+
+      addMessageToMap(targetId, msg);
+      notifyListeners();
+    } else {
+      Loading.toast("当前设备不在线");
     }
   }
 
@@ -603,11 +610,11 @@ class ImNotifier extends ChangeNotifier {
         longitude: position.longitude,
         chatType: chatType);
 
-    addMessageToMap(targetId, msg);
-    notifyListeners();
     if (GlobeDataManager.instance.isEaseMob) {
-      await EMClient.getInstance.chatManager.sendMessage(msg);
-    } else {
+      await EMClient.getInstance.chatManager
+          .sendMessage(msg)
+          .then((value) => {addMessageToMap(targetId, msg), notifyListeners()});
+    } else if (BlueToothConnect.instance.isConnect()) {
       LoarMessage message = LoarMessage(
         msgId: msg.msgId,
         msgType: MsgType.LOCATION,
@@ -620,6 +627,10 @@ class ImNotifier extends ChangeNotifier {
         longitude: position.longitude,
       );
       BlueToothConnect.instance.writeLoraMessage(message);
+      addMessageToMap(targetId, msg);
+      notifyListeners();
+    } else {
+      Loading.toast("当前设备不在线");
     }
   }
 

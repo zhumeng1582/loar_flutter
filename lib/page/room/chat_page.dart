@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/index.dart';
 import 'package:loar_flutter/page/room/chat_message_page.dart';
 import '../../common/im_data.dart';
 import '../../common/routers/RouteNames.dart';
@@ -67,8 +68,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 }
 
 extension _Action on _ChatPageState {
-
-
   roomDetail() async {
     Navigator.pushNamed(
       context,
@@ -77,13 +76,19 @@ extension _Action on _ChatPageState {
     );
   }
 
-  sendMessage(String message) {
-    ref.read(imProvider).sendTextMessage(
-        widget.conversation.type == EMConversationType.Chat
-            ? ChatType.Chat
-            : ChatType.GroupChat,
-        widget.conversation.id,
-        message);
+  bool sendMessage(String message) {
+    if (ref.watch(imProvider).communicationStatue.available) {
+      ref.read(imProvider).sendTextMessage(
+          widget.conversation.type == EMConversationType.Chat
+              ? ChatType.Chat
+              : ChatType.GroupChat,
+          widget.conversation.id,
+          message);
+    } else {
+      Loading.toast("当前设备不在线，请连接网络或者LORA");
+    }
+
+    return ref.watch(imProvider).communicationStatue.available;
   }
 
   //发送定位
@@ -102,7 +107,6 @@ extension _UI on _ChatPageState {
       textController: _controller,
       onSend: (message) => sendMessage(message),
       sendLocalMessage: sendLocalMessage,
-
     );
   }
 }

@@ -16,6 +16,7 @@ import '../../common/routers/RouteNames.dart';
 import '../../widget/common.dart';
 import '../../widget/edit_gender_sheet.dart';
 import '../../widget/edit_remark_sheet.dart';
+import '../home/provider/im_message_provider.dart';
 import '../home/provider/network_provider.dart';
 
 final meDetailProvider =
@@ -114,8 +115,14 @@ extension _Action on _MeInfoPageState {
       Loading.toastError("离线模式不支持修改头像");
       return;
     }
-    Navigator.pushNamed(context, RouteNames.selectAvatar).then((value) =>
-        {ref.read(meDetailProvider).updateUserAvatar(value as String)});
+    Navigator.pushNamed(context, RouteNames.selectAvatar)
+        .then((value) => updateUserAvatar(value as String));
+  }
+
+  updateUserAvatar(String value) {
+    ref.read(meDetailProvider).updateUserAvatar(value);
+    var me = ref.read(meDetailProvider).me;
+    ref.read(imProvider).updateUserInfo(me);
   }
 
   changeSign(String? sign) {

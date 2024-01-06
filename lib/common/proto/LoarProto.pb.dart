@@ -235,7 +235,6 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(10)
   $core.bool hasHasDeliverAck() => $_has(9);
-
   @$pb.TagNumber(10)
   void clearHasDeliverAck() => clearField(10);
 
@@ -249,7 +248,6 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(11)
   $core.bool hasRepeater() => $_has(10);
-
   @$pb.TagNumber(11)
   void clearRepeater() => clearField(11);
 }

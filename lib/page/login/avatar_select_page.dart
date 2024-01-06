@@ -14,7 +14,7 @@ class AvatarSelectNotifier extends ChangeNotifier {
 
   initData() {
     data.clear();
-    for (int i = 1; i <= 100; i++) {
+    for (int i = 1; i <= 180; i++) {
       data.add(AssetsImages.getAvatar(i));
     }
     notifyListeners();

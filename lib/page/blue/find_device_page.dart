@@ -35,6 +35,7 @@ class FindDevicesNotifier extends ChangeNotifier {
         scanResults = event;
       }
       if (BlueToothConnect.instance.isConnect()) {
+        scanResults.remove(BlueToothConnect.instance.device!);
         scanResults.insert(0, BlueToothConnect.instance.device!);
       }
 

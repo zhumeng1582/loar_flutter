@@ -34,8 +34,11 @@ class StorageUtils {
 
   static Future<List<dynamic>> loadList(String key) async {
     String? jsonString = await getString(key);
-
-    return json.decode(jsonString ?? "");
+    if (jsonString != null) {
+      return json.decode(jsonString);
+    } else {
+      return [];
+    }
   }
 
   static void saveMap(String key, Map<String, dynamic> value) async {
@@ -45,18 +48,22 @@ class StorageUtils {
   static Future<Map<String, dynamic>> loadMap(String key) async {
     String? jsonString = await getString(key);
 
-    return json.decode(jsonString ?? "");
+    if (jsonString != null) {
+      return json.decode(jsonString);
+    } else {
+      return {};
+    }
   }
 
   static Future<String?> getString(String key) async {
     final prefs = await getPreferences();
     return prefs!.getString(key);
   }
+
   static Future<List<String>?> getListString(String key) async {
     final prefs = await getPreferences();
     return prefs!.getStringList(key);
   }
-
 
   static Future<bool> remove(String key) async {
     final prefs = await getPreferences();

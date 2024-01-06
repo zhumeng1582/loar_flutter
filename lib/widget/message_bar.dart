@@ -47,7 +47,7 @@ class MessageBar extends StatefulWidget {
   final TextStyle messageBarHintStyle;
   final Color sendButtonColor;
   final void Function(String)? onTextChanged;
-  final void Function(String)? onSend;
+  final bool Function(String)? onSend;
   final void Function()? sendLocalMessage;
   final void Function()? onTapCloseReply;
 
@@ -185,9 +185,12 @@ class _MessageBarState extends State<MessageBar> {
                         .onTap(() {
                         if (widget.textController.text.trim() != '') {
                           if (widget.onSend != null) {
-                            widget.onSend!(widget.textController.text.trim());
+                            bool isSuccess = widget
+                                .onSend!(widget.textController.text.trim());
+                            if (isSuccess) {
+                              widget.textController.text = '';
+                            }
                           }
-                          widget.textController.text = '';
                         }
                       })
                     : const Icon(
