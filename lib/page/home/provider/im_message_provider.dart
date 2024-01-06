@@ -316,10 +316,14 @@ class ImNotifier extends ChangeNotifier {
             updateConversation(groupId, ChatType.GroupChat);
             notifyListeners();
           },
+          onMemberJoinedFromGroup: (groupId, member) async {
+            groupMap[groupId] = await fetchGroupInfoFromServer(groupId);
+            var contactsMap = await EMClient.getInstance.userInfoManager
+                .fetchUserInfoById([member]);
+            allUsers.addAll(contactsMap);
+          },
           onInvitationAcceptedFromGroup: (groupId, userId, reason) async {
             groupMap[groupId] = await fetchGroupInfoFromServer(groupId);
-            sendCmdMessage(
-                ChatType.GroupChat, groupId, "${allUsers[userId].name} 加入群聊");
             updateConversation(groupId, ChatType.GroupChat);
             notifyListeners();
           },
@@ -332,10 +336,12 @@ class ImNotifier extends ChangeNotifier {
             groupMap[group.groupId] = group;
             notifyListeners();
           },
-          onInvitationReceivedFromGroup: (groupId,
-              groupName,
-              inviter,
-              reason,) {
+          onInvitationReceivedFromGroup: (
+            groupId,
+            groupName,
+            inviter,
+            reason,
+          ) {
             notifyMessageList.add(NotifyBean(NotifyType.groupInvite,
                 "${DateTime.now().millisecondsSinceEpoch}",
                 inviter: inviter,
@@ -481,6 +487,8 @@ class ImNotifier extends ChangeNotifier {
       if (data.type == NotifyType.groupInvite) {
         await EMClient.getInstance.groupManager
             .acceptInvitation(data.groupId!, data.inviter!);
+        sendCmdMessage(ChatType.GroupChat, data.groupId!,
+            "${GlobeDataManager.instance.me?.userId} 加入群聊");
         groupMap[data.groupId!] = await fetchGroupInfoFromServer(data.groupId!);
         updateConversation(data.groupId!, ChatType.GroupChat);
       } else if (data.type == NotifyType.friendInvite) {

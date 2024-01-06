@@ -124,11 +124,9 @@ class BlueToothConnect {
           await _write(loarChar!, data[i]).then((value) {
             i++; //发送成功之后发送下一条
             sendSuccess = true;
-            debugPrint('_write------->Data sent successfully');
           }).catchError((error) {
             //发送失败之后重试
             sendSuccess = false;
-            debugPrint('_write------->Failed to send data: $error');
           });
           await Future.delayed(Duration(milliseconds: sendSuccess ? 20 : 1));
         }
@@ -139,11 +137,11 @@ class BlueToothConnect {
 
   writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) async {
     messageQueue.add(value);
+    sendLoraMessage();
   }
 
   _write(BluetoothCharacteristic c, List<int> value) async {
     if (c.properties.write) {
-      debugPrint("_write------->${value}");
       await c.write(value);
     }
   }
@@ -166,6 +164,8 @@ class BlueToothConnect {
     var temp = loarData[key] ?? [];
     temp.addAll(packet.data);
     loarData[key] = temp;
+    debugPrint(
+        '_read------->length data= ${data.length},temp = ${temp.length},size = ${packet.length}');
 
     if (temp.length == packet.length) {
       message(temp);
