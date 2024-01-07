@@ -89,6 +89,7 @@ class BlueToothConnect {
       debugPrint("connectionState.listen----->${state.name}");
       if (state == BluetoothConnectionState.connected) {
         success();
+        BlueToothConnect.instance.sendLoraMessage();
       } else {
         fail();
       }
@@ -112,43 +113,45 @@ class BlueToothConnect {
   }
 
   sendLoraMessage() async {
-    if (messageQueue.isNotEmpty && loarChar != null) {
-      var sendData = messageQueue[0];
-      var data = Packet.splitData(sendData.writeToBuffer(), splitLength);
+    while (true) {
+      if (messageQueue.isNotEmpty && loarChar != null) {
+        var sendData = messageQueue[0];
+        var data = Packet.splitData(sendData.writeToBuffer(), splitLength);
 
-      bool sendSuccess = true;
-      for (int i = 0; i < data.length;) {
-        //请求设备是否空闲
-        await _write(setChar!, [0xF5]);
-        await Future.delayed(const Duration(milliseconds: 200));
+        bool sendSuccess = true;
+        for (int i = 0; i < data.length;) {
+          //请求设备是否空闲
+          await _write(setChar!, [0xF5]);
+          await Future.delayed(const Duration(milliseconds: 200));
 
-        if (!isIdle) {
-          await Future.delayed(const Duration(milliseconds: 400));
-          continue;
+          if (!isIdle) {
+            await Future.delayed(const Duration(milliseconds: 400));
+            continue;
+          }
+
+          await _write(loarChar!, data[i]).then((value) async {
+            i++; //发送成功之后发送下一条
+            sendSuccess = true;
+          }).catchError((error) {
+            //发送失败之后重试
+            sendSuccess = false;
+          });
+
+          if (sendSuccess) {
+            await _write(setChar!, [0xF6]);
+          } else {
+            await Future.delayed(const Duration(milliseconds: 1));
+          }
         }
-
-        await _write(loarChar!, data[i]).then((value) async {
-          i++; //发送成功之后发送下一条
-          sendSuccess = true;
-        }).catchError((error) {
-          //发送失败之后重试
-          sendSuccess = false;
-        });
-
-        if (sendSuccess) {
-          await _write(setChar!, [0xF6]);
-        } else {
-          await Future.delayed(const Duration(milliseconds: 1));
-        }
+        messageQueue.remove(sendData);
       }
 
-      messageQueue.remove(sendData);
+      await Future.delayed(const Duration(milliseconds: 200));
     }
   }
 
   writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) {
     messageQueue.add(value);
-    sendLoraMessage();
   }
 
   _write(BluetoothCharacteristic c, List<int> value) async {
