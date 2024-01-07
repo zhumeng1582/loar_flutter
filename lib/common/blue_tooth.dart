@@ -129,12 +129,13 @@ class BlueToothConnect {
               //发送失败之后重试
               sendSuccess = false;
             });
-            await Future.delayed(Duration(milliseconds: sendSuccess ? 20 : 1));
+            await Future.delayed(
+                Duration(milliseconds: sendSuccess ? 400 : 10));
           }
           messageQueue.remove(sendData);
         }
       } else {
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 500));
       }
     }
   }
