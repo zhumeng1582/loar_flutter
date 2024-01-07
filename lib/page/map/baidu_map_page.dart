@@ -188,7 +188,7 @@ class _BaiduMapState extends ConsumerState<BaiduMapPage> {
           if (widget.mapDataPara.pageType == PageType.distance)
             getTopWidget().alignTop(),
           if (widget.mapDataPara.pageType == PageType.navigation &&
-              ref.read(baiduMapProvider).getOther() != null)
+              ref.watch(baiduMapProvider).getOther() != null)
             getBottomWidget().alignBottom(),
         ],
       ),

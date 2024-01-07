@@ -296,6 +296,8 @@ extension _UI on _HomePageState {
                               ref
                                   .read(imProvider)
                                   .getConversationLastMessage(data),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 22.sp,
                                 color: AppColors.title.withOpacity(0.6),

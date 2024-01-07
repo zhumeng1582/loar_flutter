@@ -15,6 +15,7 @@ class BlueToothConnect {
   final String _GPS_SERVICE_UUID = "00F3";
   final String _GPS_CHAR_UUID = "AE03";
   static int splitLength = 20;
+  static bool isIdle = true;
 
   static BlueToothConnect get instance => _getInstance();
   static BlueToothConnect? _instance;
@@ -87,11 +88,7 @@ class BlueToothConnect {
         .listen((BluetoothConnectionState state) async {
       debugPrint("connectionState.listen----->${state.name}");
       if (state == BluetoothConnectionState.connected) {
-        await _enableCommunication().then((value) {
-          success();
-        }).catchError((error) {
-          fail(error);
-        });
+        success();
       } else {
         fail();
       }
@@ -115,33 +112,43 @@ class BlueToothConnect {
   }
 
   sendLoraMessage() async {
-    while (true) {
-      if (messageQueue.isNotEmpty) {
-        if (loarChar != null) {
-          var sendData = messageQueue[0];
-          var data = Packet.splitData(sendData.writeToBuffer(), splitLength);
-          bool sendSuccess = true;
-          for (int i = 0; i < data.length;) {
-            await _write(loarChar!, data[i]).then((value) {
-              i++; //发送成功之后发送下一条
-              sendSuccess = true;
-            }).catchError((error) {
-              //发送失败之后重试
-              sendSuccess = false;
-            });
-            await Future.delayed(
-                Duration(milliseconds: sendSuccess ? 400 : 10));
-          }
-          messageQueue.remove(sendData);
+    if (messageQueue.isNotEmpty && loarChar != null) {
+      var sendData = messageQueue[0];
+      var data = Packet.splitData(sendData.writeToBuffer(), splitLength);
+
+      bool sendSuccess = true;
+      for (int i = 0; i < data.length;) {
+        //请求设备是否空闲
+        await _write(setChar!, [0xF5]);
+        await Future.delayed(const Duration(milliseconds: 200));
+
+        if (!isIdle) {
+          await Future.delayed(const Duration(milliseconds: 400));
+          continue;
         }
-      } else {
-        await Future.delayed(const Duration(milliseconds: 500));
+
+        await _write(loarChar!, data[i]).then((value) async {
+          i++; //发送成功之后发送下一条
+          sendSuccess = true;
+        }).catchError((error) {
+          //发送失败之后重试
+          sendSuccess = false;
+        });
+
+        if (sendSuccess) {
+          await _write(setChar!, [0xF6]);
+        } else {
+          await Future.delayed(const Duration(milliseconds: 1));
+        }
       }
+
+      messageQueue.remove(sendData);
     }
   }
 
   writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) {
     messageQueue.add(value);
+    sendLoraMessage();
   }
 
   _write(BluetoothCharacteristic c, List<int> value) async {
@@ -168,8 +175,6 @@ class BlueToothConnect {
     var temp = loarData[key] ?? [];
     temp.addAll(packet.data);
     loarData[key] = temp;
-    debugPrint(
-        '_read------->length data= ${data.length},temp = ${temp.length},size = ${packet.length}');
 
     if (temp.length == packet.length) {
       message(temp);
@@ -181,8 +186,12 @@ class BlueToothConnect {
     if (message.length == 4 && message[0] == 0xFD) {
       //0x01 最大发送500，保证数据完整性控制在200；0x00 最大发送20
       if (message[1] == 0x01) {
-        splitLength = 200;
+        splitLength = 120;
       }
+    }
+    if (message.length == 2 && message[0] == 0xF5) {
+      debugPrint("------->setMessage $message");
+      isIdle = message[1] == 0x00;
     }
   }
 

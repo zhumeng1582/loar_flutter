@@ -146,7 +146,7 @@ class _MessageBarState extends State<MessageBar> {
                     textCapitalization: TextCapitalization.sentences,
                     minLines: 1,
                     maxLines: 3,
-                    maxLength: 100,
+                    maxLength: 48,
                     //最大100个字符
                     onChanged: widget.onTextChanged,
                     decoration: InputDecoration(
