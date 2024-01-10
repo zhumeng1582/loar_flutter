@@ -161,7 +161,7 @@ class _MessageBarState extends State<MessageBar> {
                     controller: widget.textController,
                     keyboardType: TextInputType.multiline,
                     inputFormatters: [
-                      CustomLengthTextInputFormatter(maxLength: 60)
+                      CustomLengthTextInputFormatter(maxLength: 69)
                     ],
                     textCapitalization: TextCapitalization.sentences,
                     minLines: 1,

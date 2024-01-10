@@ -27,7 +27,6 @@ class BlueToothConnect {
   BluetoothCharacteristic? loarChar;
   BluetoothCharacteristic? setChar;
   List<LoarMessage> messageQueue = [];
-  Map<String, List<int>> loarData = {};
 
   Function? loarMessage;
   Function? gpsMessage;
@@ -119,32 +118,28 @@ class BlueToothConnect {
     while (true) {
       if (messageQueue.isNotEmpty && loarChar != null) {
         var message = messageQueue[0];
-        //将多条消息拆分成128个字节的数据段
-        var messageSplit =
-            Packet.splitData(message.writeToBuffer(), loarSendLength);
-        for (int i = 0; i < messageSplit.length; i++) {
-          //请求设备是否空闲
-          await _write(setChar!, [0xF5]);
-          await Future.delayed(const Duration(milliseconds: 200));
+        var sendMessage = message.writeToBuffer();
+        //请求设备是否空闲
+        await _write(setChar!, [0xF5]);
+        await Future.delayed(const Duration(milliseconds: 200));
 
-          if (!isIdle) {
-            await Future.delayed(const Duration(milliseconds: 400));
-            continue;
-          }
-          var temp = messageSplit[i];
-          for (int j = 0; j < temp.length;) {
-            int end = min(j + splitLength, temp.length);
-            var sendData = temp.sublist(j, end);
-            await _write(loarChar!, sendData).then((value) async {
-              j += splitLength++; //发送成功之后发送下一条
-            }).catchError((error) async {
-              //发送失败延时1ms之后重新发送
-              await Future.delayed(const Duration(milliseconds: 1));
-            });
-          }
-
-          await _write(setChar!, [0xF6]);
+        if (!isIdle) {
+          await Future.delayed(const Duration(milliseconds: 400));
+          continue;
         }
+
+        for (int j = 0; j < sendMessage.length;) {
+          int end = min(j + splitLength, sendMessage.length);
+          var sendData = sendMessage.sublist(j, end);
+          await _write(loarChar!, sendData).then((value) async {
+            j += splitLength++; //发送成功之后发送下一条
+          }).catchError((error) async {
+            //发送失败延时1ms之后重新发送
+            await Future.delayed(const Duration(milliseconds: 1));
+          });
+        }
+
+        await _write(setChar!, [0xF6]);
         messageQueue.remove(message);
       }
 
@@ -170,20 +165,7 @@ class BlueToothConnect {
 
   _listenLoar(Function message) {
     if (loarChar != null) {
-      _setNotifyValue(loarChar!, (text) => {receiveData(text, message)});
-    }
-  }
-
-  receiveData(List<int> data, Function message) {
-    Packet packet = Packet.fromIntList(data);
-    String key = packet.getMessageId();
-    var temp = loarData[key] ?? [];
-    temp.addAll(packet.data);
-    loarData[key] = temp;
-
-    if (temp.length == packet.length) {
-      message(temp);
-      loarData.remove(key);
+      _setNotifyValue(loarChar!, (text) => message(text));
     }
   }
 
