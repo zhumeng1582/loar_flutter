@@ -11,6 +11,7 @@ class ImCache {
   static const allUsersKey = "allUsers";
   static const meKey = "me";
   static const mePassword = "mePassword";
+  static const messageInterval = "messageInterval";
 
   static Future<Map<String, List<EMMessage>>> getAllMessage(
       List<String> conversationIdList) async {
@@ -112,5 +113,14 @@ class ImCache {
   static Future<String> getPassword() async {
     String password = (await StorageUtils.getString(mePassword)) ?? "";
     return password;
+  }
+
+  static saveMessageInterval(String time) {
+    StorageUtils.save(messageInterval, time);
+  }
+
+  static Future<String> getMessageInterval() async {
+    String time = (await StorageUtils.getString(messageInterval)) ?? "5";
+    return time;
   }
 }

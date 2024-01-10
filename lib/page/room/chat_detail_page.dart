@@ -296,7 +296,7 @@ extension _Action on _RoomDetailPageState {
     }
   }
 
-  changeGroupName(EMGroup group, String name) async {
+   changeGroupName(EMGroup group, String name) async {
     var groupNew =
         await ref.read(roomProvider).changeGroupName(group.groupId, name);
     if (groupNew != null) {

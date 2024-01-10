@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
@@ -15,6 +17,7 @@ class BlueToothConnect {
   final String _GPS_SERVICE_UUID = "00F3";
   final String _GPS_CHAR_UUID = "AE03";
   static int splitLength = 20;
+  static int loarSendLength = 128;
   static bool isIdle = true;
 
   static BlueToothConnect get instance => _getInstance();
@@ -66,19 +69,19 @@ class BlueToothConnect {
 
     var servicesList = await device?.device.discoverServices();
     var service = servicesList?.firstWhere((element) =>
-        element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
+    element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
     loarChar = service?.characteristics.firstWhere((element) =>
-        element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
+    element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
 
     var serviceGps = device?.device.servicesList.firstWhere((element) =>
-        element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
+    element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
     gpsChar = serviceGps?.characteristics.firstWhere((element) =>
-        element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
+    element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
 
     var serviceSet = device?.device.servicesList.firstWhere((element) =>
-        element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
+    element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
     setChar = serviceSet?.characteristics.firstWhere((element) =>
-        element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
+    element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
     BlueToothConnect.instance._listenLoar(loarMessage!);
     BlueToothConnect.instance._listenGps(gpsMessage!);
@@ -116,10 +119,8 @@ class BlueToothConnect {
     while (true) {
       if (messageQueue.isNotEmpty && loarChar != null) {
         var sendData = messageQueue[0];
-        var data = Packet.splitData(sendData.writeToBuffer(), splitLength);
-
-        bool sendSuccess = true;
-        for (int i = 0; i < data.length;) {
+        var data = Packet.splitData(sendData.writeToBuffer(), loarSendLength);
+        for (int i = 0; i < data.length; i++) {
           //请求设备是否空闲
           await _write(setChar!, [0xF5]);
           await Future.delayed(const Duration(milliseconds: 200));
@@ -128,20 +129,18 @@ class BlueToothConnect {
             await Future.delayed(const Duration(milliseconds: 400));
             continue;
           }
-
-          await _write(loarChar!, data[i]).then((value) async {
-            i++; //发送成功之后发送下一条
-            sendSuccess = true;
-          }).catchError((error) {
-            //发送失败之后重试
-            sendSuccess = false;
-          });
-
-          if (sendSuccess) {
-            await _write(setChar!, [0xF6]);
-          } else {
-            await Future.delayed(const Duration(milliseconds: 1));
+          for (int j = 0; j < data[j].length;) {
+            await _write(loarChar!,
+                    data[j].sublist(j, min(j + splitLength, data[j].length)))
+                .then((value) async {
+              j += splitLength++; //发送成功之后发送下一条
+            }).catchError((error) async {
+              //发送失败延时1ms之后重新发送
+              await Future.delayed(const Duration(milliseconds: 1));
+            });
           }
+
+          await _write(setChar!, [0xF6]);
         }
         messageQueue.remove(sendData);
       }
@@ -189,7 +188,9 @@ class BlueToothConnect {
     if (message.length == 4 && message[0] == 0xFD) {
       //0x01 最大发送500，保证数据完整性控制在200；0x00 最大发送20
       if (message[1] == 0x01) {
-        splitLength = 120;
+        splitLength = loarSendLength; //500,控制在128
+      } else {
+        splitLength = 20;
       }
     }
     if (message.length == 2 && message[0] == 0xF5) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
 import '../common/colors.dart';
@@ -46,6 +47,7 @@ class MessageBar extends StatefulWidget {
   final String messageBarHitText;
   final TextStyle messageBarHintStyle;
   final Color sendButtonColor;
+  final String sendButtonText;
   final void Function(String)? onTextChanged;
   final bool Function(String)? onSend;
   final void Function()? sendLocalMessage;
@@ -64,7 +66,8 @@ class MessageBar extends StatefulWidget {
     this.replyIconColor = Colors.blue,
     this.replyCloseColor = Colors.black12,
     this.messageBarColor = const Color(0xffF4F4F5),
-    this.sendButtonColor = Colors.blue,
+    this.sendButtonColor = const Color(0x00ffffff),
+    this.sendButtonText = "发送",
     this.messageBarHitText = "请输入消息",
     this.messageBarHintStyle = const TextStyle(fontSize: 16),
     this.onTextChanged,
@@ -78,6 +81,20 @@ class MessageBar extends StatefulWidget {
 }
 
 class _MessageBarState extends State<MessageBar> {
+  int calculateLength() {
+    int length = 0;
+    for (int i = 0; i < widget.textController.text.runes.length; i++) {
+      int rune = widget.textController.text.runes.elementAt(i);
+      String char = String.fromCharCode(rune);
+      if (RegExp(r'[\u4e00-\u9fa5]').hasMatch(char)) {
+        length += 3; // 中文字符长度加3
+      } else {
+        length += 1; // 英文字符长度加1
+      }
+    }
+    return length;
+  }
+
   bool isSendText = false;
 
   @override
@@ -94,42 +111,42 @@ class _MessageBarState extends State<MessageBar> {
         children: [
           widget.replying
               ? Container(
-                  color: widget.replyWidgetColor,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
+              color: widget.replyWidgetColor,
+              padding: const EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 16,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.reply,
+                    color: widget.replyIconColor,
+                    size: 24,
                   ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.reply,
-                        color: widget.replyIconColor,
-                        size: 24,
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: Text(
-                            'Re : ' + widget.replyingTo,
+                  Expanded(
+                    child: Container(
+                      child: Text(
+                        'Re : ${widget.replyingTo}',
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: widget.onTapCloseReply,
-                        child: Icon(
-                          Icons.close,
-                          color: widget.replyCloseColor,
-                          size: 24,
-                        ),
-                      ),
-                    ],
-                  ))
+                    ),
+                  ),
+                  InkWell(
+                    onTap: widget.onTapCloseReply,
+                    child: Icon(
+                      Icons.close,
+                      color: widget.replyCloseColor,
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ))
               : Container(),
           widget.replying
               ? Container(
-                  height: 1,
-                  color: Colors.grey.shade300,
-                )
+            height: 1,
+            color: Colors.grey.shade300,
+          )
               : Container(),
           Container(
             color: widget.messageBarColor,
@@ -143,13 +160,17 @@ class _MessageBarState extends State<MessageBar> {
                   child: TextField(
                     controller: widget.textController,
                     keyboardType: TextInputType.multiline,
+                    inputFormatters: [
+                      CustomLengthTextInputFormatter(maxLength: 60)
+                    ],
                     textCapitalization: TextCapitalization.sentences,
                     minLines: 1,
                     maxLines: 3,
-                    maxLength: 48,
-                    //最大100个字符
+                    // maxLength: 48,
+                    // //最大100个字符
                     onChanged: widget.onTextChanged,
                     decoration: InputDecoration(
+                      counterText: '${calculateLength()} / 69',
                       hintText: widget.messageBarHitText,
                       hintMaxLines: 1,
                       contentPadding: const EdgeInsets.symmetric(
@@ -176,35 +197,74 @@ class _MessageBarState extends State<MessageBar> {
                 ),
                 isSendText
                     ? Text(
-                        "发送",
+                        widget.sendButtonText,
                         style: TextStyle(color: AppColors.white),
                       )
                         .padding(horizontal: 15, vertical: 5)
-                        .borderRadius(all: 5, color: AppColors.commonPrimary)
+                        .borderRadius(all: 5, color: widget.sendButtonColor)
                         .padding(left: 16)
-                        .onTap(() {
-                        if (widget.textController.text.trim() != '') {
-                          if (widget.onSend != null) {
-                            bool isSuccess = widget
-                                .onSend!(widget.textController.text.trim());
-                            if (isSuccess) {
-                              widget.textController.text = '';
-                            }
-                          }
-                        }
-                      })
+                    .onTap(() {
+                  if (widget.textController.text.trim() != '') {
+                    if (widget.onSend != null) {
+                      bool isSuccess = widget
+                          .onSend!(widget.textController.text.trim());
+                      if (isSuccess) {
+                        widget.textController.text = '';
+                      }
+                    }
+                  }
+                })
                     : const Icon(
-                        Icons.place,
-                        color: Colors.black,
-                        size: 24,
-                      )
-                        .padding(horizontal: 15, vertical: 5)
+                  Icons.place,
+                  color: Colors.black,
+                  size: 24,
+                )
+                    .padding(horizontal: 15, vertical: 5)
                         .onTap(widget.sendLocalMessage),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class CustomLengthTextInputFormatter extends TextInputFormatter {
+  final int maxLength; // 设置最大长度
+
+  CustomLengthTextInputFormatter({this.maxLength = 69});
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    int currentLength = 0;
+
+    // 新值的所有字符
+    final newText = StringBuffer();
+
+    for (int i = 0; i < newValue.text.runes.length; i++) {
+      int rune = newValue.text.runes.elementAt(i);
+      String char = String.fromCharCode(rune);
+
+      // 根据字符类型增加长度
+      if (RegExp(r'[\u4e00-\u9fa5]').hasMatch(char)) {
+        currentLength += 3; // 中文字符长度加3
+      } else {
+        currentLength += 1; // 英文字符长度加1
+      }
+
+      // 如果超过最大长度，则停止添加字符
+      if (currentLength <= maxLength) {
+        newText.write(char);
+      } else {
+        break;
+      }
+    }
+
+    return TextEditingValue(
+      text: newText.toString(),
+      selection: TextSelection.collapsed(offset: newText.length),
     );
   }
 }

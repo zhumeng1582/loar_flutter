@@ -1,18 +1,51 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
+import 'package:loar_flutter/common/ex/ex_string.dart';
 import 'package:loar_flutter/common/index.dart';
 import 'package:loar_flutter/page/room/chat_message_page.dart';
-import '../../common/im_data.dart';
 import '../../common/routers/RouteNames.dart';
+import '../../common/util/im_cache.dart';
 import '../../widget/common.dart';
 import '../../widget/message_bar.dart';
 import '../home/provider/im_message_provider.dart';
 
 final roomProvider =
-    ChangeNotifierProvider<RoomNotifier>((ref) => RoomNotifier());
+ChangeNotifierProvider<RoomNotifier>((ref) => RoomNotifier());
 
-class RoomNotifier extends ChangeNotifier {}
+class RoomNotifier extends ChangeNotifier {
+  var sendText = "发送";
+  var sendColor = AppColors.commonPrimary;
+  int milliseconds = 0;
+
+  String getSendTime() {
+    double seconds = milliseconds / 1000;
+    RegExp regex = RegExp(r'([.]*0)(?!.*\d)');
+    String result = seconds.toStringAsFixed(1).replaceAll(regex, '');
+
+    return "$result秒";
+  }
+
+  setTime() {
+    if (milliseconds > 0) {
+      milliseconds = milliseconds - 500;
+      sendText = getSendTime();
+      sendColor = AppColors.commonPrimary.withOpacity(0.5);
+      notifyListeners();
+    } else if (sendText != "发送") {
+      sendText = "发送";
+      sendColor = AppColors.commonPrimary;
+      notifyListeners();
+    }
+  }
+
+  sendTimerInterval() async {
+    var time = await ImCache.getMessageInterval();
+    milliseconds = time.toInt * 1000;
+  }
+}
 
 class ChatPage extends ConsumerStatefulWidget {
   EMConversation conversation;
@@ -25,6 +58,7 @@ class ChatPage extends ConsumerStatefulWidget {
 
 class _ChatPageState extends ConsumerState<ChatPage> {
   final _controller = TextEditingController();
+  late Timer timer;
 
   @override
   void initState() {
@@ -33,6 +67,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           .read(imProvider)
           .getHistoryMessage(widget.conversation.id, widget.conversation.type);
     }
+    timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      ref.read(roomProvider).setTime();
+    });
 
     super.initState();
   }
@@ -62,8 +99,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    timer.cancel();
+    super.dispose();
   }
 }
 
@@ -78,6 +116,11 @@ extension _Action on _ChatPageState {
 
   bool sendMessage(String message) {
     if (ref.watch(imProvider).communicationStatue.available) {
+      if (ref.read(roomProvider).milliseconds > 0) {
+        Loading.toast("发送剩余时间${ref.read(roomProvider).getSendTime()}");
+        return false;
+      }
+      ref.read(roomProvider).sendTimerInterval();
       ref.read(imProvider).sendTextMessage(
           widget.conversation.type == EMConversationType.Chat
               ? ChatType.Chat
@@ -93,6 +136,11 @@ extension _Action on _ChatPageState {
 
   //发送定位
   sendLocalMessage() {
+    if (ref.read(roomProvider).milliseconds > 0) {
+      Loading.toast("发送剩余时间${ref.read(roomProvider).getSendTime()}");
+      return;
+    }
+    ref.read(roomProvider).sendTimerInterval();
     ref.read(imProvider).sendLocalMessage(
         widget.conversation.type == EMConversationType.Chat
             ? ChatType.Chat
@@ -106,6 +154,8 @@ extension _UI on _ChatPageState {
     return MessageBar(
       textController: _controller,
       onSend: (message) => sendMessage(message),
+      sendButtonColor: ref.watch(roomProvider).sendColor,
+      sendButtonText: ref.watch(roomProvider).sendText,
       sendLocalMessage: sendLocalMessage,
     );
   }
