@@ -17,7 +17,7 @@ class BlueToothConnect {
   final String _GPS_SERVICE_UUID = "00F3";
   final String _GPS_CHAR_UUID = "AE03";
   static int splitLength = 20;
-  static int loarSendLength = 128;
+  final int loarSendLength = 128;
   static bool isIdle = true;
 
   static BlueToothConnect get instance => _getInstance();
@@ -69,19 +69,19 @@ class BlueToothConnect {
 
     var servicesList = await device?.device.discoverServices();
     var service = servicesList?.firstWhere((element) =>
-    element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
+        element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
     loarChar = service?.characteristics.firstWhere((element) =>
-    element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
+        element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
 
     var serviceGps = device?.device.servicesList.firstWhere((element) =>
-    element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
+        element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
     gpsChar = serviceGps?.characteristics.firstWhere((element) =>
-    element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
+        element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
 
     var serviceSet = device?.device.servicesList.firstWhere((element) =>
-    element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
+        element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
     setChar = serviceSet?.characteristics.firstWhere((element) =>
-    element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
+        element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
     BlueToothConnect.instance._listenLoar(loarMessage!);
     BlueToothConnect.instance._listenGps(gpsMessage!);
@@ -118,9 +118,11 @@ class BlueToothConnect {
   sendLoraMessage() async {
     while (true) {
       if (messageQueue.isNotEmpty && loarChar != null) {
-        var sendData = messageQueue[0];
-        var data = Packet.splitData(sendData.writeToBuffer(), loarSendLength);
-        for (int i = 0; i < data.length; i++) {
+        var message = messageQueue[0];
+        //将多条消息拆分成128个字节的数据段
+        var messageSplit =
+            Packet.splitData(message.writeToBuffer(), loarSendLength);
+        for (int i = 0; i < messageSplit.length; i++) {
           //请求设备是否空闲
           await _write(setChar!, [0xF5]);
           await Future.delayed(const Duration(milliseconds: 200));
@@ -129,10 +131,11 @@ class BlueToothConnect {
             await Future.delayed(const Duration(milliseconds: 400));
             continue;
           }
-          for (int j = 0; j < data[j].length;) {
-            await _write(loarChar!,
-                    data[j].sublist(j, min(j + splitLength, data[j].length)))
-                .then((value) async {
+          var temp = messageSplit[i];
+          for (int j = 0; j < temp.length;) {
+            int end = min(j + splitLength, temp.length);
+            var sendData = temp.sublist(j, end);
+            await _write(loarChar!, sendData).then((value) async {
               j += splitLength++; //发送成功之后发送下一条
             }).catchError((error) async {
               //发送失败延时1ms之后重新发送
@@ -142,7 +145,7 @@ class BlueToothConnect {
 
           await _write(setChar!, [0xF6]);
         }
-        messageQueue.remove(sendData);
+        messageQueue.remove(message);
       }
 
       await Future.delayed(const Duration(milliseconds: 200));

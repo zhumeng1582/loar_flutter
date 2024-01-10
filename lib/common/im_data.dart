@@ -112,7 +112,7 @@ class GlobeDataManager {
             sender: me?.userId,
             longitude: position.longitude,
             latitude: position.latitude,
-            conversationType: ConversationType.BROARDCAST);
+            msgType: MsgType.BROARDCAST_LOCATION);
         BlueToothConnect.instance.writeLoraMessage(value);
       }
     });

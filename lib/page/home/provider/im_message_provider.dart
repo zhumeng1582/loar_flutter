@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/ex/ex_im.dart';
+import 'package:loar_flutter/common/ex/ex_loar.dart';
 import 'package:loar_flutter/common/ex/ex_num.dart';
 import 'package:loar_flutter/common/util/im_cache.dart';
 import 'package:loar_flutter/common/util/storage.dart';
@@ -400,7 +401,7 @@ class ImNotifier extends ChangeNotifier {
           loarMessage.sender == GlobeDataManager.instance.me?.userId) {
         //给消息标记已送达，只标记我发送的消息
         paraDeliverAckMessage(loarMessage);
-      } else if (loarMessage.conversationType == ConversationType.BROARDCAST) {
+      } else if (loarMessage.msgType == MsgType.BROARDCAST_LOCATION) {
         allOnlineUsers[loarMessage.sender] =
             OnlineUser(loarMessage.sender, loarMessage);
       } else if (loarMessage.conversationId ==
@@ -441,28 +442,24 @@ class ImNotifier extends ChangeNotifier {
 
   void paraLoarMessage(LoarMessage loarMessage) {
     EMMessage message;
-    if (loarMessage.msgType == MsgType.TEXT) {
+    if (loarMessage.isText) {
       message = EMMessage.createReceiveMessage(
           body: EMTextMessageBody(
               content: loarMessage.content,
               targetLanguages: [loarMessage.repeater]),
-          chatType: loarMessage.conversationType == ConversationType.CHAT
-              ? ChatType.Chat
-              : ChatType.GroupChat);
+          chatType: loarMessage.isChat ? ChatType.Chat : ChatType.GroupChat);
     } else {
       message = EMMessage.createReceiveMessage(
           body: EMLocationMessageBody(
               latitude: loarMessage.latitude, longitude: loarMessage.longitude),
-          chatType: loarMessage.conversationType == ConversationType.CHAT
-              ? ChatType.Chat
-              : ChatType.GroupChat);
+          chatType: loarMessage.isChat ? ChatType.Chat : ChatType.GroupChat);
     }
 
     message.from = loarMessage.sender;
     message.to = loarMessage.conversationId;
     var conversationId = "";
 
-    if (loarMessage.conversationType == ConversationType.CHAT) {
+    if (loarMessage.isChat) {
       conversationId = loarMessage.sender;
     } else {
       conversationId = loarMessage.conversationId;
@@ -580,13 +577,11 @@ class ImNotifier extends ChangeNotifier {
     } else if (BlueToothConnect.instance.isConnect()) {
       LoarMessage message = LoarMessage(
         msgId: msg.msgId,
-        msgType: MsgType.TEXT,
+        msgType:
+            chatType == ChatType.Chat ? MsgType.CHAT_TEXT : MsgType.GROUP_TEXT,
         hasDeliverAck: false,
         sender: GlobeDataManager.instance.me?.userId,
         conversationId: targetId,
-        conversationType: chatType == ChatType.Chat
-            ? ConversationType.CHAT
-            : ConversationType.GROUP,
         content: messageContent,
       );
       BlueToothConnect.instance.writeLoraMessage(message);
@@ -617,12 +612,11 @@ class ImNotifier extends ChangeNotifier {
     } else if (BlueToothConnect.instance.isConnect()) {
       LoarMessage message = LoarMessage(
         msgId: msg.msgId,
-        msgType: MsgType.LOCATION,
+        msgType: chatType == ChatType.Chat
+            ? MsgType.CHAT_LOCATION
+            : MsgType.GROUP_LOCATION,
         sender: GlobeDataManager.instance.me?.userId,
         conversationId: targetId,
-        conversationType: chatType == ChatType.Chat
-            ? ConversationType.CHAT
-            : ConversationType.GROUP,
         latitude: position.latitude,
         longitude: position.longitude,
       );

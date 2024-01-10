@@ -13,36 +13,27 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-class ConversationType extends $pb.ProtobufEnum {
-  static const ConversationType CHAT =
-      ConversationType._(0, _omitEnumNames ? '' : 'CHAT');
-  static const ConversationType GROUP =
-      ConversationType._(1, _omitEnumNames ? '' : 'GROUP');
-  static const ConversationType BROARDCAST =
-      ConversationType._(2, _omitEnumNames ? '' : 'BROARDCAST');
-
-  static const $core.List<ConversationType> values = <ConversationType>[
-    CHAT,
-    GROUP,
-    BROARDCAST,
-  ];
-
-  static final $core.Map<$core.int, ConversationType> _byValue =
-      $pb.ProtobufEnum.initByValue(values);
-
-  static ConversationType? valueOf($core.int value) => _byValue[value];
-
-  const ConversationType._($core.int v, $core.String n) : super(v, n);
-}
-
 class MsgType extends $pb.ProtobufEnum {
-  static const MsgType TEXT = MsgType._(0, _omitEnumNames ? '' : 'TEXT');
-  static const MsgType LOCATION =
-      MsgType._(1, _omitEnumNames ? '' : 'LOCATION');
+  static const MsgType CHAT_TEXT =
+      MsgType._(0, _omitEnumNames ? '' : 'CHAT_TEXT');
+  static const MsgType CHAT_LOCATION =
+      MsgType._(1, _omitEnumNames ? '' : 'CHAT_LOCATION');
+  static const MsgType GROUP_TEXT =
+      MsgType._(10, _omitEnumNames ? '' : 'GROUP_TEXT');
+  static const MsgType GROUP_LOCATION =
+      MsgType._(11, _omitEnumNames ? '' : 'GROUP_LOCATION');
+  static const MsgType BROARDCAST_TEXT =
+      MsgType._(20, _omitEnumNames ? '' : 'BROARDCAST_TEXT');
+  static const MsgType BROARDCAST_LOCATION =
+      MsgType._(21, _omitEnumNames ? '' : 'BROARDCAST_LOCATION');
 
   static const $core.List<MsgType> values = <MsgType>[
-    TEXT,
-    LOCATION,
+    CHAT_TEXT,
+    CHAT_LOCATION,
+    GROUP_TEXT,
+    GROUP_LOCATION,
+    BROARDCAST_TEXT,
+    BROARDCAST_LOCATION,
   ];
 
   static final $core.Map<$core.int, MsgType> _byValue =
