@@ -9,6 +9,7 @@ import 'package:loar_flutter/common/blue_tooth.dart';
 import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
 import 'package:loar_flutter/common/util/im_cache.dart';
 
+import 'ex/ex_loar.dart';
 import 'loading.dart';
 
 class GlobeDataManager {
@@ -109,7 +110,7 @@ class GlobeDataManager {
           me != null &&
           BlueToothConnect.instance.messageQueue.isEmpty) {
         LoarMessage value = LoarMessage(
-            sender: me?.userId,
+            sender: ExLoarMessage.stringToBytes(me!.userId),
             longitude: position.longitude,
             latitude: position.latitude,
             msgType: MsgType.BROARDCAST_LOCATION);

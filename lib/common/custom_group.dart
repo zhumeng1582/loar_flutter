@@ -2,8 +2,8 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 
 class CustomGroup {
   static String admin = "10000000000";
-  static String sosGroupId = "sos";
-  static String squareGroupId = "square";
+  static String squareGroupId = "888881";
+  static String sosGroupId = "888882";
   static String allUserGroup = "235958320562181";
   static List<String> hideAllGroup = [sosGroupId, squareGroupId, allUserGroup];
 

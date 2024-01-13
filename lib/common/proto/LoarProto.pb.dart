@@ -19,13 +19,13 @@ export 'LoarProto.pbenum.dart';
 
 class LoarMessage extends $pb.GeneratedMessage {
   factory LoarMessage({
-    $core.String? conversationId,
+    $core.List<$core.int>? conversationId,
     MsgType? msgType,
-    $core.String? sender,
-    $core.String? repeater,
+    $core.List<$core.int>? sender,
+    $core.List<$core.int>? repeater,
     $core.bool? hasDeliverAck,
     $core.String? content,
-    $core.String? msgId,
+    $core.List<$core.int>? msgId,
     $core.int? sendCount,
     $core.double? latitude,
     $core.double? longitude,
@@ -77,18 +77,23 @@ class LoarMessage extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'LoarMessage',
       createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'conversationId',
+    ..a<$core.List<$core.int>>(
+        1, _omitFieldNames ? '' : 'conversationId', $pb.PbFieldType.OY,
         protoName: 'conversationId')
     ..e<MsgType>(2, _omitFieldNames ? '' : 'msgType', $pb.PbFieldType.OE,
         protoName: 'msgType',
         defaultOrMaker: MsgType.CHAT_TEXT,
         valueOf: MsgType.valueOf,
         enumValues: MsgType.values)
-    ..aOS(3, _omitFieldNames ? '' : 'sender')
-    ..aOS(4, _omitFieldNames ? '' : 'repeater')
+    ..a<$core.List<$core.int>>(
+        3, _omitFieldNames ? '' : 'sender', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(
+        4, _omitFieldNames ? '' : 'repeater', $pb.PbFieldType.OY)
     ..aOB(5, _omitFieldNames ? '' : 'hasDeliverAck', protoName: 'hasDeliverAck')
     ..aOS(6, _omitFieldNames ? '' : 'content')
-    ..aOS(7, _omitFieldNames ? '' : 'msgId', protoName: 'msgId')
+    ..a<$core.List<$core.int>>(
+        7, _omitFieldNames ? '' : 'msgId', $pb.PbFieldType.OY,
+        protoName: 'msgId')
     ..a<$core.int>(8, _omitFieldNames ? '' : 'sendCount', $pb.PbFieldType.O3,
         protoName: 'sendCount')
     ..a<$core.double>(9, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)
@@ -123,11 +128,11 @@ class LoarMessage extends $pb.GeneratedMessage {
   static LoarMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get conversationId => $_getSZ(0);
+  $core.List<$core.int> get conversationId => $_getN(0);
 
   @$pb.TagNumber(1)
-  set conversationId($core.String v) {
-    $_setString(0, v);
+  set conversationId($core.List<$core.int> v) {
+    $_setBytes(0, v);
   }
 
   @$pb.TagNumber(1)
@@ -145,30 +150,32 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.bool hasMsgType() => $_has(1);
-
   @$pb.TagNumber(2)
   void clearMsgType() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get sender => $_getSZ(2);
+  $core.List<$core.int> get sender => $_getN(2);
+
   @$pb.TagNumber(3)
-  set sender($core.String v) { $_setString(2, v); }
+  set sender($core.List<$core.int> v) {
+    $_setBytes(2, v);
+  }
+
   @$pb.TagNumber(3)
   $core.bool hasSender() => $_has(2);
   @$pb.TagNumber(3)
   void clearSender() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.String get repeater => $_getSZ(3);
+  $core.List<$core.int> get repeater => $_getN(3);
 
   @$pb.TagNumber(4)
-  set repeater($core.String v) {
-    $_setString(3, v);
+  set repeater($core.List<$core.int> v) {
+    $_setBytes(3, v);
   }
 
   @$pb.TagNumber(4)
   $core.bool hasRepeater() => $_has(3);
-
   @$pb.TagNumber(4)
   void clearRepeater() => clearField(4);
 
@@ -182,7 +189,6 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(5)
   $core.bool hasHasDeliverAck() => $_has(4);
-
   @$pb.TagNumber(5)
   void clearHasDeliverAck() => clearField(5);
 
@@ -196,21 +202,19 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(6)
   $core.bool hasContent() => $_has(5);
-
   @$pb.TagNumber(6)
   void clearContent() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.String get msgId => $_getSZ(6);
+  $core.List<$core.int> get msgId => $_getN(6);
 
   @$pb.TagNumber(7)
-  set msgId($core.String v) {
-    $_setString(6, v);
+  set msgId($core.List<$core.int> v) {
+    $_setBytes(6, v);
   }
 
   @$pb.TagNumber(7)
   $core.bool hasMsgId() => $_has(6);
-
   @$pb.TagNumber(7)
   void clearMsgId() => clearField(7);
 
@@ -224,7 +228,6 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(8)
   $core.bool hasSendCount() => $_has(7);
-
   @$pb.TagNumber(8)
   void clearSendCount() => clearField(8);
 
@@ -238,7 +241,6 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(9)
   $core.bool hasLatitude() => $_has(8);
-
   @$pb.TagNumber(9)
   void clearLatitude() => clearField(9);
 
@@ -252,7 +254,6 @@ class LoarMessage extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(10)
   $core.bool hasLongitude() => $_has(9);
-
   @$pb.TagNumber(10)
   void clearLongitude() => clearField(10);
 }

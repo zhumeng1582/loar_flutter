@@ -119,6 +119,9 @@ class BlueToothConnect {
       if (messageQueue.isNotEmpty && loarChar != null) {
         var message = messageQueue[0];
         var sendMessage = message.writeToBuffer();
+        debugPrint(
+            "------------>LoraMessage send length ${sendMessage.length},:${sendMessage.toString()}");
+
         //请求设备是否空闲
         await _write(setChar!, [0xF5]);
         await Future.delayed(const Duration(milliseconds: 200));
@@ -165,8 +168,13 @@ class BlueToothConnect {
 
   _listenLoar(Function message) {
     if (loarChar != null) {
-      _setNotifyValue(loarChar!, (text) => message(text));
+      _setNotifyValue(loarChar!, (text) => {receiveData(text, message)});
     }
+  }
+
+  receiveData(List<int> data, Function message) {
+    debugPrint("------------>LoraMessage receive:$data");
+    message(data);
   }
 
   setMessage(List<int> message) {

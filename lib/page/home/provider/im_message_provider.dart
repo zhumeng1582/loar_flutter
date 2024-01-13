@@ -398,18 +398,18 @@ class ImNotifier extends ChangeNotifier {
       debugPrint("2getRemoteMessage-------->$loarMessage");
 
       if (loarMessage.hasDeliverAck &&
-          loarMessage.sender == GlobeDataManager.instance.me?.userId) {
+          loarMessage.senderPhone == GlobeDataManager.instance.me?.userId) {
         //给消息标记已送达，只标记我发送的消息
         paraDeliverAckMessage(loarMessage);
       } else if (loarMessage.msgType == MsgType.BROARDCAST_LOCATION) {
-        allOnlineUsers[loarMessage.sender] =
-            OnlineUser(loarMessage.sender, loarMessage);
-      } else if (loarMessage.conversationId ==
+        allOnlineUsers[loarMessage.senderPhone] =
+            OnlineUser(loarMessage.senderPhone, loarMessage);
+      } else if (loarMessage.getConversationId ==
               GlobeDataManager.instance.me?.userId ||
-          groupMap.containsKey(loarMessage.conversationId)) {
+          groupMap.containsKey(loarMessage.getConversationId)) {
         paraLoarMessage(loarMessage);
 
-        if (loarMessage.conversationId ==
+        if (loarMessage.getConversationId ==
             GlobeDataManager.instance.me?.userId) {
           //发送消息已送到标志
           LoarMessage deliverAckMessage = loarMessage.deepCopy();
@@ -424,14 +424,15 @@ class ImNotifier extends ChangeNotifier {
       } else if (loarMessage.sendCount == 0) {
         //不是我的消息，直接转发
         loarMessage.sendCount++;
-        loarMessage.repeater = GlobeDataManager.instance.me?.userId ?? "";
+        loarMessage.repeater = ExLoarMessage.stringToBytes(
+            GlobeDataManager.instance.me?.userId ?? "");
         BlueToothConnect.instance.writeLoraMessage(loarMessage);
       }
     } on Exception {}
   }
 
   void paraDeliverAckMessage(LoarMessage loarMessage) {
-    messageMap[loarMessage.conversationId]?.forEach((element) {
+    messageMap[loarMessage.getConversationId]?.forEach((element) {
       if (element.msgId == element.msgId) {
         element.hasDeliverAck = true;
         notifyListeners();
@@ -446,7 +447,7 @@ class ImNotifier extends ChangeNotifier {
       message = EMMessage.createReceiveMessage(
           body: EMTextMessageBody(
               content: loarMessage.content,
-              targetLanguages: [loarMessage.repeater]),
+              targetLanguages: [loarMessage.repeaterPhone]),
           chatType: loarMessage.isChat ? ChatType.Chat : ChatType.GroupChat);
     } else {
       message = EMMessage.createReceiveMessage(
@@ -455,14 +456,14 @@ class ImNotifier extends ChangeNotifier {
           chatType: loarMessage.isChat ? ChatType.Chat : ChatType.GroupChat);
     }
 
-    message.from = loarMessage.sender;
-    message.to = loarMessage.conversationId;
+    message.from = loarMessage.senderPhone;
+    message.to = loarMessage.getConversationId;
     var conversationId = "";
 
     if (loarMessage.isChat) {
-      conversationId = loarMessage.sender;
+      conversationId = loarMessage.senderPhone;
     } else {
-      conversationId = loarMessage.conversationId;
+      conversationId = loarMessage.getConversationId;
     }
 
     updateConversation(conversationId, message.chatType);
@@ -576,12 +577,13 @@ class ImNotifier extends ChangeNotifier {
           .then((value) => {addMessageToMap(targetId, msg), notifyListeners()});
     } else if (BlueToothConnect.instance.isConnect()) {
       LoarMessage message = LoarMessage(
-        msgId: msg.msgId,
+        msgId: ExLoarMessage.stringToBytes(msg.msgId),
         msgType:
             chatType == ChatType.Chat ? MsgType.CHAT_TEXT : MsgType.GROUP_TEXT,
         hasDeliverAck: false,
-        sender: GlobeDataManager.instance.me?.userId,
-        conversationId: targetId,
+        sender:
+            ExLoarMessage.stringToBytes(GlobeDataManager.instance.me!.userId),
+        conversationId: ExLoarMessage.stringToBytes(targetId),
         content: messageContent,
       );
       BlueToothConnect.instance.writeLoraMessage(message);
@@ -611,12 +613,13 @@ class ImNotifier extends ChangeNotifier {
           .then((value) => {addMessageToMap(targetId, msg), notifyListeners()});
     } else if (BlueToothConnect.instance.isConnect()) {
       LoarMessage message = LoarMessage(
-        msgId: msg.msgId,
+        msgId: ExLoarMessage.stringToBytes(msg.msgId),
         msgType: chatType == ChatType.Chat
             ? MsgType.CHAT_LOCATION
             : MsgType.GROUP_LOCATION,
-        sender: GlobeDataManager.instance.me?.userId,
-        conversationId: targetId,
+        sender:
+            ExLoarMessage.stringToBytes(GlobeDataManager.instance.me!.userId),
+        conversationId: ExLoarMessage.stringToBytes(targetId),
         latitude: position.latitude,
         longitude: position.longitude,
       );

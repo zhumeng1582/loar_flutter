@@ -8,7 +8,7 @@ extension ExUserInfo on EMUserInfo? {
   }
 
   String get name {
-    return this?.nickName?.trim() ?? "微蜂用户${this?.userId.substring(9) ?? ""}";
+    return this?.nickName?.trim() ?? "微蜂用户${this?.userId.substring(7) ?? ""}";
   }
 }
 
