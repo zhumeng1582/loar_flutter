@@ -22,8 +22,8 @@ class RoomNotifier extends ChangeNotifier {
 
   String getSendTime() {
     double seconds = milliseconds / 1000;
-    RegExp regex = RegExp(r'([.]*0)(?!.*\d)');
-    String result = seconds.toStringAsFixed(1).replaceAll(regex, '');
+    // RegExp regex = RegExp(r'([.]*0)(?!.*\d)');
+    String result = seconds.toStringAsFixed(1);
 
     return "$result秒";
   }
