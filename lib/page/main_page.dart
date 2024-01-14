@@ -55,14 +55,15 @@ class _MainPageState extends ConsumerState<MainPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      debugPrint("----------->addPostFrameCallback ");
       ref.read(networkProvider).initState();
 
       ref.read(imProvider).addImListener();
       ref.read(imProvider).init();
 
-      ref.read(locationMapProvider).location();
       ref.read(satelliteNotifier).getLocation();
       ref.read(satelliteNotifier).init();
+      debugPrint("----------->addPostFrameCallback end");
     });
 
     super.initState();

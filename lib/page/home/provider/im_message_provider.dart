@@ -59,7 +59,8 @@ class ImNotifier extends ChangeNotifier {
   }
 
   Future<void> loadData() async {
-    await GlobeDataManager.instance.getUserInfo();
+    await GlobeDataManager.instance
+        .getUserInfo(GlobeDataManager.instance.isEaseMob);
 
     if (GlobeDataManager.instance.isEaseMob) {
       contacts =
@@ -395,7 +396,7 @@ class ImNotifier extends ChangeNotifier {
     debugPrint("1getRemoteMessage-------->$message");
     try {
       LoarMessage loarMessage = LoarMessage.fromBuffer(message);
-      debugPrint("2getRemoteMessage-------->$loarMessage");
+      debugPrint("2getRemoteMessage-------->${loarMessage.toProto3Json()}");
 
       if (loarMessage.hasDeliverAck &&
           loarMessage.senderPhone == GlobeDataManager.instance.me?.userId) {

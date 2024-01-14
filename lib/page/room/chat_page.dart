@@ -13,7 +13,7 @@ import '../../widget/message_bar.dart';
 import '../home/provider/im_message_provider.dart';
 
 final roomProvider =
-ChangeNotifierProvider<RoomNotifier>((ref) => RoomNotifier());
+    ChangeNotifierProvider<RoomNotifier>((ref) => RoomNotifier());
 
 class RoomNotifier extends ChangeNotifier {
   var sendText = "发送";
@@ -80,11 +80,12 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       appBar: getAppBar(context,
           ref.read(imProvider).getConversationTitle(widget.conversation),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.more_horiz),
-              tooltip: 'Detail',
-              onPressed: roomDetail,
-            )
+            if (!CustomGroup.hideMore(widget.conversation.id))
+              IconButton(
+                icon: const Icon(Icons.more_horiz),
+                tooltip: 'Detail',
+                onPressed: roomDetail,
+              )
           ]),
       body: SafeArea(
         child: Column(

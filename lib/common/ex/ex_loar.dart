@@ -40,7 +40,7 @@ extension ExLoarMessage on LoarMessage {
   static Uint8List stringToBytes(String numberString) {
     int length = numberString.length;
     // 确保长度为偶数，如果不是，前面补一个'0'
-    String adjustedString = length % 2 != 0 ? '0' + numberString : numberString;
+    String adjustedString = length % 2 != 0 ? '0$numberString' : numberString;
     // 计算字节列表的长度
     int bytesLength = adjustedString.length ~/ 2;
     Uint8List bytes = Uint8List(bytesLength);

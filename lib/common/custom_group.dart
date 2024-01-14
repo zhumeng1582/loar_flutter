@@ -16,4 +16,8 @@ class CustomGroup {
       EMGroup.fromJson({"groupId": sosGroupId, "name": "SOS", "owner": admin});
   static EMGroup squareGroup = EMGroup.fromJson(
       {"groupId": squareGroupId, "name": "微蜂广场", "owner": admin});
+
+  static bool hideMore(String conversationId) {
+    return conversationId == squareGroupId || conversationId == sosGroupId;
+  }
 }

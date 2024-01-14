@@ -20,7 +20,6 @@ class GlobeDataManager {
 
   var isEaseMob = false;
   BMFCoordinate? _position;
-  BMFCoordinate? _baiduPosition;
 
   static GlobeDataManager _getInstance() {
     _instance ??= GlobeDataManager._();
@@ -88,7 +87,11 @@ class GlobeDataManager {
     }
   }
 
-  getUserInfo() async {
+  getUserInfo(bool isEaseMob) async {
+    if (!isEaseMob) {
+      _getCacheMe();
+      return;
+    }
     try {
       var value = await EMClient.getInstance.userInfoManager.fetchOwnInfo();
       if (value != null) {
@@ -123,17 +126,7 @@ class GlobeDataManager {
     _position = BMFCoordinate(latitude, longitude);
   }
 
-  setBaiduPosition(double latitude, double longitude) {
-    _baiduPosition = BMFCoordinate(latitude, longitude);
-  }
-
   BMFCoordinate? getPosition() {
-    if (_position != null) {
-      return _position;
-    }
-    if (_baiduPosition != null) {
-      return _baiduPosition;
-    }
-    return null;
+    return _position;
   }
 }

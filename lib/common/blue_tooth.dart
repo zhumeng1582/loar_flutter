@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -58,6 +59,16 @@ class BlueToothConnect {
   }
 
   connect(ScanResult value, Function success, Function fail) async {
+    if (Platform.isAndroid == true) {
+      var phySupport = await FlutterBluePlus.getPhySupport();
+      if (phySupport.le2M) {
+        splitLength = loarSendLength;
+      } else {
+        splitLength = 20;
+      }
+      debugPrint("--------->splitLength = $splitLength");
+    } else {}
+
     await value.device
         .connect(timeout: const Duration(seconds: 35))
         .catchError((e) {
@@ -68,19 +79,19 @@ class BlueToothConnect {
 
     var servicesList = await device?.device.discoverServices();
     var service = servicesList?.firstWhere((element) =>
-        element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
+    element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
     loarChar = service?.characteristics.firstWhere((element) =>
-        element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
+    element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
 
     var serviceGps = device?.device.servicesList.firstWhere((element) =>
-        element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
+    element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
     gpsChar = serviceGps?.characteristics.firstWhere((element) =>
-        element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
+    element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
 
     var serviceSet = device?.device.servicesList.firstWhere((element) =>
-        element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
+    element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
     setChar = serviceSet?.characteristics.firstWhere((element) =>
-        element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
+    element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
     BlueToothConnect.instance._listenLoar(loarMessage!);
     BlueToothConnect.instance._listenGps(gpsMessage!);
@@ -178,14 +189,14 @@ class BlueToothConnect {
   }
 
   setMessage(List<int> message) {
-    if (message.length == 4 && message[0] == 0xFD) {
-      //0x01 最大发送500，保证数据完整性控制在200；0x00 最大发送20
-      if (message[1] == 0x01) {
-        splitLength = loarSendLength; //500,控制在128
-      } else {
-        splitLength = 20;
-      }
-    }
+    // if (message.length == 4 && message[0] == 0xFD) {
+    //   //0x01 最大发送500，保证数据完整性控制在200；0x00 最大发送20
+    //   if (message[1] == 0x01) {
+    //     splitLength = loarSendLength; //500,控制在128
+    //   } else {
+    //     splitLength = 20;
+    //   }
+    // }
     if (message.length == 2 && message[0] == 0xF5) {
       debugPrint("------->setMessage $message");
       isIdle = message[1] == 0x00;
