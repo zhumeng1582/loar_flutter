@@ -146,7 +146,7 @@ class BlueToothConnect {
           int end = min(j + splitLength, sendMessage.length);
           var sendData = sendMessage.sublist(j, end);
           await _write(loarChar!, sendData).then((value) async {
-            j += splitLength++; //发送成功之后发送下一条
+            j += splitLength; //发送成功之后发送下一条
           }).catchError((error) async {
             //发送失败延时1ms之后重新发送
             await Future.delayed(const Duration(milliseconds: 1));
