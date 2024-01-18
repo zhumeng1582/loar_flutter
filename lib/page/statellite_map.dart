@@ -108,11 +108,13 @@ class SatelliteNotifier extends ChangeNotifier {
         return;
       }
 
-      var latitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[3]);
-      var longitude = BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
+      var latitude = (split[4] == "N" ? 1 : -1) *
+          BlueToothConnect.instance.convertGPRMCToDegrees(split[3]);
+      var longitude = (split[6] == "E" ? 1 : -1) *
+          BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
 
       var bd09Coordinate =
-          CoordConvert.gcj02tobd09(Coords(latitude, longitude));
+          CoordConvert.wgs84tobd09(Coords(latitude, longitude));
       GlobeDataManager.instance
           .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
     } else {

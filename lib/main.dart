@@ -94,7 +94,7 @@ Future<void> initIm() async {
   EMOptions options = EMOptions(
       appKey: appKey,
       autoLogin: false,
-      debugModel: true,
+      debugMode: true,
       requireDeliveryAck: true);
   await EMClient.getInstance.init(options);
 }
