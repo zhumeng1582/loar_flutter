@@ -185,7 +185,7 @@ extension _UI on _SatelliteMapPage {
         ImageWidget.asset(satelliteFlags[name]!,
             width: 80.w, height: 80.h, radius: 60.r),
         Text(showName).paddingVertical(30.h),
-        Text("${data?.satellites.length ?? "0"}"),
+        Text("${data?.total ?? "0"}"),
       ],
     );
   }
