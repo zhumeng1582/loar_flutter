@@ -121,7 +121,7 @@ extension _Action on _ChatPageState {
   }
 
   bool sendMessage(String message) {
-    if (ref.watch(imProvider).communicationStatue.available) {
+    if (ref.watch(imProvider).available) {
       if (ref.read(roomProvider).milliseconds > 0) {
         Loading.toast("发送剩余时间${ref.read(roomProvider).getSendTime()}");
         return false;
@@ -137,7 +137,7 @@ extension _Action on _ChatPageState {
       Loading.toast("当前设备不在线，请连接网络或者LORA");
     }
 
-    return ref.watch(imProvider).communicationStatue.available;
+    return ref.watch(imProvider).available;
   }
 
   //发送定位

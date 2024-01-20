@@ -44,7 +44,7 @@ class ImNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  var _isEaseMob = false;
+  var _isEaseMob = GlobeDataManager.instance.isEaseMob;
 
   bool get available => BlueToothConnect.instance.isConnect() || _isEaseMob;
 

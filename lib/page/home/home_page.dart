@@ -68,7 +68,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
           var item = data[index];
-          if (item is CommunicationStatue?) {
+          if (item is bool) {
             return _buildCommunicationStatue(item);
           } else if (item is EMConversation) {
             return _buildRoomItem(item).onTap(() {
@@ -254,15 +254,15 @@ extension _UI on _HomePageState {
     );
   }
 
-  Widget _buildCommunicationStatue(CommunicationStatue? data) {
-    if (data?.available == true) {
+  Widget _buildCommunicationStatue(bool available) {
+    if (available == true) {
       return Container();
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "网络和LORA不可用",
+          "环信和LORA不可用",
           style: TextStyle(fontSize: 26.sp),
         ).paddingVertical(8.h)
       ],
