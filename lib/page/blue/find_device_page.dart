@@ -47,6 +47,7 @@ class FindDevicesNotifier extends ChangeNotifier {
     final snackBar = snackBarFail(prettyException("Connect Error:", error));
     snackBarKeyB.currentState?.removeCurrentSnackBar();
     snackBarKeyB.currentState?.showSnackBar(snackBar);
+    notifyListeners();
   }
 
   goDeviceDetail(ScanResult value) async {
@@ -96,6 +97,15 @@ class FindDevicesScreen extends ConsumerStatefulWidget {
 }
 
 class _FindDevicesScreenState extends ConsumerState<FindDevicesScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.watch(findDevicesProvider).scanDevice();
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(

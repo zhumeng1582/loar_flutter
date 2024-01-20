@@ -39,7 +39,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         ref.watch(imProvider).conversationsList;
     List<dynamic> data = [
       0,
-      ref.watch(imProvider).communicationStatue,
+      ref.watch(imProvider).available,
       ...notifyList,
       ...conversationsList
     ];

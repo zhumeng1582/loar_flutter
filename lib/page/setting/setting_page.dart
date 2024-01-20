@@ -74,7 +74,7 @@ class _SettingPageState extends ConsumerState<SettingPage> {
                   .then((value) => setState(() {}));
             }),
             Gaps.line,
-            _getMeItem("离线地址管理").onTap(() {
+            _getMeItem("离线地图管理").onTap(() {
               Navigator.pushNamed(context, RouteNames.offlineMap);
             }),
             Gaps.line,

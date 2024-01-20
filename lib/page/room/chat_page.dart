@@ -19,6 +19,7 @@ class RoomNotifier extends ChangeNotifier {
   var sendText = "发送";
   var sendColor = AppColors.commonPrimary;
   int milliseconds = 0;
+  Timer? timer;
 
   String getSendTime() {
     double seconds = milliseconds / 1000;
@@ -44,6 +45,15 @@ class RoomNotifier extends ChangeNotifier {
   sendTimerInterval() async {
     var time = await ImCache.getMessageInterval();
     milliseconds = time.toInt * 1000;
+
+    if (timer != null) {
+      timer?.cancel();
+      timer = null;
+    }
+
+    timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      setTime();
+    });
   }
 }
 
@@ -58,7 +68,6 @@ class ChatPage extends ConsumerStatefulWidget {
 
 class _ChatPageState extends ConsumerState<ChatPage> {
   final _controller = TextEditingController();
-  late Timer timer;
 
   @override
   void initState() {
@@ -67,9 +76,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           .read(imProvider)
           .getHistoryMessage(widget.conversation.id, widget.conversation.type);
     }
-    timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      ref.read(roomProvider).setTime();
-    });
 
     super.initState();
   }
@@ -101,7 +107,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   @override
   void dispose() {
     _controller.dispose();
-    timer.cancel();
     super.dispose();
   }
 }
