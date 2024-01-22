@@ -66,8 +66,7 @@ class ImNotifier extends ChangeNotifier {
     await GlobeDataManager.instance.getUserInfo(_isEaseMob);
 
     if (_isEaseMob) {
-      contacts =
-          await EMClient.getInstance.contactManager.getAllContactsFromServer();
+      contacts = await EMClient.getInstance.contactManager.fetchAllContactIds();
 
       for (var element in contacts) {
         await getHistoryMessage(element, EMConversationType.Chat);
@@ -505,8 +504,8 @@ class ImNotifier extends ChangeNotifier {
       } else if (data.type == NotifyType.friendInvite) {
         await EMClient.getInstance.contactManager
             .acceptInvitation(data.inviter!);
-        contacts = await EMClient.getInstance.contactManager
-            .getAllContactsFromServer();
+        contacts =
+            await EMClient.getInstance.contactManager.fetchAllContactIds();
         updateConversation(data.inviter!, ChatType.ChatRoom);
       } else if (data.type == NotifyType.joinPublicGroupApproval) {
         await EMClient.getInstance.groupManager
