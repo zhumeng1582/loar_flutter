@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
+import '../../common/blue_tooth.dart';
 import '../../common/image.dart';
 import '../../common/util/images.dart';
 import '../../widget/common.dart';
@@ -67,6 +68,10 @@ class _AboutDetailPageState extends ConsumerState<AboutDetailPage> {
                 .roundedBorder(radius: 3.r)
                 .paddingTop(10.h),
             Expanded(child: Container()),
+            Text(BlueToothConnect.instance.version,
+                style: TextStyle(
+                  fontSize: 38.sp,
+                )).paddingBottom(20.h),
           ],
         ).paddingHorizontal(30.w),
       ),

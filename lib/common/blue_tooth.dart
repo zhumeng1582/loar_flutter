@@ -31,6 +31,14 @@ class BlueToothConnect {
 
   Function? loarMessage;
   Function? gpsMessage;
+  int? _version;
+
+  String get version {
+    if (_version == null) {
+      return "";
+    }
+    return "固件版本：${_version! / 10}.${_version! % 10}";
+  }
 
   setListen(Function message) {
     loarMessage = message;
@@ -190,7 +198,8 @@ class BlueToothConnect {
 
   setMessage(List<int> message) {
     if (message.length == 4 && message[0] == 0xFD) {
-      Loading.toast("固件版本：${message[2]}");
+      _version = message[2];
+      // Loading.toast("固件版本：${message[2]}");
     }
     if (message.length == 2 && message[0] == 0xF5) {
       debugPrint("------->setMessage $message");
