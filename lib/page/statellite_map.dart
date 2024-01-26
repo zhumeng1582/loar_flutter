@@ -100,25 +100,34 @@ class SatelliteNotifier extends ChangeNotifier {
         .setGPSMessage((message) => gpsParser(String.fromCharCodes(message)));
   }
 
+  String text = "";
+
   gpsParser(String value) {
-    debugPrint("gpsParser------>$value");
-    if (value.contains("GNRMC")) {
-      var split = value.split(",");
-      if (split.length < 5 || split[3].isEmpty || split[5].isEmpty) {
-        return;
+    if (value.startsWith("\$")) {
+      text = "";
+    }
+
+    text += value;
+    if (value.endsWith("\n\r")) {
+      debugPrint("gpsParser------>$text");
+      if (value.contains("GNRMC")) {
+        var split = value.split(",");
+        if (split.length < 5 || split[3].isEmpty || split[5].isEmpty) {
+          return;
+        }
+
+        var latitude = (split[4] == "N" ? 1 : -1) *
+            BlueToothConnect.instance.convertGPRMCToDegrees(split[3]);
+        var longitude = (split[6] == "E" ? 1 : -1) *
+            BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
+
+        var bd09Coordinate =
+            CoordConvert.wgs84tobd09(Coords(latitude, longitude));
+        GlobeDataManager.instance
+            .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
+      } else {
+        para(value);
       }
-
-      var latitude = (split[4] == "N" ? 1 : -1) *
-          BlueToothConnect.instance.convertGPRMCToDegrees(split[3]);
-      var longitude = (split[6] == "E" ? 1 : -1) *
-          BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
-
-      var bd09Coordinate =
-          CoordConvert.wgs84tobd09(Coords(latitude, longitude));
-      GlobeDataManager.instance
-          .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
-    } else {
-      para(value);
     }
   }
 }
