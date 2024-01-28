@@ -6,6 +6,7 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/gaps.dart';
+import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
 
 import '../../common/colors.dart';
 import '../../common/constant.dart';
@@ -21,7 +22,7 @@ final loginProvider =
     ChangeNotifierProvider<LoginNotifier>((ref) => LoginNotifier());
 
 class LoginNotifier extends ChangeNotifier {
-  Future<bool> login(String account, String password) async {
+  Future<bool> login(String account, String password, var isNetwork) async {
     if (!Reg.isPhone(account)) {
       Loading.toast("请输入正确的手机号");
       return false;
@@ -32,7 +33,6 @@ class LoginNotifier extends ChangeNotifier {
     }
 
     password = Encrypter.encrypt(password, Constant.encryptKey);
-    var isNetwork = await GlobeDataManager.instance.isNetworkAwait();
     if (isNetwork) {
       try {
         Loading.show();
@@ -44,7 +44,6 @@ class LoginNotifier extends ChangeNotifier {
             await GlobeDataManager.instance.getOnlineUserInfo();
         Loading.dismiss();
         if (userInfo?.ext == password) {
-          GlobeDataManager.instance.isEaseMob = true;
           ImCache.savePassword(password);
           return true;
         } else {
@@ -65,7 +64,6 @@ class LoginNotifier extends ChangeNotifier {
     var psw = await ImCache.getPassword();
     Loading.dismiss();
     if (psw == password) {
-      GlobeDataManager.instance.isEaseMob = false;
       return true;
     } else {
       Loading.toastError("离线模式只能登陆上次登陆账号");
@@ -151,13 +149,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "登陆",
+                  "离线登陆",
+                  style: TextStyle(fontSize: 34.sp),
+                ).padding(all: 20.w)
+              ],
+            ).roundedBorder(radius: 24.r).onTap(() {
+              loarLogin(
+                  _userAccountController.text, _userPasswordController.text);
+            }).paddingTop(70.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "在线登陆",
                   style: TextStyle(fontSize: 34.sp),
                 ).padding(all: 20.w)
               ],
             ).roundedBorder(radius: 24.r).onTap(() {
               login(_userAccountController.text, _userPasswordController.text);
-            }).paddingTop(70.h),
+            }).paddingTop(30.h),
             Row(
               children: [
                 Text("忘记密码", style: TextStyle()).onTap(() => forgetPassword()),
@@ -196,9 +206,27 @@ extension _Action on _LoginPageState {
   }
 
   login(String account, String password) async {
-    bool isSuccess = await ref.read(loginProvider).login(account, password);
+    bool isSuccess =
+        await ref.read(loginProvider).login(account, password, true);
 
     if (isSuccess) {
+      ref.read(imProvider).emConnected = true;
+      ref.read(imProvider).isOnline = true;
+      Navigator.popAndPushNamed(
+        context,
+        // RouteNames.blueSearchList,
+        RouteNames.main,
+      );
+    }
+  }
+
+  loarLogin(String account, String password) async {
+    bool isSuccess =
+        await ref.read(loginProvider).login(account, password, false);
+
+    if (isSuccess) {
+      ref.read(imProvider).isOnline = false;
+      ref.read(imProvider).emConnected = false;
       Navigator.popAndPushNamed(
         context,
         // RouteNames.blueSearchList,

@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:loar_flutter/common/index.dart';
 import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
 
 class BlueToothConnect {
@@ -18,7 +17,6 @@ class BlueToothConnect {
   final String _GPS_SERVICE_UUID = "00F3";
   final String _GPS_CHAR_UUID = "AE03";
   static int splitLength = 20;
-  final int loarSendLength = 128;
   static bool isIdle = true;
 
   static BlueToothConnect get instance => _getInstance();
@@ -37,7 +35,8 @@ class BlueToothConnect {
     if (_version == null) {
       return "";
     }
-    return "固件版本：${_version! / 10}.${_version! % 10}";
+
+    return "固件版本：${_version! / 10}";
   }
 
   setListen(Function message) {
@@ -70,7 +69,7 @@ class BlueToothConnect {
     if (Platform.isAndroid == true) {
       var phySupport = await FlutterBluePlus.getPhySupport();
       if (phySupport.le2M) {
-        splitLength = loarSendLength;
+        splitLength = 128;
       } else {
         splitLength = 20;
       }
@@ -109,6 +108,7 @@ class BlueToothConnect {
         .listen((BluetoothConnectionState state) async {
       debugPrint("connectionState.listen----->${state.name}");
       if (state == BluetoothConnectionState.connected) {
+        await setCommunicationLength();
         success();
         BlueToothConnect.instance.sendLoraMessage();
       } else {
@@ -122,14 +122,10 @@ class BlueToothConnect {
     await _write(setChar!, data);
   }
 
-  _enableCommunication() async {
+  setCommunicationLength() async {
     if (setChar != null) {
-      await setLoraMode(2);
-      await Future.delayed(const Duration(milliseconds: 150));
-      List<int> value = [0xC2, 0x00, 0x06, 0x12, 0x34, 0x01, 0x62, 0x00, 0x18];
-      await _write(loarChar!, value);
-      await Future.delayed(const Duration(milliseconds: 150));
-      await setLoraMode(0);
+      List<int> data = splitLength == 20 ? [0xFD, 0x00] : [0xFD, 0x01];
+      await _write(setChar!, data);
     }
   }
 

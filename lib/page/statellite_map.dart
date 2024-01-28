@@ -103,12 +103,13 @@ class SatelliteNotifier extends ChangeNotifier {
   String text = "";
 
   gpsParser(String value) {
+    debugPrint("gpsParser------>$value");
     if (value.startsWith("\$")) {
       text = "";
     }
 
     text += value;
-    if (value.endsWith("\n\r")) {
+    if (value.endsWith("\r\n")) {
       debugPrint("gpsParser------>$text");
       if (value.contains("GNRMC")) {
         var split = value.split(",");
@@ -122,7 +123,7 @@ class SatelliteNotifier extends ChangeNotifier {
             BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
 
         var bd09Coordinate =
-            CoordConvert.wgs84tobd09(Coords(latitude, longitude));
+        CoordConvert.wgs84tobd09(Coords(latitude, longitude));
         GlobeDataManager.instance
             .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
       } else {

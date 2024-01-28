@@ -71,7 +71,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   @override
   void initState() {
-    if (GlobeDataManager.instance.isEaseMob) {
+    if (ref.read(imProvider).isOnline) {
       ref
           .read(imProvider)
           .getHistoryMessage(widget.conversation.id, widget.conversation.type);

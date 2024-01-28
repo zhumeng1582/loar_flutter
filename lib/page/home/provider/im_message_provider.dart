@@ -44,9 +44,10 @@ class ImNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  var _isEaseMob = GlobeDataManager.instance.isEaseMob;
+  var isOnline = true;
+  var emConnected = true;
 
-  bool get available => BlueToothConnect.instance.isConnect() || _isEaseMob;
+  bool get available => BlueToothConnect.instance.isConnect() || emConnected;
 
   init() async {
     Loading.show();
@@ -63,9 +64,9 @@ class ImNotifier extends ChangeNotifier {
   }
 
   Future<void> loadData() async {
-    await GlobeDataManager.instance.getUserInfo(_isEaseMob);
+    await GlobeDataManager.instance.getUserInfo(isOnline);
 
-    if (_isEaseMob) {
+    if (isOnline) {
       contacts = await EMClient.getInstance.contactManager.fetchAllContactIds();
 
       for (var element in contacts) {
@@ -367,15 +368,15 @@ class ImNotifier extends ChangeNotifier {
       EMConnectionEventHandler(
         // sdk 连接成功;
         onConnected: () => {
-          _isEaseMob = true,
-          GlobeDataManager.instance.isEaseMob = _isEaseMob,
-          notifyListeners()
+          emConnected = true,
+          notifyListeners(),
+          print("-------->onConnected")
         },
         // 由于网络问题导致的断开，sdk会尝试自动重连，连接成功后会回调 "onConnected";
         onDisconnected: () => {
-          _isEaseMob = false,
-          GlobeDataManager.instance.isEaseMob = _isEaseMob,
-          notifyListeners()
+          emConnected = false,
+          notifyListeners(),
+          print("-------->onDisconnected")
         },
         // 用户 token 鉴权失败;
         onUserAuthenticationFailed: () => {},
@@ -581,7 +582,7 @@ class ImNotifier extends ChangeNotifier {
 
   Future<void> _sendMessage(String targetId, EMMessage msg, ChatType chatType,
       String messageContent) async {
-    if (_isEaseMob) {
+    if (isOnline) {
       await EMClient.getInstance.chatManager
           .sendMessage(msg)
           .then((value) => {addMessageToMap(targetId, msg), notifyListeners()});
@@ -617,7 +618,7 @@ class ImNotifier extends ChangeNotifier {
         longitude: position.longitude,
         chatType: chatType);
 
-    if (_isEaseMob) {
+    if (isOnline) {
       await EMClient.getInstance.chatManager
           .sendMessage(msg)
           .then((value) => {addMessageToMap(targetId, msg), notifyListeners()});

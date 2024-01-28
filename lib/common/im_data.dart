@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 
@@ -18,7 +19,6 @@ class GlobeDataManager {
   static GlobeDataManager get instance => _getInstance();
   static GlobeDataManager? _instance;
 
-  var isEaseMob = false;
   BMFCoordinate? _position;
 
   static GlobeDataManager _getInstance() {
@@ -123,6 +123,8 @@ class GlobeDataManager {
   }
 
   setLoarPosition(double latitude, double longitude) {
+    debugPrint(
+        "setLoarPosition------>latitude = $latitude,longitude = $longitude");
     _position = BMFCoordinate(latitude, longitude);
   }
 

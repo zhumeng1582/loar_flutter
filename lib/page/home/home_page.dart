@@ -43,18 +43,14 @@ class _HomePageState extends ConsumerState<HomePage> {
       ...notifyList,
       ...conversationsList
     ];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bottomBackground,
         title: Text("蜂信"),
         centerTitle: true,
         leadingWidth: 76.w,
-        leading: ImageWidget(
-          url: BlueToothConnect.instance.isConnect()
-              ? AssetsImages.iconBlueToothOpen
-              : AssetsImages.iconBlueTooth,
-          type: ImageWidgetType.asset,
-        ).paddingLeft(30.w).onTap(blueTooth),
+        leading: buildOnTap(),
         actions: [
           ImageWidget(
             url: AssetsImages.iconScan,
@@ -84,6 +80,18 @@ class _HomePageState extends ConsumerState<HomePage> {
         },
       ),
     );
+  }
+
+  Widget buildOnTap() {
+    if (ref.read(imProvider).isOnline) {
+      return Container();
+    }
+    return ImageWidget(
+      url: BlueToothConnect.instance.isConnect()
+          ? AssetsImages.iconBlueToothOpen
+          : AssetsImages.iconBlueTooth,
+      type: ImageWidgetType.asset,
+    ).paddingLeft(30.w).onTap(blueTooth);
   }
 
   @override
@@ -148,7 +156,7 @@ extension _Action on _HomePageState {
   }
 
   _room(EMConversation data) {
-    if (GlobeDataManager.instance.isEaseMob) {
+    if (ref.read(imProvider).isOnline) {
       if (data.id == CustomGroup.sosGroupId) {
         Loading.toast("对不起，当前网络禁止使用SOS");
         return;
@@ -258,11 +266,21 @@ extension _UI on _HomePageState {
     if (available == true) {
       return Container();
     }
+    String text = "";
+    if (ref.read(imProvider).isOnline) {
+      if (!ref.read(imProvider).emConnected) {
+        text = "网络不可用";
+      }
+    } else {
+      if (!BlueToothConnect.instance.isConnect()) {
+        text = "LORA不可用";
+      }
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "环信和LORA不可用",
+          text,
           style: TextStyle(fontSize: 26.sp),
         ).paddingVertical(8.h)
       ],

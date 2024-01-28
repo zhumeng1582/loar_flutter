@@ -45,9 +45,7 @@ class NetworkNotifier extends ChangeNotifier {
     if (_connectionStatus == ConnectivityResult.mobile ||
         _connectionStatus == ConnectivityResult.wifi ||
         _connectionStatus == ConnectivityResult.ethernet) {
-      GlobeDataManager.instance.isEaseMob = true;
     } else {
-      GlobeDataManager.instance.isEaseMob = false;
     }
 
     notifyListeners();
