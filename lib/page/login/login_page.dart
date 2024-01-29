@@ -66,7 +66,7 @@ class LoginNotifier extends ChangeNotifier {
     if (psw == password) {
       return true;
     } else {
-      Loading.toastError("离线模式只能登陆上次登陆账号");
+      Loading.toastError("需要有线登录一次获取信息，再离线登录");
       return false;
     }
   }

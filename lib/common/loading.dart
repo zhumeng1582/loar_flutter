@@ -4,7 +4,7 @@ import 'package:loar_flutter/common/util/images.dart';
 
 /// 提示框
 class Loading {
-  static const int _milliseconds = 500; // 提示 延迟毫秒, 提示体验 秒关太快
+  static const int _milliseconds = 2000; // 提示 延迟毫秒, 提示体验 秒关太快
   static const int _dismissMilliseconds = 250; // dismiss 延迟毫秒
 
   Loading() {
