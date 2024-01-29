@@ -106,11 +106,11 @@ class ImCache {
     return EMUserInfo.fromJson(jsonDecode(me));
   }
 
-  static savePassword(String password) {
+  static saveAccountAndPassword(String password) {
     StorageUtils.save(mePassword, password);
   }
 
-  static Future<String> getPassword() async {
+  static Future<String> getAccountAndPassword() async {
     String password = (await StorageUtils.getString(mePassword)) ?? "";
     return password;
   }

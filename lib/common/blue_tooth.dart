@@ -130,7 +130,7 @@ class BlueToothConnect {
   }
 
   sendLoraMessage() async {
-    while (true) {
+    while (isConnect()) {
       if (messageQueue.isNotEmpty && loarChar != null) {
         var message = messageQueue[0];
         var sendMessage = message.writeToBuffer();

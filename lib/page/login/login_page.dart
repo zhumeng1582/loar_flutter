@@ -44,7 +44,7 @@ class LoginNotifier extends ChangeNotifier {
             await GlobeDataManager.instance.getOnlineUserInfo();
         Loading.dismiss();
         if (userInfo?.ext == password) {
-          ImCache.savePassword(password);
+          ImCache.saveAccountAndPassword("$account/$password");
           return true;
         } else {
           await EMClient.getInstance.logout();
@@ -56,14 +56,14 @@ class LoginNotifier extends ChangeNotifier {
         return false;
       }
     } else {
-      return await loginCache(password);
+      return await loginCache(account, password);
     }
   }
 
-  Future<bool> loginCache(String password) async {
-    var psw = await ImCache.getPassword();
+  Future<bool> loginCache(String account, String password) async {
+    var psw = await ImCache.getAccountAndPassword();
     Loading.dismiss();
-    if (psw == password) {
+    if (psw == "$account/$password") {
       return true;
     } else {
       Loading.toastError("需要在线登录一次获取信息，再离线登录");

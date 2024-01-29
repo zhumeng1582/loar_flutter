@@ -72,7 +72,7 @@ class SignUpNotifier extends ChangeNotifier {
           .catchError((value) => error(value));
       buttonState = ButtonState.normal;
       notifyListeners();
-      ImCache.savePassword(password);
+      ImCache.saveAccountAndPassword("$account/$password");
       return true;
     }
     buttonState = ButtonState.normal;
