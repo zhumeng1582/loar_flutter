@@ -87,7 +87,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
 
 extension _Action on _LocationPageState {
   bool hasPosition() {
-    if (BlueToothConnect.instance.isConnect()) {
+    if (!BlueToothConnect.instance.isConnect()) {
       Loading.toast("未连接设备");
       return false;
     }
