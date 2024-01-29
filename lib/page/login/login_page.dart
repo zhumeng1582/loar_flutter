@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
-import 'package:loar_flutter/common/image.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 import 'package:loar_flutter/common/util/gaps.dart';
 import 'package:loar_flutter/page/home/provider/im_message_provider.dart';
@@ -39,7 +38,8 @@ class LoginNotifier extends ChangeNotifier {
         notifyListeners();
         await EMClient.getInstance.logout();
 
-        await EMClient.getInstance.login(account, Constant.loginPassword);
+        await EMClient.getInstance
+            .loginWithPassword(account, Constant.loginPassword);
         EMUserInfo? userInfo =
             await GlobeDataManager.instance.getOnlineUserInfo();
         Loading.dismiss();
@@ -66,7 +66,7 @@ class LoginNotifier extends ChangeNotifier {
     if (psw == password) {
       return true;
     } else {
-      Loading.toastError("需要有线登录一次获取信息，再离线登录");
+      Loading.toastError("需要在线登录一次获取信息，再离线登录");
       return false;
     }
   }
