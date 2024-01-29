@@ -139,7 +139,7 @@ class BlueToothConnect {
 
         //请求设备是否空闲
         await _write(setChar!, [0xF5]);
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 250));
 
         if (!isIdle) {
           await Future.delayed(const Duration(milliseconds: 400));
@@ -160,8 +160,7 @@ class BlueToothConnect {
         await _write(setChar!, [0xF6]);
         messageQueue.remove(message);
       }
-
-      await Future.delayed(const Duration(milliseconds: 200));
+      await Future.delayed(const Duration(milliseconds: 1500));
     }
   }
 
