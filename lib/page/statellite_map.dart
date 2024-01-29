@@ -56,6 +56,10 @@ class SatelliteNotifier extends ChangeNotifier {
     return bars;
   }
 
+  clear() {
+    svgData.clear();
+  }
+
   init() async {
     satelliteFlags.forEach((key, value) async {
       satelliteImage[key] = await SatelliteData.loadAssetImage(value);
@@ -109,10 +113,10 @@ class SatelliteNotifier extends ChangeNotifier {
     }
 
     text += value;
-    if (value.endsWith("\r\n")) {
-      debugPrint("gpsParser------>$text");
-      if (value.contains("GNRMC")) {
-        var split = value.split(",");
+
+    if (text.endsWith("\r\n")) {
+      if (text.contains("GNRMC")) {
+        var split = text.split(",");
         if (split.length < 5 || split[3].isEmpty || split[5].isEmpty) {
           return;
         }
@@ -123,11 +127,11 @@ class SatelliteNotifier extends ChangeNotifier {
             BlueToothConnect.instance.convertGPRMCToDegrees(split[5]);
 
         var bd09Coordinate =
-        CoordConvert.wgs84tobd09(Coords(latitude, longitude));
+            CoordConvert.wgs84tobd09(Coords(latitude, longitude));
         GlobeDataManager.instance
             .setLoarPosition(bd09Coordinate.latitude, bd09Coordinate.longitude);
       } else {
-        para(value);
+        para(text);
       }
     }
   }
@@ -144,6 +148,9 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
   @override
   void initState() {
     super.initState();
+    Future(() {
+      ref.read(satelliteNotifier).clear();
+    });
   }
 
   @override
@@ -159,17 +166,20 @@ class _SatelliteMapPage extends ConsumerState<SatelliteMapPage> {
             painter: SatellitePainter(data),
             size: Size(600.w, 600.h),
           ).paddingTop(50.h).center(),
-          CustomScrollView(
-            scrollDirection: Axis.horizontal,
-            slivers: <Widget>[
-              SliverToBoxAdapter(
-                child: CustomPaint(
-                  painter: BarChartPainter(data, 45.w, 10.w),
-                  size: Size(max(barsWidth, 690.w), 400.h),
+          Scrollbar(
+            thumbVisibility: true,
+            child: CustomScrollView(
+              scrollDirection: Axis.horizontal,
+              slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: CustomPaint(
+                    painter: BarChartPainter(data, 45.w, 10.w),
+                    size: Size(max(barsWidth, 690.w), 400.h),
+                  ),
                 ),
-              ),
-            ],
-          ).height(400.h).paddingTop(40.h),
+              ],
+            ).height(400.h).paddingTop(40.h),
+          ),
           Row(
             children: [
               satelliteStatic(satelliteType[0]).expanded(),
@@ -194,7 +204,10 @@ extension _UI on _SatelliteMapPage {
       children: [
         ImageWidget.asset(satelliteFlags[name]!,
             width: 80.w, height: 80.h, radius: 60.r),
-        Text(showName).paddingVertical(30.h),
+        Text(
+          showName,
+          style: TextStyle(fontSize: 12.sp),
+        ).paddingVertical(20.h),
         Text("${data?.total ?? "0"}"),
       ],
     );

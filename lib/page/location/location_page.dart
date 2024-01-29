@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loar_flutter/common/blue_tooth.dart';
 import 'package:loar_flutter/common/im_data.dart';
 import 'package:loar_flutter/common/loading.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
@@ -35,7 +36,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColors.bottomBackground,
-        title: Text("定位"),
+        title: const Text("定位"),
       ),
       body: SafeArea(
         child: Column(
@@ -44,39 +45,33 @@ class _LocationPageState extends ConsumerState<LocationPage> {
               height: 0.1.h,
             ).paddingTop(200.h),
             _getItem(AssetsImages.iconFengWo, "蜂窝", "我的位置").onTap(() {
-              if (GlobeDataManager.instance.getPosition() == null) {
-                Loading.toast("请先开启定位");
-                return;
+              if (hasPosition()) {
+                Navigator.pushNamed(context, RouteNames.baiduMapPage,
+                    arguments: MapDataPara(PageType.me));
               }
-              Navigator.pushNamed(context, RouteNames.baiduMapPage,
-                  arguments: MapDataPara(PageType.me));
             }),
             _getItem(AssetsImages.iconFenLin, "蜂邻", "周围都有谁").onTap(() {
-              if (GlobeDataManager.instance.getPosition() == null) {
-                Loading.toast("请先开启定位");
-                return;
+              if (hasPosition()) {
+                Navigator.pushNamed(context, RouteNames.baiduMapPage,
+                    arguments: MapDataPara(PageType.nearBy));
               }
-              Navigator.pushNamed(context, RouteNames.baiduMapPage,
-                  arguments: MapDataPara(PageType.nearBy));
             }),
             _getItem(AssetsImages.iconFenJu, "蜂距", "两者距离").onTap(() {
-              if (GlobeDataManager.instance.getPosition() == null) {
-                Loading.toast("请先开启定位");
-                return;
+              if (hasPosition()) {
+                Navigator.pushNamed(context, RouteNames.baiduMapPage,
+                    arguments: MapDataPara(PageType.distance));
               }
-              Navigator.pushNamed(context, RouteNames.baiduMapPage,
-                  arguments: MapDataPara(PageType.distance));
             }),
             _getItem(AssetsImages.iconFenXing, "蜂行", "导航").onTap(() {
-              if (GlobeDataManager.instance.getPosition() == null) {
-                Loading.toast("请先开启定位");
-                return;
+              if (hasPosition()) {
+                Navigator.pushNamed(context, RouteNames.baiduMapPage,
+                    arguments: MapDataPara(PageType.navigation));
               }
-              Navigator.pushNamed(context, RouteNames.baiduMapPage,
-                  arguments: MapDataPara(PageType.navigation));
             }),
             _getItem(AssetsImages.iconFengTu, "星图", "卫星星图").onTap(() {
-              Navigator.pushNamed(context, RouteNames.satelliteMapPage);
+              if (hasPosition()) {
+                Navigator.pushNamed(context, RouteNames.satelliteMapPage);
+              }
             }),
           ],
         ),
@@ -90,7 +85,20 @@ class _LocationPageState extends ConsumerState<LocationPage> {
   }
 }
 
-extension _Action on _LocationPageState {}
+extension _Action on _LocationPageState {
+  bool hasPosition() {
+    if (BlueToothConnect.instance.isConnect()) {
+      Loading.toast("未连接设备");
+      return false;
+    }
+    if (GlobeDataManager.instance.getPosition() == null) {
+      Loading.toast("等待定位中...");
+      return false;
+    }
+
+    return true;
+  }
+}
 
 extension _UI on _LocationPageState {
   Widget _getItem(String image, String title, String? value) {

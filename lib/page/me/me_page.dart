@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:loar_flutter/common/util/ex_widget.dart';
 
+import '../../common/colors.dart';
 import '../../common/im_data.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
@@ -32,7 +33,11 @@ class _MePageState extends ConsumerState<MePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: getAppBar(context, "我"),
+      appBar: AppBar(
+        backgroundColor: AppColors.bottomBackground,
+        title: Text("我"),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Column(
           children: [
