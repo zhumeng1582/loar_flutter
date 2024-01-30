@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
@@ -17,7 +18,7 @@ class BlueToothConnect {
   final String _GPS_SERVICE_UUID = "00F3";
   final String _GPS_CHAR_UUID = "AE03";
   static int splitLength = 20;
-  static bool isIdle = false;
+  static bool isDeviceIdle = false;
 
   static BlueToothConnect get instance => _getInstance();
   static BlueToothConnect? _instance;
@@ -130,34 +131,60 @@ class BlueToothConnect {
 
   sendLoraMessage() async {
     while (true) {
-      if (isConnect() && messageQueue.isNotEmpty && loarChar != null) {
-        //请求设备是否空闲
-        await _write(setChar!, [0xF5]);
-        do {
-          await Future.delayed(const Duration(milliseconds: 250));
-        } while (!isIdle);
+      if (!isConnect() || messageQueue.isEmpty || loarChar == null) {
+        await Future.delayed(const Duration(milliseconds: 1500));
+        continue;
+      }
 
-        var message = messageQueue[0];
-        var sendMessage = message.writeToBuffer();
-        debugPrint(
-            "------------>LoraMessage send length ${sendMessage.length},:${sendMessage.toString()}");
+      //请求设备是否空闲
+      isDeviceIdle = false;
+      await _write(setChar!, [0xF5]);
+      await Future.delayed(const Duration(milliseconds: 250));
 
-        for (int j = 0; j < sendMessage.length;) {
-          int end = min(j + splitLength, sendMessage.length);
-          var sendData = sendMessage.sublist(j, end);
-          await _write(loarChar!, sendData).then((value) async {
-            j += splitLength; //发送成功之后发送下一条
-          }).catchError((error) async {
-            //发送失败延时1ms之后重新发送
-            await Future.delayed(const Duration(milliseconds: 1));
-          });
-        }
-        isIdle = false;
-        await _write(setChar!, [0xF6]);
+      //第一次没取到在等250ms
+      if (!isDeviceIdle) {
+        await Future.delayed(const Duration(milliseconds: 250));
+      }
+
+      if (!isDeviceIdle) {
+        continue;
+      }
+
+      var message = messageQueue[0];
+      var sendMessage = message.writeToBuffer();
+      debugPrint(
+          "------------>LoraMessage send length ${sendMessage.length},:${sendMessage.toString()}");
+
+      var success = await sendLoarMessage(sendMessage);
+      if (success) {
+        await Future.delayed(const Duration(milliseconds: 1500));
         messageQueue.remove(message);
       }
-      await Future.delayed(const Duration(milliseconds: 1500));
     }
+  }
+
+  Future<bool> sendLoarMessage(Uint8List sendMessage) async {
+    for (int j = 0; j < sendMessage.length;) {
+      //发送过程中断开连接
+      if (!isConnect()) {
+        return false;
+      }
+      int end = min(j + splitLength, sendMessage.length);
+      var sendData = sendMessage.sublist(j, end);
+      await _write(loarChar!, sendData).then((value) async {
+        j += splitLength; //发送成功之后发送下一条
+      }).catchError((error) async {
+        //发送失败延时1ms之后重新发送
+        await Future.delayed(const Duration(milliseconds: 1));
+      });
+    }
+    //发送过程中断开连接
+    if (!isConnect()) {
+      return false;
+    }
+
+    await _write(setChar!, [0xF6]);
+    return true;
   }
 
   writeLoraMessage(LoarMessage value, {bool isBroadcast = false}) {
@@ -194,7 +221,7 @@ class BlueToothConnect {
     }
     if (message.length == 2 && message[0] == 0xF5) {
       debugPrint("------->setMessage $message");
-      isIdle = message[1] == 0x00;
+      isDeviceIdle = message[1] == 0x00;
     }
   }
 
