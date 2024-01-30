@@ -399,6 +399,7 @@ class ImNotifier extends ChangeNotifier {
       ),
     );
     BlueToothConnect.instance.setListen((text) => {getRemoteMessage(text)});
+    BlueToothConnect.instance.sendLoraMessage();
   }
 
   //loar消息分发处理

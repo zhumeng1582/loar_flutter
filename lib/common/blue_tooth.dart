@@ -17,7 +17,7 @@ class BlueToothConnect {
   final String _GPS_SERVICE_UUID = "00F3";
   final String _GPS_CHAR_UUID = "AE03";
   static int splitLength = 20;
-  static bool isIdle = true;
+  static bool isIdle = false;
 
   static BlueToothConnect get instance => _getInstance();
   static BlueToothConnect? _instance;
@@ -110,7 +110,6 @@ class BlueToothConnect {
       if (state == BluetoothConnectionState.connected) {
         await setCommunicationLength();
         success();
-        BlueToothConnect.instance.sendLoraMessage();
       } else {
         fail();
       }
@@ -130,21 +129,18 @@ class BlueToothConnect {
   }
 
   sendLoraMessage() async {
-    while (isConnect()) {
-      if (messageQueue.isNotEmpty && loarChar != null) {
+    while (true) {
+      if (isConnect() && messageQueue.isNotEmpty && loarChar != null) {
+        //请求设备是否空闲
+        await _write(setChar!, [0xF5]);
+        do {
+          await Future.delayed(const Duration(milliseconds: 250));
+        } while (!isIdle);
+
         var message = messageQueue[0];
         var sendMessage = message.writeToBuffer();
         debugPrint(
             "------------>LoraMessage send length ${sendMessage.length},:${sendMessage.toString()}");
-
-        //请求设备是否空闲
-        await _write(setChar!, [0xF5]);
-        await Future.delayed(const Duration(milliseconds: 250));
-
-        if (!isIdle) {
-          await Future.delayed(const Duration(milliseconds: 400));
-          continue;
-        }
 
         for (int j = 0; j < sendMessage.length;) {
           int end = min(j + splitLength, sendMessage.length);
@@ -156,7 +152,7 @@ class BlueToothConnect {
             await Future.delayed(const Duration(milliseconds: 1));
           });
         }
-
+        isIdle = false;
         await _write(setChar!, [0xF6]);
         messageQueue.remove(message);
       }

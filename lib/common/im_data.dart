@@ -111,6 +111,7 @@ class GlobeDataManager {
       var position = getPosition();
       if (position != null &&
           me != null &&
+          BlueToothConnect.instance.isConnect() &&
           BlueToothConnect.instance.messageQueue.isEmpty) {
         LoarMessage value = LoarMessage(
             sender: ExLoarMessage.stringToBytes(me!.userId),
