@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -8,6 +9,10 @@ import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
 
 class BlueToothConnect {
   BlueToothConnect._();
+
+  int start = 36;
+  int end1 = 13;
+  int end2 = 10;
 
   final String _SET_SERVICE_UUID = "00F1";
   final String _SET_CHAR_UUID = "AE01";
@@ -24,8 +29,13 @@ class BlueToothConnect {
   static BlueToothConnect? _instance;
   ScanResult? device;
   BluetoothCharacteristic? gpsChar;
+  StreamSubscription? gpsSubscription;
   BluetoothCharacteristic? loarChar;
+  StreamSubscription? loarSubscription;
+
   BluetoothCharacteristic? setChar;
+  StreamSubscription? setSubscription;
+
   List<LoarMessage> messageQueue = [];
 
   Function? loarMessage;
@@ -87,19 +97,19 @@ class BlueToothConnect {
 
     var servicesList = await device?.device.discoverServices();
     var service = servicesList?.firstWhere((element) =>
-        element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
+    element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
     loarChar = service?.characteristics.firstWhere((element) =>
-        element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
+    element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
 
     var serviceGps = device?.device.servicesList.firstWhere((element) =>
-        element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
+    element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
     gpsChar = serviceGps?.characteristics.firstWhere((element) =>
-        element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
+    element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
 
     var serviceSet = device?.device.servicesList.firstWhere((element) =>
-        element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
+    element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
     setChar = serviceSet?.characteristics.firstWhere((element) =>
-        element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
+    element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
     BlueToothConnect.instance._listenLoar(loarMessage!);
     BlueToothConnect.instance._listenGps(gpsMessage!);
@@ -151,11 +161,7 @@ class BlueToothConnect {
       }
 
       var message = messageQueue[0];
-      var sendMessage = message.writeToBuffer();
-      debugPrint(
-          "------------>LoraMessage send length ${sendMessage.length},:${sendMessage.toString()}");
-
-      var success = await sendLoarMessage(sendMessage);
+      var success = await sendLoarMessage(message);
       if (success) {
         await Future.delayed(const Duration(milliseconds: 1500));
         messageQueue.remove(message);
@@ -163,7 +169,10 @@ class BlueToothConnect {
     }
   }
 
-  Future<bool> sendLoarMessage(Uint8List sendMessage) async {
+  Future<bool> sendLoarMessage(LoarMessage message) async {
+    var sendMessage = [start, ...message.writeToBuffer(), end1, end2];
+    debugPrint(
+        "------------>LoraMessage send length ${sendMessage.length},:${sendMessage.toString()}");
     for (int j = 0; j < sendMessage.length;) {
       //发送过程中断开连接
       if (!isConnect()) {
@@ -197,21 +206,34 @@ class BlueToothConnect {
     }
   }
 
-  _listenGps(Function message) {
+  _listenGps(Function message) async {
     if (gpsChar != null) {
-      _setNotifyValue(gpsChar!, message);
+      gpsSubscription?.cancel();
+      gpsSubscription = await _setNotifyValue(gpsChar!, message);
     }
   }
 
-  _listenLoar(Function message) {
+  _listenLoar(Function message) async {
     if (loarChar != null) {
-      _setNotifyValue(loarChar!, (text) => {receiveData(text, message)});
+      loarSubscription?.cancel();
+      loarSubscription = await _setNotifyValue(
+          loarChar!, (text) => {receiveData(text, message)});
     }
   }
+
+  List<int> receive = [];
 
   receiveData(List<int> data, Function message) {
     debugPrint("------------>LoraMessage receive:$data");
-    message(data);
+    if (data[0] == start) {
+      receive.clear();
+    }
+    receive.addAll(data);
+
+    if (data[data.length - 2] == end1 && data[data.length - 1] == end2) {
+      message(receive.sublist(1, data.length - 2));
+      receive.clear();
+    }
   }
 
   setMessage(List<int> message) {
@@ -225,20 +247,24 @@ class BlueToothConnect {
     }
   }
 
-  _listenSet(Function message) {
+  _listenSet(Function message) async {
     if (setChar != null) {
-      _setNotifyValue(setChar!, message);
+      setSubscription?.cancel();
+      setSubscription = await _setNotifyValue(setChar!, message);
     }
   }
 
-  _setNotifyValue(BluetoothCharacteristic c, Function message) async {
-    c.onValueReceived.listen((event) {
+  Future<StreamSubscription> _setNotifyValue(
+      BluetoothCharacteristic c, Function message) async {
+    var subscription = c.onValueReceived.listen((event) {
+      debugPrint("------------>LoraMessage onValueReceived:$event");
       message(event);
     });
     await c.setNotifyValue(true);
     if (c.properties.read) {
       await c.read();
     }
+    return subscription;
   }
 
   List<int> string2Int(String text) {
