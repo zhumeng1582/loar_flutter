@@ -122,11 +122,13 @@ extension _Action on _ChatPageState {
 
   bool sendMessage(String message) {
     if (ref.watch(imProvider).available) {
-      if (ref.read(roomProvider).milliseconds > 0) {
-        Loading.toast("发送剩余时间${ref.read(roomProvider).getSendTime()}");
-        return false;
+      if (BlueToothConnect.instance.isConnect()) {
+        if (ref.read(roomProvider).milliseconds > 0) {
+          Loading.toast("发送剩余时间${ref.read(roomProvider).getSendTime()}");
+          return false;
+        }
+        ref.read(roomProvider).sendTimerInterval();
       }
-      ref.read(roomProvider).sendTimerInterval();
       ref.read(imProvider).sendTextMessage(
           widget.conversation.type == EMConversationType.Chat
               ? ChatType.Chat
@@ -142,11 +144,14 @@ extension _Action on _ChatPageState {
 
   //发送定位
   sendLocalMessage() {
-    if (ref.read(roomProvider).milliseconds > 0) {
-      Loading.toast("发送剩余时间${ref.read(roomProvider).getSendTime()}");
-      return;
+    if (BlueToothConnect.instance.isConnect()) {
+      if (ref.read(roomProvider).milliseconds > 0) {
+        Loading.toast("发送剩余时间${ref.read(roomProvider).getSendTime()}");
+        return false;
+      }
+      ref.read(roomProvider).sendTimerInterval();
     }
-    ref.read(roomProvider).sendTimerInterval();
+
     ref.read(imProvider).sendLocalMessage(
         widget.conversation.type == EMConversationType.Chat
             ? ChatType.Chat

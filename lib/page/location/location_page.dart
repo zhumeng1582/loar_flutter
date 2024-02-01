@@ -69,7 +69,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
               }
             }),
             _getItem(AssetsImages.iconFengTu, "星图", "卫星星图").onTap(() {
-              if (hasPosition()) {
+              if (isConnect()) {
                 Navigator.pushNamed(context, RouteNames.satelliteMapPage);
               }
             }),
@@ -96,6 +96,14 @@ extension _Action on _LocationPageState {
       return false;
     }
 
+    return true;
+  }
+
+  bool isConnect() {
+    if (!BlueToothConnect.instance.isConnect()) {
+      Loading.toast("未连接设备");
+      return false;
+    }
     return true;
   }
 }

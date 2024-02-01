@@ -94,11 +94,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     super.initState();
 
     Future(() async {
+      var psw = await ImCache.getAccountAndPassword();
+
       // _userAccountController.text = GlobeDataManager.instance.me?.userId ?? "";
       // _userPasswordController.text = await ImCache.getPassword();
-
-      _userAccountController.addListener(() {});
-      _userPasswordController.addListener(() {});
+      if (psw.isNotEmpty) {
+        _userAccountController.text = psw.split("/")[0];
+      }
     });
   }
 

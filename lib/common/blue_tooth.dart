@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:loar_flutter/common/proto/LoarProto.pb.dart';
@@ -97,19 +96,19 @@ class BlueToothConnect {
 
     var servicesList = await device?.device.discoverServices();
     var service = servicesList?.firstWhere((element) =>
-    element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
+        element.serviceUuid.toString().toUpperCase() == _LORA_SERVICE_UUID);
     loarChar = service?.characteristics.firstWhere((element) =>
-    element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
+        element.characteristicUuid.toString().toUpperCase() == _LORA_CHAR_UUID);
 
     var serviceGps = device?.device.servicesList.firstWhere((element) =>
-    element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
+        element.serviceUuid.toString().toUpperCase() == _GPS_SERVICE_UUID);
     gpsChar = serviceGps?.characteristics.firstWhere((element) =>
-    element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
+        element.characteristicUuid.toString().toUpperCase() == _GPS_CHAR_UUID);
 
     var serviceSet = device?.device.servicesList.firstWhere((element) =>
-    element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
+        element.serviceUuid.toString().toUpperCase() == _SET_SERVICE_UUID);
     setChar = serviceSet?.characteristics.firstWhere((element) =>
-    element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
+        element.characteristicUuid.toString().toUpperCase() == _SET_CHAR_UUID);
 
     BlueToothConnect.instance._listenLoar(loarMessage!);
     BlueToothConnect.instance._listenGps(gpsMessage!);
@@ -267,9 +266,6 @@ class BlueToothConnect {
     return subscription;
   }
 
-  List<int> string2Int(String text) {
-    return text.split('').map((char) => char.codeUnitAt(0)).toList();
-  }
 
   double convertGPRMCToDegrees(String gprmc) {
     var degreePart = gprmc.substring(0, gprmc.length - 8);
