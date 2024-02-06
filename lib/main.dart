@@ -24,6 +24,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initMap();
   await initIm();
+
   GlobeDataManager.instance.tryConnection();
   if (Platform.isAndroid) {
     [
