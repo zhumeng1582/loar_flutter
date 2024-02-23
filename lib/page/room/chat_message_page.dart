@@ -78,6 +78,7 @@ extension _UI on _RoomMessagePageState {
   }
 
   Widget _buildRoomMessageItem(EMMessage data) {
+    debugPrint("buildRoomMessageItem--->" + data.toString());
     if (data.body is EMCmdMessageBody) {
       return _buildChatCmdItem(data);
     } else if (data.body is EMLocationMessageBody) {

@@ -97,7 +97,8 @@ class ImNotifier extends ChangeNotifier {
       groupMap = await ImCache.getGroup();
       addCustomGroup();
       allUsers = await ImCache.getAllUser();
-      messageMap = await ImCache.getAllMessage(allUsers.keys.toList());
+      messageMap = await ImCache.getAllMessage(groupMap.keys.toList());
+      messageMap.addAll(await ImCache.getAllMessage(allUsers.keys.toList()));
       contacts = (await ImCache.getContacts()) ?? [];
     }
   }
@@ -478,7 +479,6 @@ class ImNotifier extends ChangeNotifier {
       conversationId = loarMessage.getConversationId;
     }
 
-    updateConversation(conversationId, message.chatType);
     addMessageToMap(conversationId, message);
 
     notifyListeners();
@@ -569,7 +569,6 @@ class ImNotifier extends ChangeNotifier {
       ChatType chatType, String targetId, String messageContent) async {
     var msg = EMMessage.createTxtSendMessage(
         targetId: targetId, content: messageContent, chatType: chatType);
-
     await _sendMessage(targetId, msg, chatType, messageContent);
   }
 
@@ -599,7 +598,7 @@ class ImNotifier extends ChangeNotifier {
         content: messageContent,
       );
       BlueToothConnect.instance.writeLoraMessage(message);
-
+      msg.from = GlobeDataManager.instance.me?.userId;
       addMessageToMap(targetId, msg);
       notifyListeners();
     } else {
