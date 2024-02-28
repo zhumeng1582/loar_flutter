@@ -38,7 +38,9 @@ class _LocationPageState extends ConsumerState<LocationPage> {
         centerTitle: true,
         backgroundColor: AppColors.bottomBackground,
         title: const Text("定位"),
-        actions: [const Text("重置在线用户").onTap(clearAllUser)],
+        actions: [
+          const Text("刷新用戶").paddingHorizontal(32.h).onTap(clearAllUser)
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -90,6 +92,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
 extension _Action on _LocationPageState {
   void clearAllUser() {
     ref.read(imProvider).clearAllOnlineUser();
+    Loading.toast("刷新成功");
   }
 
   bool hasPosition() {
