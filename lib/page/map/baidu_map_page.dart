@@ -48,6 +48,8 @@ class BaiduMapNotifier extends ChangeNotifier {
 
   addMakerList(MapDataPara mapDataPara, BMFMapController controller,
       Map<String, OnlineUser> allOnlineUsers) {
+    clearMaker();
+    //只有蜂邻不显示自己的位置
     if (mapDataPara.pageType != PageType.nearBy) {
       var mePosition = GlobeDataManager.instance.getPosition();
       if (mePosition != null) {
@@ -118,7 +120,6 @@ class _BaiduMapState extends ConsumerState<BaiduMapPage> {
   void initState() {
     super.initState();
 
-    ref.read(baiduMapProvider).clearMaker();
   }
 
   void onBMFMapCreated(BMFMapController controller) {

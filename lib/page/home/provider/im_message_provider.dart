@@ -44,6 +44,11 @@ class ImNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  clearAllOnlineUser() {
+    allOnlineUsers.clear();
+    notifyListeners();
+  }
+
   var isOnline = true;
   var emConnected = true;
 
@@ -645,7 +650,7 @@ class ImNotifier extends ChangeNotifier {
   getHistoryMessage(String id, EMConversationType type) async {
     try {
       EMCursorResult<EMMessage?> cursor =
-          await EMClient.getInstance.chatManager.fetchHistoryMessages(
+      await EMClient.getInstance.chatManager.fetchHistoryMessages(
         conversationId: id,
         type: type,
       );

@@ -10,6 +10,7 @@ import '../../common/colors.dart';
 import '../../common/image.dart';
 import '../../common/routers/RouteNames.dart';
 import '../../common/util/images.dart';
+import '../home/provider/im_message_provider.dart';
 import '../map/model/page_type.dart';
 
 final locationProvider =
@@ -37,6 +38,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
         centerTitle: true,
         backgroundColor: AppColors.bottomBackground,
         title: const Text("定位"),
+        actions: [const Text("重置在线用户").onTap(clearAllUser)],
       ),
       body: SafeArea(
         child: Column(
@@ -86,6 +88,10 @@ class _LocationPageState extends ConsumerState<LocationPage> {
 }
 
 extension _Action on _LocationPageState {
+  void clearAllUser() {
+    ref.read(imProvider).clearAllOnlineUser();
+  }
+
   bool hasPosition() {
     if (!BlueToothConnect.instance.isConnect()) {
       Loading.toast("未连接设备");
